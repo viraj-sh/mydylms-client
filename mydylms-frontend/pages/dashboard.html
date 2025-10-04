@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="icon" href="/src/favicon.ico" type="image/x-icon" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="/js/dashboard.js"></script>
+    <script src="/js/logout.js"></script>
+
+</head>
+
+<body>
+    <!-- Start of Navbar -->
+    <nav class="bg-white border-gray-200">
+        <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-2xl p-4">
+            <img src="/src/images/logo.png" class="h-20" alt="Flowbite Logo" />
+            </a>
+            <div class="flex items-center space-x-6 rtl:space-x-reverse">
+                <a href="/index.html" class="text-sm  text-red-800">Logout</a>
+            </div>
+        </div>
+    </nav>
+    <nav class="bg-red-800 sticky top-0 z-40">
+        <div class="max-w-screen-2xl px-4 py-3 mx-auto">
+            <div class="flex items-center">
+                <ul class="flex flex-row font-medium mt-0 rtl:space-x-reverse text-sm">
+                    <li>
+                        <a style="text-decoration: none;" href="/pages/dashboard.html"
+                            class="px-4 py-3 text-gray-900 text-white hover:underline hover:bg-black no-underline hover:no-underline focus:no-underline active:no-underline"
+                            aria-current="page">My Classes</a>
+                    </li>
+                    <li class="no-underline">
+                        <a style="text-decoration: none;" href="/pages/attendance.html"
+                            class="px-4 py-3 text-gray-900 text-white hover:underline hover:bg-black no-underline hover:no-underline focus:no-underline active:no-underline">Attendance</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- End of Navbar -->
+
+
+    <section class="bg-gray-50 py-6">
+        <div class="max-w-screen-2xl mx-auto px-4 flex flex-col gap-6">
+
+            <!-- Semester Selector (top bar) -->
+            <div>
+                <h3 class="text-lg font-semibold text-slate-700 mb-3">Select Semester</h3>
+                <div id="semesterGrid" class="flex gap-3 overflow-x-auto pb-2">
+                    <div class="text-gray-500 text-sm" id="semesterPlaceholder">Loading semesters...</div>
+                </div>
+            </div>
+
+            <!-- Main Layout -->
+            <div class="flex gap-8">
+
+                <!-- Sidebar: Subjects -->
+                <!-- Sidebar: Subjects -->
+                <aside
+                    class="w-72 bg-white border border-gray-200 rounded-xl shadow-sm p-4 h-[calc(100vh-10rem)] sticky top-20 overflow-y-auto">
+                    <h3 class="text-sm font-semibold text-slate-700 mb-2">Select Subject</h3>
+                    <ul id="subjectGrid" class="flex flex-col divide-y divide-gray-200">
+                        <li class="text-center text-gray-400 py-4" id="subjectPlaceholder">
+                            Select a semester first
+                        </li>
+                    </ul>
+                </aside>
+
+
+                <!-- Main Content: Documents -->
+                <main class="flex-1 space-y-6">
+
+                    <!-- Header with search + filter -->
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <h2 class="text-2xl font-bold text-slate-800">Documents</h2>
+                        <div class="flex gap-2">
+                            <input type="text" id="searchDocs" placeholder="Search documents..." disabled
+                                class="px-4 py-2 w-64 border border-red-800 rounded-lg shadow-sm text-sm text-black">
+                            <select aria-placeholder="All" id="docFilter" disabled
+                                class="px-3 py-2 border border-red-800 rounded-lg shadow-sm text-sm text-black">
+                            </select>
+
+
+                        </div>
+                    </div>
+
+                    <!-- Documents Grid -->
+                    <div id="documentsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="col-span-full text-center text-gray-400 py-6" id="docsPlaceholder">
+                            Select a subject to load documents
+                        </div>
+                    </div>
+
+                </main>
+            </div>
+        </div>
+    </section>
+
+
+
+</body>
+
+</html>
