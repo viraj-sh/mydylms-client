@@ -1,0 +1,32 @@
+name: Sync upstream repos
+
+on:
+  workflow_dispatch: # allows you to trigger manually
+  repository_dispatch: # allows other repos to trigger it automatically
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v3
+
+      - name: Sync API repo
+        run: |
+          rm -rf mydylms-api
+          git clone --depth 1 https://github.com/viraj-sh/mydylms-api mydylms-api
+          rm -rf mydylms-api/.git
+
+      - name: Sync Frontend repo
+        run: |
+          rm -rf mydylms-frontend
+          git clone --depth 1 https://github.com/Viraj-S45/mydylms-frontend mydylms-frontend
+          rm -rf mydylms-frontend/.git
+
+      - name: Commit and push changes
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "Sync upstream repos" || echo "No changes to commit"
+          git push
