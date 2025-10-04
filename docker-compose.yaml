@@ -1,0 +1,16 @@
+services:
+  api:
+    image: virajsh/mydylms-api:latest
+    container_name: mydylms-api
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  frontend:
+    image: virajsh/mydylms-frontend:latest
+    container_name: mydylms-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    restart: unless-stopped
