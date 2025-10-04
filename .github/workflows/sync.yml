@@ -4,6 +4,9 @@ on:
   workflow_dispatch: # allows you to trigger manually
   repository_dispatch: # allows other repos to trigger it automatically
 
+permissions:
+  contents: write
+
 jobs:
   sync:
     runs-on: ubuntu-latest
