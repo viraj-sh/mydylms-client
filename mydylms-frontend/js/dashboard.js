@@ -16,9 +16,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let selectedSubject = null;
 
     // Types that should NOT show Download button
-    // const NO_DOWNLOAD_TYPES = new Set(["url"]);
+    const HIDE_ALL_BUTTONS_TYPES = new Set(["quiz", "forum", "assign"]);
     const HIDE_DOWNLOAD_TYPES = new Set(["url"]);
     const DIRECT_URL_TYPES = new Set([]);
+    const HIDE_ALL_MESSAGE = "Manual Task";
     // Helpers
     function capitalizeFirst(s) {
         if (!s && s !== 0) return "";
@@ -196,6 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
         documentsContainer.innerHTML = filtered.map(doc => {
             const modType = (doc.mod_type || "unknown").toLowerCase();
             const hideDownload = HIDE_DOWNLOAD_TYPES.has(modType);
+            const hideAllButtons = HIDE_ALL_BUTTONS_TYPES.has(modType);
             const useDirectUrl = DIRECT_URL_TYPES.has(modType);
 
             const viewHref = useDirectUrl
@@ -212,9 +214,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="mt-3 flex justify-between items-center">
                         <div class="text-xs text-gray-500">Uploaded ID: ${doc.id}</div>
                         <div class="flex gap-3">
-                            <a href="${viewHref}" target="_blank" rel="noopener noreferrer"
-                               class="text-red-700 font-medium hover:underline text-sm">View</a>
-                            ${hideDownload ? "" : `<a href="${downloadHref}" class="text-red-700 font-medium hover:underline text-sm">Download</a>`}
+                        ${hideAllButtons
+                    ? `<span class="text-gray-400 text-sm italic">${HIDE_ALL_MESSAGE}</span>`
+                    : `<a href="${viewHref}" target="_blank" rel="noopener noreferrer" class="text-red-700 font-medium hover:underline text-sm">View</a>`}
+                        ${hideAllButtons || hideDownload
+                    ? ""
+                    : `<a href="${downloadHref}" class="text-red-700 font-medium hover:underline text-sm">Download</a>`}
                         </div>
                     </div>
                 </div>`;
