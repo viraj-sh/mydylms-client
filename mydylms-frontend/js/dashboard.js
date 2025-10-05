@@ -16,8 +16,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let selectedSubject = null;
 
     // Types that should NOT show Download button
-    const NO_DOWNLOAD_TYPES = new Set(["url"]);
-
+    // const NO_DOWNLOAD_TYPES = new Set(["url"]);
+    const HIDE_DOWNLOAD_TYPES = new Set(["url"]);
+    const DIRECT_URL_TYPES = new Set([]);
     // Helpers
     function capitalizeFirst(s) {
         if (!s && s !== 0) return "";
@@ -148,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
             `<div class="animate-pulse bg-gray-200 h-28 rounded-xl w-full"></div>`).join("");
 
         try {
-            const res = await fetch(`${API_BASE_URL}/sem/${semNo}/sub/${subId}/doc`);
+            const res = await fetch(`${API_BASE_URL}/sem/${semNo}/sub/${subId}`);
             if (!res.ok) throw new Error("Failed to fetch documents");
             const data = await res.json();
             documents = data.data || [];
@@ -194,8 +195,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         documentsContainer.innerHTML = filtered.map(doc => {
             const modType = (doc.mod_type || "unknown").toLowerCase();
-            const isUrlType = NO_DOWNLOAD_TYPES.has(modType);
-            const viewHref = isUrlType ? (doc.doc_url || "#") : `${API_BASE_URL}/sem/${selectedSemester}/sub/${selectedSubject}/doc/${doc.id}/view`;
+            const hideDownload = HIDE_DOWNLOAD_TYPES.has(modType);
+            const useDirectUrl = DIRECT_URL_TYPES.has(modType);
+
+            const viewHref = useDirectUrl
+                ? (doc.doc_url || "#")
+                : `${API_BASE_URL}/sem/${selectedSemester}/sub/${selectedSubject}/doc/${doc.id}/view`;
+
             const downloadHref = `${API_BASE_URL}/sem/${selectedSemester}/sub/${selectedSubject}/doc/${doc.id}/download`;
             const typeLabel = `Type: ${doc.mod_type || "unknown"}`;
 
@@ -208,7 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="flex gap-3">
                             <a href="${viewHref}" target="_blank" rel="noopener noreferrer"
                                class="text-red-700 font-medium hover:underline text-sm">View</a>
-                            ${isUrlType ? "" : `<a href="${downloadHref}" class="text-red-700 font-medium hover:underline text-sm">Download</a>`}
+                            ${hideDownload ? "" : `<a href="${downloadHref}" class="text-red-700 font-medium hover:underline text-sm">Download</a>`}
                         </div>
                     </div>
                 </div>`;

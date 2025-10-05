@@ -1,11 +1,11 @@
-import io
+import io, mimetypes
 import os
 import requests
 import logging
 from fastapi import FastAPI, HTTPException, Query, Request, Path, Depends
 from fastapi.responses import JSONResponse
 from typing import Annotated, Optional, List, Dict, Any, Literal
-from fastapi.responses import StreamingResponse, FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 
 from core.auth import login, verify_token, get_token
 from core.utils import dump_json, load_json, CREDENTIALS_PATH
@@ -167,7 +167,7 @@ def delete_token():
         return {
             "success": False,
             "message": "Token is not present",
-        }  # soft fail, keep as 200
+        }
     creds["token"] = ""
     dump_json(creds, CREDENTIALS_PATH)
     return {"success": True, "message": "Token deleted"}
@@ -342,13 +342,11 @@ def view_doc(
     doc_entry = get_doc_entry(sub_id, doc_id)
 
     doc_url = help_doc(doc_entry["mod_type"], doc_id)
-    filename, content = help_download_file(doc_url)
-
-    return StreamingResponse(
-        io.BytesIO(content),
-        media_type=guess_media_type(filename),
-        headers={"Content-Disposition": f'inline; filename="{filename}"'},
-    )
+    mime_type, _ = mimetypes.guess_type(doc_url)
+    if mime_type:
+        filename, content = help_download_file(doc_url)
+        return build_streaming_response(filename, content, inline=True)
+    return RedirectResponse(url=doc_url)
 
 
 @app.get(
@@ -368,11 +366,7 @@ def download_doc(
     doc_url = help_doc(doc_entry["mod_type"], doc_id)
     filename, content = help_download_file(doc_url)
 
-    return StreamingResponse(
-        io.BytesIO(content),
-        media_type="application/octet-stream",
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
-    )
+    return build_streaming_response(filename, content, inline=True)
 
 
 @app.get(
@@ -401,7 +395,7 @@ def get_all_docs_from_subject(
         doc_url = get_doc_url_or_500(entry["mod_type"], entry["id"])
         results.append({**entry, "doc_url": doc_url})
 
-    paginated = paginate_list(results, page, page_size)  # <-- your existing function
+    paginated = paginate_list(results, page, page_size)
     return {
         "status": "ok",
         "data": paginated["items"],
@@ -427,8 +421,11 @@ def get_doc_from_subject(doc_entry: Dict[str, Any] = Depends(get_doc_or_404)):
 )
 def view_doc(doc_entry: Dict[str, Any] = Depends(get_doc_or_404)):
     doc_url = get_doc_url_or_500(doc_entry["mod_type"], doc_entry["id"])
-    filename, content = help_download_file(doc_url)  # <-- your existing function
-    return build_streaming_response(filename, content, inline=True)
+    mime_type, _ = mimetypes.guess_type(doc_url)
+    if mime_type:
+        filename, content = help_download_file(doc_url)
+        return build_streaming_response(filename, content, inline=True)
+    return RedirectResponse(url=doc_url)
 
 
 @app.get(
@@ -442,15 +439,51 @@ def download_doc(doc_entry: Dict[str, Any] = Depends(get_doc_or_404)):
     return build_streaming_response(filename, content, inline=False)
 
 
+@app.get(
+    "/doc/{mod_type}/{doc_id}",
+    tags=["Document"],
+    summary="Get metadata of a specific document",
+)
+def get_doc_from_subject(doc_id: int, mod_type: str):
+    doc_url = get_doc_url_or_500(mod_type, doc_id)
+    return {
+        "id": doc_id,
+        "mod_type": mod_type,
+        "doc_url": doc_url,
+    }
+
+
+@app.get(
+    "/doc/{mod_type}/{doc_id}/view",
+    tags=["Document"],
+    summary="Inline view of a specific document",
+)
+def view_doc(doc_id: int, mod_type: str):
+    doc_url = get_doc_url_or_500(mod_type, doc_id)
+    mime_type, _ = mimetypes.guess_type(doc_url)
+    if mime_type:
+        filename, content = help_download_file(doc_url)
+        return build_streaming_response(filename, content, inline=True)
+    return RedirectResponse(url=doc_url)
+
+
+@app.get(
+    "/doc/{mod_type}/{doc_id}/download",
+    tags=["Document"],
+    summary="Download a specific document",
+)
+def download_doc(doc_id: int, mod_type: str):
+    doc_url = get_doc_url_or_500(mod_type, doc_id)
+    filename, content = help_download_file(doc_url)
+    return build_streaming_response(filename, content, inline=False)
+
+
 @app.get("/att", tags=["Attendance"], summary="Get overall or detailed attendance")
 def get_attendance(
     type: Literal["overall", "detailed"] = Query(
         "overall", description="Type of attendance: overall or detailed"
     )
 ) -> Dict[str, Any]:
-    """
-    Returns overall or detailed attendance summary.
-    """
     att = d_attendance() if type == "detailed" else o_attendance()
     return {"status": "ok", "data": att}
 
@@ -464,15 +497,11 @@ def get_attendance(
 def get_subject_attendance(
     altid: int = Path(..., description="Subject alternate ID")
 ) -> Dict[str, Any]:
-    """
-    Returns detailed attendance for a specific subject by its alternate ID.
-    """
     att = s_attendance(altid)
     if att is None:
         raise HTTPException(
             status_code=404, detail=f"No attendance found for subject ALTID {altid}"
         )
-
     return {"status": "ok", "type": "subject", "data": att}
 
 

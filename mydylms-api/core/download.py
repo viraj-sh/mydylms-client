@@ -3,6 +3,7 @@ import requests
 from urllib.parse import urlparse, unquote
 from core.auth import get_token
 from core.utils import load_json, dump_json
+import io, mimetypes
 
 
 def download_file(file_url: str, token: str) -> tuple[str, bytes]:

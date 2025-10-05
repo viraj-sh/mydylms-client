@@ -16,7 +16,6 @@
   <img src="/src/images/preview_attendance.png" width="250" alt="Page 3"/>
 </a>
 
-
 ---
 
 ## Overview
@@ -30,6 +29,32 @@ This frontend provides a user interface for:
 - Logging out.
 
 It is designed to work **exclusively with the [mydylms-api](https://github.com/viraj-sh/mydylms-api)**. Nothing will function without the API.
+
+---
+
+## Docker Usage
+
+You can use this frontend easily via Docker, without manually setting up dependencies:
+
+### Option 1: Pull the prebuilt image
+
+```bash
+docker pull virajsh/mydylms-frontend:latest
+docker run -p 3000:80 virajsh/mydylms-frontend:latest
+```
+
+- Frontend will be accessible at [http://localhost:3000](http://localhost:3000).
+- You can map any host port you like by changing `-p <host_port>:80`.
+
+### Option 2: Build the image locally
+
+```bash
+docker build -t virajsh/mydylms-frontend:latest .
+docker run -p 3000:80 virajsh/mydylms-frontend:latest
+```
+
+- This uses the `Dockerfile` in the root of the project to create the image yourself.
+- You can then run it on any host port as desired.
 
 ---
 
@@ -82,8 +107,6 @@ It is designed to work **exclusively with the [mydylms-api](https://github.com/v
 - Additional features as the API evolves.
 
 ---
-
-
 
 ## Disclaimer
 
