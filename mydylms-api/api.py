@@ -32,7 +32,6 @@ from core.download import help_download_file
 from core.attendence import o_attendance, d_attendance, s_attendance
 from core.exceptions import add_exception_handlers
 from core.logging_config import setup_logging
-from core.pagination import paginate_list
 from schema.pydantic_auth import (
     Auth,
     MessageResponse,
@@ -239,8 +238,6 @@ def get_subjects(
 def get_subject_in_semester(
     sem_no: int = Path(..., description="Semester number. Use -1 for latest semester"),
     sub_id: int = Path(..., ge=1, description="Subject ID (>=1)"),
-    page: int = Query(1, ge=1),
-    page_size: int = Query(20, ge=1, le=100),
 ):
     sem_no, _ = get_valid_sem_no(sem_no)
     subjects = load_semsub(sem_no)
@@ -257,11 +254,9 @@ def get_subject_in_semester(
             detail=f"No modules found for Subject {sub_id} in Semester {sem_no}",
         )
 
-    paginated = paginate_list(modules, page, page_size)
     return {
         "status": "ok",
-        "data": paginated["items"],
-        "pagination": paginated["pagination"],
+        "data": modules,
     }
 
 
@@ -274,8 +269,6 @@ def get_subject_in_semester(
 def list_subject_docs(
     sem_no: int = Path(..., description="Semester number. Use -1 for latest"),
     sub_id: int = Path(..., ge=1, description="Subject ID (>=1)"),
-    page: int = Query(1, ge=1),
-    page_size: int = Query(20, ge=1, le=100),
     semesters=Depends(validate_sem),
 ):
     validate_sub(sem_no, sub_id)
@@ -294,12 +287,7 @@ def list_subject_docs(
             )
         results.append({**entry, "doc_url": doc_url})
 
-    paginated = paginate_list(results, page, page_size)
-    return {
-        "status": "ok",
-        "data": paginated["items"],
-        "pagination": paginated["pagination"],
-    }
+    return {"status": "ok", "data": results}
 
 
 @app.get(
@@ -387,20 +375,13 @@ def get_subject(semsub: List[Dict[str, Any]] = Depends(get_subject_or_404)):
 )
 def get_all_docs_from_subject(
     semsub: List[Dict[str, Any]] = Depends(get_subject_or_404),
-    page: int = Query(1, ge=1),
-    page_size: int = Query(20, ge=1, le=100),
 ):
     results = []
     for entry in semsub:
         doc_url = get_doc_url_or_500(entry["mod_type"], entry["id"])
         results.append({**entry, "doc_url": doc_url})
 
-    paginated = paginate_list(results, page, page_size)
-    return {
-        "status": "ok",
-        "data": paginated["items"],
-        "pagination": paginated["pagination"],
-    }
+    return {"status": "ok", "data": results}
 
 
 @app.get(

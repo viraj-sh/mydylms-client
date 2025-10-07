@@ -12,4 +12,3 @@ class DocumentResponse(BaseModel):
 class DocumentListResponse(BaseModel):
     status: str
     data: List[DocumentResponse]
-    pagination: Optional[Dict[str, Any]] = None
