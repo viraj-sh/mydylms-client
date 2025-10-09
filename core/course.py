@@ -47,6 +47,7 @@ def get_course_contents(key: str, course_id: int):
         for module in section.get("modules", []):
             modname = module.get("modname")
             doc_name_module = module.get("name")
+            view_id = module.get("id")
             for content in module.get("contents", []):
                 doc_url = content.get("fileurl")
                 doc_id = None
@@ -62,6 +63,7 @@ def get_course_contents(key: str, course_id: int):
 
                 week["docs"].append(
                     {
+                        "view_id": view_id,
                         "doc_id": doc_id,
                         "module": doc_name_module,
                         "mod": modname,
