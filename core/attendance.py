@@ -1,6 +1,13 @@
 import re
 from bs4 import BeautifulSoup
-from core.utils import fetch_html
+from core.utils import fetch_html, OVERALL_TTL, COURSE_TTL, COURSES_TTL
+import logging
+
+from core.cache import load_cache, save_cache
+from core.logging_config import setup_logging
+
+setup_logging()
+logger = logging.getLogger("mydylms")
 
 
 def det_att(token):
@@ -71,3 +78,45 @@ def course_att(token, altid):
             }
         )
     return records
+
+
+def get_overall_attendance_helper(token: str):
+    cache_name = "attendance_overall"
+    cached = load_cache(cache_name, ttl_hours=OVERALL_TTL)
+    if cached:
+        logger.info("Cache hit: overall attendance")
+        return cached
+
+    logger.info("Cache miss: fetching overall attendance")
+    data = o_att(token)
+    if data:
+        save_cache(cache_name, data, ttl_hours=OVERALL_TTL)
+    return data
+
+
+def get_courses_attendance_helper(token: str):
+    cache_name = "attendance_courses"
+    cached = load_cache(cache_name, ttl_hours=COURSES_TTL)
+    if cached:
+        logger.info("Cache hit: courses attendance")
+        return cached
+
+    logger.info("Cache miss: fetching attendance for all courses")
+    data = det_att(token)
+    if data:
+        save_cache(cache_name, data, ttl_hours=COURSES_TTL)
+    return data
+
+
+def get_course_attendance_helper(token: str, altid: int):
+    cache_name = f"attendance_course_{altid}"
+    cached = load_cache(cache_name, ttl_hours=COURSE_TTL)
+    if cached:
+        logger.info(f"Cache hit: course attendance for altid={altid}")
+        return cached
+
+    logger.info(f"Cache miss: fetching attendance for course altid={altid}")
+    data = course_att(token, altid)
+    if data:
+        save_cache(cache_name, data, ttl_hours=COURSE_TTL)
+    return data

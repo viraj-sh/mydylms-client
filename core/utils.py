@@ -15,6 +15,10 @@ SEM_TTL_HOURS = 6
 COURSE_CACHE_PREFIX = "course_"
 COURSE_TTL_HOURS = 1
 
+OVERALL_TTL = 1  # hour
+COURSES_TTL = 1  # hour
+COURSE_TTL = 0.5  # 30 minutes
+
 
 def dump_json(data, json_path: Path, indent: int = 4):
     json_path.parent.mkdir(parents=True, exist_ok=True)
