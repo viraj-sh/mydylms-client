@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import logging
 
-# from api.system import router as system_router
+from api.system import router as system_router
 from api.auth import router as auth_router
 from core.logging_config import setup_logging
 from core.exceptions import add_exception_handlers
@@ -29,5 +29,5 @@ add_exception_handlers(app)
 logger.info("Application startup complete")
 
 # Include routers
-# app.include_router(system_router)
+app.include_router(system_router)
 app.include_router(auth_router)
