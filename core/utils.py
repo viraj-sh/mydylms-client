@@ -56,5 +56,3 @@ def fetch_html(url: str, token: str):
     return resp.text
 
 
-def standard_response(data: dict):
-    return {"status": "success", "data": data, "errors": []}
