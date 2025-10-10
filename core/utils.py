@@ -10,6 +10,11 @@ DATA_DIR = Path("data")
 PROFILE_CACHE_NAME = "user_profile"
 PROFILE_TTL_HOURS = 12
 
+SEM_CACHE_NAME = "semesters"
+SEM_TTL_HOURS = 6
+COURSE_CACHE_PREFIX = "course_"
+COURSE_TTL_HOURS = 1
+
 
 def dump_json(data, json_path: Path, indent: int = 4):
     json_path.parent.mkdir(parents=True, exist_ok=True)
@@ -54,5 +59,3 @@ def fetch_html(url: str, token: str):
     resp = session.get(url, timeout=10)
     resp.raise_for_status()
     return resp.text
-
-

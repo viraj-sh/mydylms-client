@@ -10,7 +10,11 @@ DATA_DIR.mkdir(parents=True, exist_ok=True)
 def save_cache(name: str, data: dict, ttl_hours: int = 6):
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     path = DATA_DIR / f"{name}.json"
-    payload = {"timestamp": datetime.utcnow().isoformat(), "data": data}
+    payload = {
+        "timestamp": datetime.utcnow().isoformat(),
+        "data": data,
+        "_metadata": {"ttl_hours": ttl_hours},
+    }
     path.write_text(json.dumps(payload, indent=2))
 
 

@@ -2,7 +2,14 @@ import re
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, parse_qs
-from core.utils import fetch_html, PROFILE_CACHE_NAME, PROFILE_TTL_HOURS
+from core.utils import (
+    fetch_html,
+    PROFILE_CACHE_NAME,
+    PROFILE_TTL_HOURS,
+    SEM_CACHE_NAME,
+    SEM_TTL_HOURS,
+    DATA_DIR,
+)
 from core.cache import load_cache, save_cache, clear_cache, get_cache_metadata
 from core.logging_config import setup_logging
 
@@ -138,4 +145,28 @@ def get_user_profile_helper(token: str, user_id: int) -> dict | None:
         return load_cache(PROFILE_CACHE_NAME, ttl_hours=PROFILE_TTL_HOURS)
 
     logger.warning("Failed to fetch user profile from source.")
+    return None
+
+
+def get_semesters_helper(token: str):
+    cached = load_cache(SEM_CACHE_NAME, ttl_hours=SEM_TTL_HOURS)
+    metadata = get_cache_metadata(SEM_CACHE_NAME)
+
+    if cached:
+        if metadata:
+            logger.info(
+                f"Cache hit for semesters. Age: {metadata['age_minutes']:.1f} min, TTL: {metadata['ttl_hours']}h"
+            )
+        else:
+            logger.info("Cache hit for semesters (metadata unavailable).")
+        return cached
+
+    logger.info("Cache miss for semesters. Fetching fresh data...")
+    semesters = get_semesters(token)
+    if semesters:
+        save_cache(SEM_CACHE_NAME, semesters, ttl_hours=SEM_TTL_HOURS)
+        logger.info("Saved fresh semesters to cache.")
+        return load_cache(SEM_CACHE_NAME, ttl_hours=SEM_TTL_HOURS)
+
+    logger.warning("Failed to fetch semesters from source.")
     return None

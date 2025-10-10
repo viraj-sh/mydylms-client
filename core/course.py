@@ -2,8 +2,14 @@ import requests
 import re
 import json
 from bs4 import BeautifulSoup
-from core.utils import fetch_html
+from core.utils import fetch_html, COURSE_CACHE_PREFIX, COURSE_TTL_HOURS
 from typing import Optional
+from core.cache import load_cache, save_cache, get_cache_metadata
+from core.logging_config import setup_logging
+import logging
+
+setup_logging()
+logger = logging.getLogger("mydylms")
 
 
 def get_course_contents(key: str, course_id: int):
@@ -77,3 +83,28 @@ def get_course_contents(key: str, course_id: int):
         formatted.append(week)
 
     return {"status": "success", "error": None, "data": formatted}
+
+
+def get_course_contents_helper(key: str, course_id: int):
+    cache_name = f"{COURSE_CACHE_PREFIX}{course_id}"
+    cached = load_cache(cache_name, ttl_hours=COURSE_TTL_HOURS)
+    metadata = get_cache_metadata(cache_name)
+
+    if cached:
+        if metadata:
+            logger.info(
+                f"Cache hit for course {course_id}. Age: {metadata['age_minutes']:.1f} min, TTL: {metadata['ttl_hours']}h"
+            )
+        else:
+            logger.info(f"Cache hit for course {course_id} (metadata unavailable).")
+        return cached
+
+    logger.info(f"Cache miss for course {course_id}. Fetching fresh data...")
+    course_data = get_course_contents(key, course_id)
+    if course_data.get("status") == "success" and course_data.get("data"):
+        save_cache(cache_name, course_data["data"], ttl_hours=COURSE_TTL_HOURS)
+        logger.info(f"Saved fresh course {course_id} to cache.")
+        return load_cache(cache_name, ttl_hours=COURSE_TTL_HOURS)
+
+    logger.warning(f"Failed to fetch course {course_id} from source.")
+    return None
