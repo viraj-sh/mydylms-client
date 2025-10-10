@@ -2,7 +2,14 @@ import re
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, parse_qs
-from core.utils import fetch_html
+from core.utils import fetch_html, PROFILE_CACHE_NAME, PROFILE_TTL_HOURS
+from core.cache import load_cache, save_cache, clear_cache, get_cache_metadata
+from core.logging_config import setup_logging
+
+import logging
+
+setup_logging()
+logger = logging.getLogger("mydylms")
 
 
 def get_semesters(token: str):
@@ -102,3 +109,33 @@ def user_profile(token: str, user_id: int):
                 )
 
     return profile_data
+
+
+def get_user_profile_helper(token: str, user_id: int) -> dict | None:
+    cached = load_cache(PROFILE_CACHE_NAME, ttl_hours=PROFILE_TTL_HOURS)
+    metadata = get_cache_metadata(PROFILE_CACHE_NAME)
+
+    if cached:
+        if metadata:
+            logger.info(
+                f"Cache hit for user profile. Age: {metadata['age_minutes']:.1f} minutes, TTL: {metadata['ttl_hours']}h"
+            )
+        else:
+            logger.info("Cache hit for user profile (metadata unavailable).")
+        return cached
+
+    logger.info("Cache miss for user profile. Fetching fresh data...")
+    profile = user_profile(token, user_id)
+    if profile:
+        save_cache(PROFILE_CACHE_NAME, profile, ttl_hours=PROFILE_TTL_HOURS)
+        metadata = get_cache_metadata(PROFILE_CACHE_NAME)
+        if metadata:
+            logger.info(
+                f"Saved fresh profile to cache. TTL: {metadata['ttl_hours']}h (newly cached)"
+            )
+        else:
+            logger.info("Saved fresh profile to cache (metadata unavailable).")
+        return load_cache(PROFILE_CACHE_NAME, ttl_hours=PROFILE_TTL_HOURS)
+
+    logger.warning("Failed to fetch user profile from source.")
+    return None

@@ -1,8 +1,18 @@
 import re
 import requests
+import os
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, parse_qs
 from core.utils import fetch_html
+from dotenv import set_key, load_dotenv
+from core.utils import ENV_FILE, DATA_DIR
+from core.cache import save_cache
+import logging
+from core.logging_config import setup_logging
+import shutil
+
+setup_logging()
+logger = logging.getLogger("mydylms")
 
 
 def moodle_login(user_email: str, password: str):
@@ -15,7 +25,6 @@ def moodle_login(user_email: str, password: str):
     }
 
     session = requests.Session()
-
     try:
         response = session.post(url, data=payload, allow_redirects=True)
         html = response.text
@@ -30,7 +39,7 @@ def moodle_login(user_email: str, password: str):
 
     if "Invalid login, please try again" in html:
         status = "invalid credentials"
-    elif "Academic Status" in html:
+    elif "Academic Status" in html or "Dashboard" in html or "My courses" in html:
         status = "success"
     else:
         status = "unknown"
@@ -44,11 +53,36 @@ def moodle_login(user_email: str, password: str):
             "user_id": None,
         }
 
-    sesskey_match = re.search(r'sesskey["\'=:\s>]+([a-zA-Z0-9]{8,})', html)
+    cookie = session.cookies.get("MoodleSession")
+    if not cookie:
+        return {
+            "status": "error",
+            "cookie": None,
+            "sesskey": None,
+            "semesters": None,
+            "user_id": None,
+        }
+
+    headers = {"Cookie": f"MoodleSession={cookie}"}
+    try:
+        my_response = session.get("https://mydy.dypatil.edu/rait/my", headers=headers)
+        my_html = my_response.text
+    except requests.RequestException:
+        return {
+            "status": "error",
+            "cookie": cookie,
+            "sesskey": None,
+            "semesters": None,
+            "user_id": None,
+        }
+
+    sesskey_match = re.search(r'sesskey["\'=:\s>]+([a-zA-Z0-9]{8,})', my_html)
     sesskey = sesskey_match.group(1) if sesskey_match else None
 
-    soup = BeautifulSoup(html, "html.parser")
+    user_id_match = re.search(r"/user/profile\.php\?id=(\d+)", my_html)
+    user_id = int(user_id_match.group(1)) if user_id_match else None
 
+    soup = BeautifulSoup(my_html, "html.parser")
     semesters = []
     for li in soup.find_all("li", class_="type_course"):
         span = li.find("span", class_="usdimmed_text")
@@ -79,12 +113,9 @@ def moodle_login(user_email: str, password: str):
         if subjects:
             semesters.append({"semester": semester_name, "subjects": subjects})
 
-    user_id_match = re.search(r"/user/profile\.php\?id=(\d+)", html)
-    user_id = int(user_id_match.group(1)) if user_id_match else None
-
     return {
         "status": status,
-        "cookie": session.cookies.get("MoodleSession"),
+        "cookie": cookie,
         "sesskey": sesskey,
         "user_id": user_id,
         "semesters": semesters,
@@ -160,3 +191,89 @@ def logout(token: str, sesskey: str):
         return True
     except requests.RequestException:
         return False
+
+
+def login_helper(user_email: str, password: str) -> dict:
+    result = moodle_login(user_email, password)
+
+    if result["status"] == "success":
+        # Save semesters cache
+        if result.get("semesters"):
+            save_cache("semesters", result["semesters"], ttl_hours=6)
+
+        load_dotenv(ENV_FILE)
+        set_key(str(ENV_FILE), "USER_ID", str(result["user_id"]))
+        set_key(str(ENV_FILE), "TOKEN", result["cookie"] or "")
+        set_key(str(ENV_FILE), "SESSKEY", result["sesskey"] or "")
+
+    return result
+
+
+def get_creds_helper() -> dict:
+    load_dotenv(ENV_FILE)
+
+    token = os.getenv("TOKEN")
+    user_id = os.getenv("USER_ID")
+    sesskey = os.getenv("SESSKEY")
+    web_key = os.getenv("KEY_1")
+    features_key = os.getenv("KEY_2")
+    my_key = os.getenv("KEY_3")
+
+    # Only fetch user_id if missing
+    if not user_id and token:
+        fetched_user_id = get_user_id(token)
+        if fetched_user_id:
+            set_key(str(ENV_FILE), "USER_ID", str(fetched_user_id))
+            user_id = str(fetched_user_id)
+
+    # Only fetch sesskey if missing
+    if not sesskey and token:
+        fetched_sesskey = get_sesskey(token)
+        if fetched_sesskey:
+            set_key(str(ENV_FILE), "SESSKEY", fetched_sesskey)
+            sesskey = fetched_sesskey
+
+    # Only fetch keys if any of them is missing
+    if token and (not web_key or not features_key or not my_key):
+        keys = get_security_keys(token, sesskey)
+        logger.info(f"Fetched security keys: {keys}")
+        if keys.get("web_key") and not web_key:
+            set_key(str(ENV_FILE), "KEY_1", keys["web_key"])
+            web_key = keys["web_key"]
+        if keys.get("features_key") and not features_key:
+            set_key(str(ENV_FILE), "KEY_2", keys["features_key"])
+            features_key = keys["features_key"]
+        if keys.get("my_key") and not my_key:
+            set_key(str(ENV_FILE), "KEY_3", keys["my_key"])
+            my_key = keys["my_key"]
+
+    return {
+        "token": token,
+        "user_id": int(user_id) if user_id else None,
+        "sesskey": sesskey,
+        "keys": {
+            "web_key": web_key,
+            "features_key": features_key,
+            "my_key": my_key,
+        },
+    }
+
+
+def logout_helper(token: str, sesskey: str) -> bool:
+    success = logout(token, sesskey)
+    if not success:
+        return False
+
+    # Remove the .env file if it exists
+    if ENV_FILE.exists():
+        ENV_FILE.unlink()
+
+        # Remove cached env vars from process memory
+    for key in ["TOKEN", "USER_ID", "SESSKEY", "KEY_1", "KEY_2", "KEY_3"]:
+        os.environ.pop(key, None)
+
+    # Remove the entire data directory if it exists
+    if DATA_DIR.exists() and DATA_DIR.is_dir():
+        shutil.rmtree(DATA_DIR)
+
+    return True

@@ -5,6 +5,11 @@ from pathlib import Path
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
+ENV_FILE = Path(".env")
+DATA_DIR = Path("data")
+PROFILE_CACHE_NAME = "user_profile"
+PROFILE_TTL_HOURS = 12
+
 
 def dump_json(data, json_path: Path, indent: int = 4):
     json_path.parent.mkdir(parents=True, exist_ok=True)
@@ -49,3 +54,7 @@ def fetch_html(url: str, token: str):
     resp = session.get(url, timeout=10)
     resp.raise_for_status()
     return resp.text
+
+
+def standard_response(data: dict):
+    return {"status": "success", "data": data, "errors": []}

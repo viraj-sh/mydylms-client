@@ -2,3 +2,8 @@ test.py
 core/__pycache__
 notes.md
 data
+logs
+schema/__pycache__
+api/__pycache__
+__pycache__/main.cpython-313.pyc
+test/__pycache__
