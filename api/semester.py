@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from schema.pydantic_semester import SemestersResponse, CourseResponse
+from schema.pydantic_semester import SemestersResponse, SemesterCoursesResponse
 from core.info import get_semesters_helper
-from core.course import get_course_contents_helper
 from dotenv import load_dotenv
 from os import getenv
 from core.utils import ENV_FILE
@@ -24,16 +23,29 @@ def get_all_semesters():
 
 
 @router.get(
-    "/{course_id}/course", summary="Get course contents", response_model=CourseResponse
+    "/{sem_no}/course",
+    summary="Get all courses in a given semester",
+    response_model=SemesterCoursesResponse,
 )
-def get_course_contents(course_id: int):
+def get_courses_in_semester(sem_no: int):
     load_dotenv(ENV_FILE)
-    key = getenv("KEY_1") or getenv("KEY_2")
-    if not key:
-        raise HTTPException(status_code=401, detail="Missing API key (token)")
+    token = getenv("TOKEN")
+    if not token:
+        raise HTTPException(status_code=401, detail="User not logged in")
 
-    course_data = get_course_contents_helper(key, course_id)
-    if not course_data:
-        raise HTTPException(status_code=500, detail="Failed to fetch course contents")
+    semesters = get_semesters_helper(token)
+    if not isinstance(semesters, list):
+        raise HTTPException(status_code=500, detail="Invalid semesters data structure")
 
-    return CourseResponse(status="success", data=course_data, errors=[])
+    if len(semesters) == 0:
+        raise HTTPException(status_code=404, detail="No semesters found")
+
+    total = len(semesters)
+
+    index = total + sem_no if sem_no < 0 else sem_no - 1
+
+    if index < 0 or index >= total:
+        raise HTTPException(status_code=400, detail="Invalid semester number")
+
+    semester = semesters[index]
+    return SemesterCoursesResponse(status="success", data=semester, errors=[])

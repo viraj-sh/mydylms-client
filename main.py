@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import logging
 
 from api.system import router as system_router
+from api.course import router as course_router
 from api.auth import router as auth_router
 from api.semester import router as semester_router
 from core.logging_config import setup_logging
@@ -33,3 +34,4 @@ logger.info("Application startup complete")
 app.include_router(system_router)
 app.include_router(auth_router)
 app.include_router(semester_router)
+app.include_router(course_router)
