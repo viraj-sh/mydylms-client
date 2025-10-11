@@ -19,6 +19,10 @@ OVERALL_TTL = 1  # hour
 COURSES_TTL = 1  # hour
 COURSE_TTL = 0.5  # 30 minutes
 
+NON_DOWNLOADABLE_MODS = {"url"}
+NON_VIEWABLE_MODS = {"url"}
+FRONTEND_VIEWABLE_EXTENSIONS = {".pptx", ".docx"}
+
 
 def dump_json(data, json_path: Path, indent: int = 4):
     json_path.parent.mkdir(parents=True, exist_ok=True)

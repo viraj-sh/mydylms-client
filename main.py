@@ -5,6 +5,7 @@ import logging
 from api.system import router as system_router
 from api.course import router as course_router
 from api.attendance import router as attendance_router
+from api.document import router as document_router
 from api.auth import router as auth_router
 from api.semester import router as semester_router
 from core.logging_config import setup_logging
@@ -36,4 +37,5 @@ app.include_router(system_router)
 app.include_router(auth_router)
 app.include_router(semester_router)
 app.include_router(course_router)
+app.include_router(document_router)
 app.include_router(attendance_router)
