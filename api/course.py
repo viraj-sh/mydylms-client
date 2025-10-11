@@ -18,8 +18,24 @@ def get_course_contents(course_id: int):
     if not key:
         raise HTTPException(status_code=401, detail="Missing API key (token)")
 
-    course_data = get_course_contents_helper(key, course_id)
+    try:
+        course_data = get_course_contents_helper(key, course_id)
+    except FileNotFoundError as e:
+        logger.warning(str(e))
+        raise HTTPException(
+            status_code=404,
+            detail=f"No cached data found for course {course_id}. Try fetching it first.",
+        )
+    except Exception as e:
+        logger.exception("Unexpected error fetching course contents")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Unexpected error while fetching course contents: {str(e)}",
+        )
+
     if not course_data:
-        raise HTTPException(status_code=500, detail="Failed to fetch course contents")
+        raise HTTPException(
+            status_code=502, detail="Failed to fetch course contents from source"
+        )
 
     return CourseResponse(status="success", data=course_data, errors=[])

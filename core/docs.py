@@ -103,11 +103,12 @@ def _guess_media_type(filename: str) -> str:
 
 def _download_with_token(file_url: str) -> tuple[str, bytes]:
     load_dotenv(ENV_FILE)
-
     TOKEN = getenv("TOKEN")
-    """Download file from Moodle using the MoodleSession token."""
+
     if not TOKEN:
-        raise HTTPException(status_code=500, detail="Missing TOKEN in environment")
+        raise HTTPException(
+            status_code=401, detail="Missing Moodle session token (TOKEN)"
+        )
 
     parsed = urlparse(file_url)
     filename = unquote(os.path.basename(parsed.path)) or "downloaded_file"
@@ -115,14 +116,18 @@ def _download_with_token(file_url: str) -> tuple[str, bytes]:
     session = requests.Session()
     session.cookies.set("MoodleSession", TOKEN, domain=parsed.netloc)
 
-    resp = session.get(file_url, stream=True, timeout=30)
-    if not resp.ok:
+    try:
+        resp = session.get(file_url, stream=True, timeout=30)
+        if not resp.ok:
+            raise HTTPException(
+                status_code=resp.status_code,
+                detail=f"Failed to fetch file from Moodle ({resp.status_code})",
+            )
+        return filename, resp.content
+    except requests.RequestException as e:
         raise HTTPException(
-            status_code=resp.status_code,
-            detail=f"Failed to fetch file from Moodle ({resp.status_code})",
+            status_code=502, detail=f"Network error while fetching file: {e}"
         )
-
-    return filename, resp.content
 
 
 def _build_streaming_response(filename: str, content: bytes, inline: bool = True):

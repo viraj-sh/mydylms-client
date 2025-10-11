@@ -101,10 +101,17 @@ def get_course_contents_helper(key: str, course_id: int):
 
     logger.info(f"Cache miss for course {course_id}. Fetching fresh data...")
     course_data = get_course_contents(key, course_id)
-    if course_data.get("status") == "success" and course_data.get("data"):
-        save_cache(cache_name, course_data["data"], ttl_hours=COURSE_TTL_HOURS)
+
+    # NEW: handle error response properly
+    if course_data.get("status") != "success":
+        logger.warning(f"Error fetching course {course_id}: {course_data.get('error')}")
+        return None
+
+    data = course_data.get("data")
+    if data:
+        save_cache(cache_name, data, ttl_hours=COURSE_TTL_HOURS)
         logger.info(f"Saved fresh course {course_id} to cache.")
         return load_cache(cache_name, ttl_hours=COURSE_TTL_HOURS)
 
-    logger.warning(f"Failed to fetch course {course_id} from source.")
+    logger.warning(f"No data returned for course {course_id}.")
     return None

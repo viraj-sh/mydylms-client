@@ -33,8 +33,19 @@ def handle_document(
     doc_id: int,
     action: str | None = Query(default=None, description="view | download | None"),
 ):
+    try:
+        doc = get_doc_details_by_view_id(doc_id)
+    except FileNotFoundError as e:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Document database not found: {e}. Try syncing course data first.",
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Unexpected error while accessing document: {str(e)}",
+        )
 
-    doc = get_doc_details_by_view_id(doc_id)
     if not doc:
         raise HTTPException(status_code=404, detail=f"Document id {doc_id} not found")
 
@@ -43,11 +54,12 @@ def handle_document(
     doc_name = doc.get("doc_name", "")
     file_ext = _guess_extension(doc_name)
 
+    # ✅ If no action, just return metadata
     if action is None:
         return {"status": "success", "data": doc, "errors": []}
 
+    # ✅ Handle "view"
     if action == "view":
-
         if mod in NON_VIEWABLE_MODS:
             return RedirectResponse(url=doc_url)
 
@@ -68,13 +80,15 @@ def handle_document(
 
         try:
             filename, content = _download_with_token(doc_url)
+        except HTTPException:
+            raise
         except Exception as e:
             raise HTTPException(status_code=400, detail=f"Error fetching document: {e}")
 
         return _build_streaming_response(filename, content, inline=True)
 
+    # ✅ Handle "download"
     elif action == "download":
-
         if mod in NON_DOWNLOADABLE_MODS:
             return RedirectResponse(url=doc_url)
 
@@ -84,11 +98,14 @@ def handle_document(
 
         try:
             filename, content = _download_with_token(doc_url)
+        except HTTPException:
+            raise
         except Exception as e:
             raise HTTPException(status_code=400, detail=f"Error downloading file: {e}")
 
         return _build_streaming_response(filename, content, inline=False)
 
     raise HTTPException(
-        status_code=400, detail="Invalid action parameter. Use 'view' or 'download'."
+        status_code=400,
+        detail="Invalid action parameter. Use 'view' or 'download'.",
     )
