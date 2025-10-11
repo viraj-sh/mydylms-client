@@ -22,6 +22,7 @@ COURSE_TTL = 0.5  # 30 minutes
 NON_DOWNLOADABLE_MODS = {"url"}
 NON_VIEWABLE_MODS = {"url"}
 FRONTEND_VIEWABLE_EXTENSIONS = {".pptx", ".docx"}
+CHUNK_SIZE = 64 * 1024  # 64 KB, tune if desired
 
 
 def dump_json(data, json_path: Path, indent: int = 4):

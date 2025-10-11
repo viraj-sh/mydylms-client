@@ -6,7 +6,7 @@ import os
 import json
 from dotenv import load_dotenv
 from os import getenv
-from core.utils import ENV_FILE
+from core.utils import ENV_FILE, CHUNK_SIZE
 from fastapi import HTTPException
 import json
 from urllib.parse import urlparse, unquote
@@ -101,10 +101,10 @@ def _guess_media_type(filename: str) -> str:
     return mime or "application/octet-stream"
 
 
-def _download_with_token(file_url: str) -> tuple[str, bytes]:
+# ---- helper: stream file from Moodle using server-side MoodleSession cookie ----
+def _stream_file_with_token(file_url: str, inline: bool = False) -> StreamingResponse:
     load_dotenv(ENV_FILE)
     TOKEN = getenv("TOKEN")
-
     if not TOKEN:
         raise HTTPException(
             status_code=401, detail="Missing Moodle session token (TOKEN)"
@@ -118,16 +118,38 @@ def _download_with_token(file_url: str) -> tuple[str, bytes]:
 
     try:
         resp = session.get(file_url, stream=True, timeout=30)
-        if not resp.ok:
-            raise HTTPException(
-                status_code=resp.status_code,
-                detail=f"Failed to fetch file from Moodle ({resp.status_code})",
-            )
-        return filename, resp.content
     except requests.RequestException as e:
         raise HTTPException(
             status_code=502, detail=f"Network error while fetching file: {e}"
         )
+
+    if not resp.ok:
+        resp.close()
+        raise HTTPException(
+            status_code=resp.status_code,
+            detail=f"Failed to fetch file from Moodle ({resp.status_code})",
+        )
+
+    content_type = resp.headers.get("Content-Type") or "application/octet-stream"
+    content_length = resp.headers.get("Content-Length")
+
+    def _iter_file():
+        try:
+            for chunk in resp.iter_content(CHUNK_SIZE):
+                if chunk:
+                    yield chunk
+        finally:
+            resp.close()
+
+    disposition_type = "inline" if inline else "attachment"
+
+    headers = {
+        "Content-Disposition": f'{disposition_type}; filename="{filename}"',
+    }
+    if content_length:
+        headers["Content-Length"] = content_length
+
+    return StreamingResponse(_iter_file(), media_type=content_type, headers=headers)
 
 
 def _build_streaming_response(filename: str, content: bytes, inline: bool = True):
