@@ -75,3 +75,14 @@ class LogoutResponse(BaseModel):
 class LoginRequest(BaseModel):
     email: str
     password: str
+
+
+class TokenValidationData(BaseModel):
+    valid: bool
+    token: str | None = None
+
+
+class TokenValidationResponse(BaseModel):
+    status: str
+    data: TokenValidationData
+    errors: list[str]

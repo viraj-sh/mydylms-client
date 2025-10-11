@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from core.auth import login_helper, get_creds_helper, logout_helper
+from core.auth import login_helper, get_creds_helper, logout_helper, validate_token
 from core.info import get_user_profile_helper
 from schema.pydantic_auth import (
     LoginData,
@@ -12,12 +12,14 @@ from schema.pydantic_auth import (
     LogoutData,
     LogoutResponse,
     LoginRequest,
+    TokenValidationData,
+    TokenValidationResponse,
 )
 from dotenv import load_dotenv
 from os import getenv
 from core.utils import ENV_FILE
 
-# load_dotenv(ENV_FILE)
+
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
@@ -36,6 +38,35 @@ def login(request: LoginRequest):
         semesters=result.get("semesters"),
     )
     return LoginResponse(status="success", data=response_data, errors=[])
+
+
+@router.get(
+    "/token", summary="Validate current token", response_model=TokenValidationResponse
+)
+def validate_current_token():
+    load_dotenv(ENV_FILE, override=True)
+    token = getenv("TOKEN")
+
+    if not token:
+        return TokenValidationResponse(
+            status="failed",
+            data=TokenValidationData(valid=False, token=None),
+            errors=["Token not found"],
+        )
+
+    is_valid = validate_token(token)
+    if not is_valid:
+        return TokenValidationResponse(
+            status="failed",
+            data=TokenValidationData(valid=False, token=None),
+            errors=["Invalid or expired token"],
+        )
+
+    return TokenValidationResponse(
+        status="success",
+        data=TokenValidationData(valid=True, token=token),
+        errors=[],
+    )
 
 
 @router.get("/me", summary="Get logged-in user profile", response_model=ProfileResponse)

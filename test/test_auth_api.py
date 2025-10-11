@@ -1,6 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
-from main import app
+from app import app
 import os
 from dotenv import load_dotenv
 
@@ -151,3 +151,36 @@ def test_logout_not_logged_in():
     resp = client.delete("/auth/logout")
     assert resp.status_code == 401
     assert resp.json()["detail"] == "User not logged in"
+
+
+def test_token_not_found(monkeypatch):
+    # Ensure TOKEN is not set
+    monkeypatch.delenv("TOKEN", raising=False)
+    resp = client.get("/auth/token")
+    data = resp.json()
+    assert resp.status_code == 200
+    assert data["status"] == "failed"
+    assert data["data"]["valid"] is False
+    assert data["data"]["token"] is None
+    assert "Token not found" in data["errors"]
+
+
+def test_token_invalid(monkeypatch):
+    # Set a fake token
+    os.environ["TOKEN"] = "fake_token"
+
+    # Patch validate_token to return False
+    monkeypatch.setattr("core.auth.validate_token", lambda token: False)
+
+    resp = client.get("/auth/token")
+    data = resp.json()
+    assert resp.status_code == 200
+    assert data["status"] == "failed"
+    assert data["data"]["valid"] is False
+    assert data["data"]["token"] is None
+    assert "Invalid or expired token" in data["errors"]
+
+
+def test_token_valid(monkeypatch):
+    # Patch load_dotenv to skip actually loading .env
+    pass

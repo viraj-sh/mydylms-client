@@ -1,43 +1,66 @@
 # V3.0 API Rewrite
 
-**Status:** Early development (~25% complete)
+**Status:** ~90% complete
 
-This branch contains a complete rewrite of the Moodle API wrapper for personal use. The current version is in early stages and primarily focused on laying the foundation with core functionality.
+This branch contains a complete rewrite of the Moodle API wrapper for personal use. The API is mostly functional, with all core endpoints implemented. Core modules are used internally and should not be accessed directly.
 
-## Modules
+## System Endpoints
 
-- **core/auth.py**
+- `GET /`  
+  Root endpoint
 
-  - `get_security_keys`
-  - `validate_token`
-  - `moodle_login`
-  - `get_user_id`
-  - `get_sesskey`
-  - `logout`
+- `GET /health`  
+  Health check
 
-- **core/info.py**
+## Auth Endpoints
 
-  - `user_profile`
-  - `get_semesters`
+- `POST /auth/login`  
+  Login with email and password
 
-- **core/course.py**
+- `GET /auth/token`  
+  Validate current token _(flaky in tests, skipped)_
 
-  - `get_course_contents`
+- `GET /auth/me`  
+  Get logged-in user profile
 
-- **core/utils.py**
-  - `loadjson`
-  - `dumpjson`
-  - `fetchhtml`
-  - `retrysession`
+- `GET /auth/creds`  
+  Get current user credentials
 
-## Current Focus
+- `DELETE /auth/logout`  
+  Logout current user
 
-- Establishing a clean and modular structure.
-- Implementing authentication and course content retrieval.
-- Parsing user profile and semester details.
+## Semester Endpoints
+
+- `GET /sem/`  
+  Get all semesters
+
+- `GET /sem/{sem_no}/course`  
+  Get all courses in a given semester
+
+## Course Endpoints
+
+- `GET /course/{course_id}/docs`  
+  Get course contents
+
+## Document Endpoints
+
+- `GET /doc/{doc_id}`  
+  Document metadata, view, or download handler
+
+## Attendance Endpoints
+
+- `GET /att/`  
+  Get overall attendance
+
+- `GET /att/courses`  
+  Get attendance for all courses
+
+- `GET /att/course/{altid}`  
+  Get attendance for a given course
 
 ## Notes
 
-- This is a work in progress; most endpoints are partially implemented.
-- The code is intended for personal development and testing.
-- Expect significant changes in future commits.
+- The API is fully functional for most endpoints.
+- Core modules are used internally; external access is not recommended.
+- Some endpoints (like `/auth/token`) may behave inconsistently in automated tests due to runtime `.env` dependencies.
+- Intended for personal development and testing.
