@@ -24,38 +24,71 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            // 2. Health check
-            const healthRes = await fetch(`${API_BASE_URL}/health`);
-            if (!healthRes.ok) throw new Error("API server is unreachable.");
-            const healthData = await healthRes.json();
-            if (healthData.status !== "OK") throw new Error("Server is down.");
-
-            // 3. Attempt login
+            // 2. Attempt login
             const res = await fetch(`${API_BASE_URL}/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
             });
 
-            if (!res.ok) {
-                const errData = await res.json().catch(() => null);
-                const errorMsg = errData?.detail || errData?.message || "Login failed. Please try again.";
-                console.error("Login error:", errorMsg);
-                showMessage(errorMsg, "error");
+            const data = await res.json().catch(() => null);
+
+            if (!data) {
+                showMessage("Unexpected server response. Please try again.", "error");
                 return;
             }
 
-            const data = await res.json();
+            // 3. Handle invalid credentials
+            if (data.detail === "Login failed: invalid credentials") {
+                showMessage("Invalid email or password.", "error");
+                return;
+            }
 
-            if (data.success) {
-                localStorage.setItem("authToken", data.token);
-                showMessage("Login successful! Redirecting...", "success");
+            // 4. Validate successful login structure
+            if (
+                data.status === "success" &&
+                data.data &&
+                data.data.status === "success" &&
+                data.data.cookie &&
+                data.data.sesskey &&
+                data.data.user_id
+            ) {
+                // Store session info
+                localStorage.setItem("cookie", data.data.cookie);
+                localStorage.setItem("sesskey", data.data.sesskey);
+                localStorage.setItem("user_id", data.data.user_id);
 
-                setTimeout(() => {
-                    window.location.href = "/pages/dashboard.html";
-                }, 1200);
+                showMessage("Login successful! Fetching credentials...", "success");
+
+                // 5. Call /auth/creds before redirecting
+                try {
+                    const credsRes = await fetch(`${API_BASE_URL}/auth/creds`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            // Optional: send cookie/session headers if needed
+                            "Authorization": `Bearer ${data.data.sesskey}`,
+                        },
+                    });
+
+                    const credsData = await credsRes.json().catch(() => null);
+
+                    if (!credsRes.ok || !credsData) {
+                        showMessage("Failed to initialize user credentials. Please try again.", "error");
+                        return;
+                    }
+
+                    // Success — all steps complete
+                    showMessage("Login successful! Redirecting...", "success");
+                    setTimeout(() => {
+                        window.location.href = "/pages/dashboard.html";
+                    }, 1000);
+                } catch (credsErr) {
+                    console.error("Error fetching /auth/creds:", credsErr);
+                    showMessage("Error initializing credentials. Please try again.", "error");
+                }
             } else {
-                showMessage(data.message || "Invalid credentials.", "error");
+                showMessage("Login failed. Please try again.", "error");
             }
         } catch (err) {
             console.error("Unexpected error:", err);

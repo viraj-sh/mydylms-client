@@ -2,43 +2,27 @@ import os
 import json
 import requests
 from pathlib import Path
-from dotenv import load_dotenv, set_key, dotenv_values
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-CREDENTIALS_PATH = Path("./data/credentials.json")
-SEM_PATH = Path("./data/sem.json")
-SUBJECTS_DIR = Path("./data/subjects/")
-ENDLINK_PATH = Path("./data/endlink.json")
+ENV_FILE = Path(".env")
+DATA_DIR = Path("data")
+PROFILE_CACHE_NAME = "user_profile"
+PROFILE_TTL_HOURS = 12
 
+SEM_CACHE_NAME = "semesters"
+SEM_TTL_HOURS = 6
+COURSE_CACHE_PREFIX = "course_"
+COURSE_TTL_HOURS = 1
 
-def save_token(token: str, env_path: Path):
-    load_dotenv(env_path)
-    set_key(str(env_path), "TOKEN", token)
+OVERALL_TTL = 1  # hour
+COURSES_TTL = 1  # hour
+COURSE_TTL = 0.5  # 30 minutes
 
-
-def load_token(env_path: Path) -> str | None:
-    if not env_path.exists():
-        return None
-    config = dotenv_values(env_path)
-    return config.get("TOKEN")
-
-
-def load_json_token(credentials_path: Path) -> str | None:
-    if not credentials_path.exists():
-        return None
-    creds = load_json(Path(credentials_path))
-    return creds["token"]
-
-
-def remove_token(env_path: Path):
-    if not env_path.exists():
-        return
-    config = dotenv_values(env_path)
-    if "TOKEN" in config:
-        lines = env_path.read_text().splitlines()
-        new_lines = [line for line in lines if not line.startswith("TOKEN=")]
-        env_path.write_text("\n".join(new_lines))
+NON_DOWNLOADABLE_MODS = {"url"}
+NON_VIEWABLE_MODS = {"url"}
+FRONTEND_VIEWABLE_EXTENSIONS = {".pptx", ".docx"}
+CHUNK_SIZE = 64 * 1024  # 64 KB, tune if desired
 
 
 def dump_json(data, json_path: Path, indent: int = 4):

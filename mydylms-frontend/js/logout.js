@@ -1,27 +1,41 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const API_BASE_URL = "http://127.0.0.1:8000"; // update per environment
+    const API_BASE_URL = "http://127.0.0.1:8000";
     const logoutBtn = document.querySelector('a[href="/index.html"]');
 
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", async (e) => {
-            e.preventDefault();
+    if (!logoutBtn) return;
 
-            try {
-                // Attempt to delete credentials on server
-                await fetch(`${API_BASE_URL}/auth`, {
-                    method: "DELETE",
-                });
-            } catch (err) {
-                console.error("Error deleting credentials:", err);
-                // Ignore errors, still proceed to redirect
-            } finally {
-                // Clear local storage/session storage
-                localStorage.removeItem("authToken");
-                sessionStorage.clear();
+    logoutBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
 
-                // Redirect to index.html
-                window.location.href = "/index.html";
+        try {
+            const res = await fetch(`${API_BASE_URL}/auth/logout`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include"
+            });
+
+            const data = await res.json().catch(() => ({}));
+
+            // ✅ Successful logout
+            if (res.ok && data?.status === "success" && data?.data?.success) {
+                console.log("Logout successful.");
             }
-        });
-    }
+            // ⚠️ User already logged out or session expired
+            else if (data?.detail === "User not logged in") {
+                console.warn("User already logged out or session expired.");
+            }
+            // ❌ Some other server error
+            else {
+                console.error("Unexpected logout response:", data);
+            }
+
+        } catch (err) {
+            console.error("Error during logout request:", err);
+        } finally {
+            // ✅ Always clear storage and redirect regardless
+            localStorage.removeItem("authToken");
+            sessionStorage.clear();
+            window.location.href = "/index.html";
+        }
+    });
 });

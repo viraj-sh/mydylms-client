@@ -2,6 +2,7 @@ import logging
 import logging.config
 import os
 import json
+from pythonjsonlogger import json
 
 
 def setup_logging():
@@ -14,7 +15,7 @@ def setup_logging():
         "formatters": {
             "standard": {"format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"},
             "json": {
-                "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
+                "()": "pythonjsonlogger.json.JsonFormatter",
                 "fmt": "%(asctime)s %(levelname)s %(name)s %(message)s %(pathname)s %(lineno)d",
             },
         },
