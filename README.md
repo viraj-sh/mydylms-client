@@ -1,75 +1,75 @@
 # MYDY LMS CLIENT (Unofficial)
 
-**Note:** This is an unofficial client for **mydylms**, including both the [mydylms-frontend](/frontend/readme.md) and [mydylms-api](/api/README.md).
-It is made purely for educational purposes and is **not affiliated with or endorsed by DY Patil or mydy**. Logos and branding used here are for demonstration only.
+**Note:** This is an unofficial client for **[mydylms](https://mydy.dypatil.edu/)**, including the [frontend](docs/frontend.md), [api](docs/api.md), and [mcp server](docs/mcp.md).  
+It is developed for educational purposes and is **not affiliated with or endorsed by DY Patil or mydy**. Logos and branding are used for demonstration only.
 
 ---
 
 ## Overview
 
-This repository combines:
+This repository includes:
 
-- **[mydylms-api](/api/README.md):** A FastAPI-based backend for authentication, semesters, subjects, documents, and attendance.
-- **[mydylms-frontend](/frontend/readme.md):** A static frontend interface to access the API data.
+- **[API](docs/api.md):** FastAPI-based backend for authentication, semesters, subjects, documents, and attendance.
+- **[Frontend](docs/frontend.md):** Static interface for interacting with the API.
+- **[MCP Server](docs/mcp.md):** Endpoint (`/mcp`) compatible with Model Context Protocol (MCP) clients such as LLM Clients, LangChain bots, etc.
 
-You can run the client **either with Docker** (recommended) or **manually** by running the client.
+The client can be run using **[built from source](#option-1-building-from-source-without-docker)** or **[Docker](#option-2-running-with-docker)**.  
+Quick deployment is also supported on **Render** and **Vercel** using the buttons below.
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/viraj-sh/mydylms-client)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/viraj-sh/mydylms-client)
 
 ---
 
-## Option 1: Running with Docker (Recommended)
-
-You can run this **[mydylms-client](https://github.com/viraj-sh/mydylms-client)** using Docker in two ways:
-
-#### 1. Build Locally
-
-A `Dockerfile` is included in the root directory.
-To build and run:
+## Option 1: Building from Source (Without Docker)
 
 ```bash
-docker build -t mydylms-client .
-docker run -p 8000:8000 mydylms-client
+git clone https://github.com/viraj-sh/mydylms-client
+cd mydylms-client
+pip install -r requirements.txt
+python app.py
 ```
 
-#### 2. Use Prebuilt Image from Docker Hub
+---
 
-A prebuilt image is available on Docker Hub:
+## Option 2: Running with Docker
+
+### 1. Use Prebuilt Image from Docker Hub (Recommended)
 
 ```bash
 docker pull virajsh/mydylms-client:latest
 docker run -p 8000:8000 virajsh/mydylms-client:latest
 ```
 
-- API will be available at: [http://127.0.0.1:8000/api](http://127.0.0.1:8000/api)
+### 2. Build Locally
 
-  - Swagger UI: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+A `Dockerfile` is included in the repository.
 
-- Frontend will be accessible at [http://localhost:8000](http://localhost:8000).
-- You can map any host port you like by changing `-p <host_port>:80`.
+```bash
+git clone https://github.com/viraj-sh/mydylms-client
+cd mydylms-client
+docker build -t mydylms-client .
+docker run -p 8000:8000 mydylms-client
+```
 
 ---
 
-## Option 2: Manual Run (Without Docker)
+### After Running (for Both Methods)
 
-You can run the CLIENT without Docker.
+Once the client is running, the following services will be available:
 
-```bash
-git clone https://github.com/viraj-sh/mydylms-client mydylms-client
-cd mydylms-client
-pip install -r requirements.txt
-python app.py
-```
+- **API:** [http://127.0.0.1:8000/api](http://127.0.0.1:8000/api)
 
-- API will be available at: [http://127.0.0.1:8000/api](http://127.0.0.1:8000/api)
+  - **Swagger UI:** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
-  - Swagger UI: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-
-- Frontend will be accessible at [http://localhost:8000](http://localhost:8000).
-- You can map any host port you like by changing `-p <host_port>:80`.
+- **Frontend:** [http://localhost:8000](http://localhost:8000)
+- **MCP Server:** [http://localhost:8000/mcp](http://localhost:8000/mcp)
 
 ---
 
 ## Disclaimer
 
-This project is **unofficial** and made for personal/educational use. DY Patil or MyDY is **not associated** with this project.
+This project is **unofficial** and intended for personal and educational use only.
+DY Patil or MyDY is **not associated** with this project.
 
-Use responsibly. The author is **not responsible for misuse, data loss, or violations of institutional policies**.
+Use responsibly. The author is **not liable for misuse, data loss, or violations of institutional policies**.
