@@ -11,9 +11,5 @@
             "src": "/api(/.*)?",
             "dest": "/app.py"
         }
-    ],
-    "installCommand": "pip install -r requirements.txt",
-    "env": {
-        "PORT": "8000"
-    }
+    ]
 }
