@@ -1,34 +1,24 @@
-## MYDY LMS API (Unofficial)
+# MYDY LMS CLIENT (Unofficial)
 
-This is a FastAPI-based wrapper for the MYDY LMS.  
-It provides endpoints to access login, semesters, subjects, documents, and attendance data.
-
----
-
-### Installation
-
-```bash
-pip install -r requirements.txt
-```
+**Note:** This is an unofficial client for **mydylms**, including both the [mydylms-frontend](/frontend/readme.md) and [mydylms-api](/api/README.md).
+It is made purely for educational purposes and is **not affiliated with or endorsed by DY Patil or mydy**. Logos and branding used here are for demonstration only.
 
 ---
 
-### Running the Server (Locally)
+## Overview
 
-```bash
-uvicorn api:app --reload
-```
+This repository combines:
 
-API will be available at:
+- **[mydylms-api](/api/README.md):** A FastAPI-based backend for authentication, semesters, subjects, documents, and attendance.
+- **[mydylms-frontend](/frontend/readme.md):** A static frontend interface to access the API data.
 
-- [http://127.0.0.1:8000](http://127.0.0.1:8000)
-- Swagger UI: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+You can run the client **either with Docker** (recommended) or **manually** by running the client.
 
 ---
 
-### Running with Docker
+## Option 1: Running with Docker (Recommended)
 
-You can run this API using Docker in two ways:
+You can run this **[mydylms-client](https://github.com/viraj-sh/mydylms-client)** using Docker in two ways:
 
 #### 1. Build Locally
 
@@ -36,8 +26,8 @@ A `Dockerfile` is included in the root directory.
 To build and run:
 
 ```bash
-docker build -t mydylms-api .
-docker run -p 8000:8000 mydylms-api
+docker build -t mydylms-client .
+docker run -p 8000:8000 mydylms-client
 ```
 
 #### 2. Use Prebuilt Image from Docker Hub
@@ -45,84 +35,41 @@ docker run -p 8000:8000 mydylms-api
 A prebuilt image is available on Docker Hub:
 
 ```bash
-docker pull virajsh/mydylms-api:latest
-docker run -p 8000:8000 virajsh/mydylms-api:latest
+docker pull virajsh/mydylms-client:latest
+docker run -p 8000:8000 virajsh/mydylms-client:latest
 ```
 
-API will be available at:
+- API will be available at: [http://127.0.0.1:8000/api](http://127.0.0.1:8000/api)
 
-- [http://127.0.0.1:8000](http://127.0.0.1:8000)
-- Swagger UI: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+  - Swagger UI: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
----
-
-### Endpoints Overview
-
-#### System
-
-- `GET /` – Root endpoint
-  Returns a basic API info message.
-
-- `GET /health` – Health check
-  Returns service status and uptime confirmation.
-
-#### Auth Endpoints
-
-- `POST /auth/login` - Login with email and password
-
-- `GET /auth/token` - Validate current token _(flaky in tests, skipped)_
-
-- `GET /auth/me` - Get logged-in user profile
-
-- `GET /auth/creds` - Get current user credentials
-
-- `DELETE /auth/logout` - Logout current user
-
-#### Semester Endpoints
-
-- `GET /sem/` - Get all semesters
-
-- `GET /sem/{sem_no}/course` - Get all courses in a given semester
-
-#### Course Endpoints
-
-- `GET /course/{course_id}/docs` - Get course contents
-
-#### Document Endpoints
-
-- `GET /doc/{doc_id}` - Document metadata, view, or download handler
-
-#### Attendance Endpoints
-
-- `GET /att/` - Get overall attendance
-
-- `GET /att/courses` - Get attendance for all courses
-
-- `GET /att/course/{altid}` - Get attendance for a given course
+- Frontend will be accessible at [http://localhost:8000](http://localhost:8000).
+- You can map any host port you like by changing `-p <host_port>:80`.
 
 ---
 
-### Notes
+## Option 2: Manual Run (Without Docker)
 
-- Authentication credentials and tokens are stored locally after a successful `/auth/login`.
-- Use `/auth/creds` to view stored credentials (passwords are never returned or saved).
-- Documents can be either viewed inline or downloaded, depending on the chosen endpoint.
-- Data is cached and stored locally in the `./data/` directory for faster subsequent access.
-- All endpoints return structured JSON responses with `status`, `data` and `errors`.
-- Some endpoints (like /auth/token) may behave inconsistently in automated tests due to runtime .env dependencies.
+You can run the CLIENT without Docker.
+
+```bash
+git clone https://github.com/viraj-sh/mydylms-client mydylms-client
+cd mydylms-client
+pip install -r requirements.txt
+python app.py
+```
+
+- API will be available at: [http://127.0.0.1:8000/api](http://127.0.0.1:8000/api)
+
+  - Swagger UI: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+
+- Frontend will be accessible at [http://localhost:8000](http://localhost:8000).
+- You can map any host port you like by changing `-p <host_port>:80`.
 
 ---
 
-### Related Project
+## Disclaimer
 
-For a complete setup (API + frontend), check out the combined client:  
-[mydylms-client (Unofficial)](https://github.com/viraj-sh/mydylms-client) — includes this API and a web interface with Docker Compose support.
+This project is **unofficial** and made for personal/educational use. DY Patil or MyDY is **not associated** with this project.
 
----
-
-### Usage and Disclaimer
-
-- This project is for **personal and educational purposes only**.
-- It is **not affiliated with, endorsed by, or supported by DY Patil University**.
-- Use of this API is at your own risk. The author is **not responsible for any misuse, data loss, or violations of institutional policies**.
-- Do not use this to overload, abuse, or disrupt official LMS services.
+Use responsibly. The author is **not responsible for misuse, data loss, or violations of institutional policies**.

@@ -11,6 +11,10 @@ from api.semester import router as semester_router
 from core.logging_config import setup_logging
 from core.exceptions import add_exception_handlers
 
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+import os
+
 setup_logging()
 logger = logging.getLogger("mydylms")
 
@@ -18,6 +22,7 @@ app = FastAPI(title="Unofficial mydylms-client API")
 
 origins = [
     "http://127.0.0.1:5500",
+    "http://localhost:5500",
     "*",
 ]
 
@@ -32,10 +37,24 @@ app.add_middleware(
 add_exception_handlers(app)
 logger.info("Application startup complete")
 
+app.mount("/static", StaticFiles(directory="frontend"), name="frontend_static")
+
+
+@app.get("/", include_in_schema=False)
+def serve_frontend():
+    return FileResponse("frontend/index.html")
+
+
 # Include routers
-app.include_router(system_router)
-app.include_router(auth_router)
-app.include_router(semester_router)
-app.include_router(course_router)
-app.include_router(document_router)
-app.include_router(attendance_router)
+app.include_router(system_router, prefix="/api")
+app.include_router(auth_router, prefix="/api")
+app.include_router(semester_router, prefix="/api")
+app.include_router(course_router, prefix="/api")
+app.include_router(document_router, prefix="/api")
+app.include_router(attendance_router, prefix="/api")
+
+if __name__ == "__main__":
+    import uvicorn
+
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)

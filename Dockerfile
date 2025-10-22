@@ -1,6 +1,6 @@
 FROM python:3.11-slim AS base
 
-WORKDIR /api
+WORKDIR /client
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \

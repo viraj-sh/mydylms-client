@@ -1,0 +1,14 @@
+api/__pycache__
+api/README.md
+core/__pycache__
+frontend/readme.md
+requirements-dev.txt
+README.md
+.gitignore
+venv
+test
+schema/__pycache__
+logs
+frontend/src/images/preview_attendance.png
+frontend/src/images/preview_dashboard.png
+frontend/src/images/preview_login.png

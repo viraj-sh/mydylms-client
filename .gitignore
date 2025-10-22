@@ -9,3 +9,7 @@ __pycache__/main.cpython-313.pyc
 test/__pycache__
 .env
 __pycache__/app.cpython-313.pyc
+frontend/.hash_mapping.json
+frontend/notes.md
+frontend/hash.py
+frontend/venv
