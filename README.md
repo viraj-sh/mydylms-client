@@ -14,13 +14,10 @@ This repository includes:
 - **[MCP Server](docs/mcp.md):** Endpoint (`/mcp`) compatible with Model Context Protocol (MCP) clients such as LLM Clients, LangChain bots, etc.
 
 The client can be run using **[built from source](#option-1-building-from-source-without-docker)** or **[Docker](#option-2-running-with-docker)**.  
-Quick deployment is also supported on **Render** and **Vercel** using the buttons below.
+Quick deployment is also supported on **Render**.
 
 <a href="https://render.com/deploy?repo=https://github.com/viraj-sh/mydylms-client" target="_blank">
   <img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render" width="180"/>
-</a>
-<a href="https://vercel.com/new/clone?repository-url=https://github.com/viraj-sh/mydylms-client" target="_blank">
-  <img src="https://vercel.com/button" alt="Deploy with Vercel" width="140"/>
 </a>
 
 ---
