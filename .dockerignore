@@ -12,3 +12,4 @@ logs
 frontend/src/images/preview_attendance.png
 frontend/src/images/preview_dashboard.png
 frontend/src/images/preview_login.png
+frontend/hash.py
