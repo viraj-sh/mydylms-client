@@ -10,7 +10,10 @@ router = APIRouter(prefix="/course", tags=["Course"])
 
 
 @router.get(
-    "/{course_id}/docs", summary="Get course contents", response_model=CourseResponse
+    "/{course_id}/docs",
+    summary="Get course contents",
+    response_model=CourseResponse,
+    operation_id="get_course_documents",
 )
 def get_course_contents(course_id: int):
     load_dotenv(ENV_FILE)

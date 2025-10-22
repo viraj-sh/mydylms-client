@@ -24,7 +24,10 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
 @router.post(
-    "/login", summary="Login with email and password", response_model=LoginResponse
+    "/login",
+    summary="Login with email and password",
+    response_model=LoginResponse,
+    operation_id="login_user",
 )
 def login(request: LoginRequest):
     result = login_helper(request.email, request.password)
@@ -41,7 +44,10 @@ def login(request: LoginRequest):
 
 
 @router.get(
-    "/token", summary="Validate current token", response_model=TokenValidationResponse
+    "/token",
+    summary="Validate current token",
+    response_model=TokenValidationResponse,
+    operation_id="validate_login_session",
 )
 def validate_current_token():
     load_dotenv(ENV_FILE, override=True)
@@ -69,7 +75,12 @@ def validate_current_token():
     )
 
 
-@router.get("/me", summary="Get logged-in user profile", response_model=ProfileResponse)
+@router.get(
+    "/me",
+    summary="Get logged-in user profile",
+    response_model=ProfileResponse,
+    operation_id="get_user_profile",
+)
 def me():
     load_dotenv(ENV_FILE)
     token = getenv("TOKEN")
@@ -84,14 +95,22 @@ def me():
 
 
 @router.get(
-    "/creds", summary="Get current user credentials", response_model=CredsResponse
+    "/creds",
+    summary="Get current user credentials",
+    response_model=CredsResponse,
+    operation_id="get_user_credentials",
 )
 def creds():
     creds = get_creds_helper()
     return CredsResponse(status="success", data=creds, errors=[])
 
 
-@router.delete("/logout", summary="Logout current user", response_model=LogoutResponse)
+@router.delete(
+    "/logout",
+    summary="Logout current user",
+    response_model=LogoutResponse,
+    operation_id="logout_user",
+)
 def logout():
     load_dotenv(ENV_FILE)
     token = getenv("TOKEN")

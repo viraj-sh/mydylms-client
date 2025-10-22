@@ -10,7 +10,12 @@ from fastapi.responses import FileResponse
 router = APIRouter(tags=["System"])
 
 
-@router.get("/", summary="Root endpoint", response_model=MessageResponse)
+@router.get(
+    "/",
+    summary="Root endpoint",
+    response_model=MessageResponse,
+    operation_id="get_system_info",
+)
 def home():
     return MessageResponse(
         status="success",
@@ -19,7 +24,12 @@ def home():
     )
 
 
-@router.get("/health", summary="Health check", response_model=HealthResponse)
+@router.get(
+    "/health",
+    summary="Health check",
+    response_model=HealthResponse,
+    operation_id="check_system_health",
+)
 def health_check():
     return HealthResponse(
         status="success",

@@ -17,7 +17,10 @@ router = APIRouter(prefix="/att", tags=["Attendance"])
 
 
 @router.get(
-    "/", summary="Get overall attendance", response_model=OverallAttendanceResponse
+    "/",
+    summary="Get overall attendance",
+    response_model=OverallAttendanceResponse,
+    operation_id="get_overall_attendance",
 )
 def get_overall_attendance():
     load_dotenv(ENV_FILE)
@@ -38,6 +41,7 @@ def get_overall_attendance():
     "/courses",
     summary="Get attendance for all courses",
     response_model=CoursesAttendanceResponse,
+    operation_id="get_all_course_attendance",
 )
 def get_courses_attendance():
     load_dotenv(ENV_FILE)
@@ -58,6 +62,7 @@ def get_courses_attendance():
     "/course/{altid}",
     summary="Get attendance for a given course",
     response_model=CourseAttendanceResponse,
+    operation_id="get_course_attendance",
 )
 def get_course_attendance(altid: int):
     load_dotenv(ENV_FILE)

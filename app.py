@@ -10,6 +10,7 @@ from api.auth import router as auth_router
 from api.semester import router as semester_router
 from core.logging_config import setup_logging
 from core.exceptions import add_exception_handlers
+from fastapi_mcp import FastApiMCP
 
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -52,6 +53,27 @@ app.include_router(semester_router, prefix="/api")
 app.include_router(course_router, prefix="/api")
 app.include_router(document_router, prefix="/api")
 app.include_router(attendance_router, prefix="/api")
+
+mcp = FastApiMCP(
+    app,
+    include_operations=[
+        "get_system_info",
+        "check_system_health",
+        "login_user",
+        "validate_login_session",
+        "get_user_profile",
+        "get_user_credentials",
+        "logout_user",
+        "get_all_semesters",
+        "get_semester_courses",
+        "get_course_documents",
+        "get_document_by_id",
+        "get_overall_attendance",
+        "get_all_course_attendance",
+        "get_course_attendance",
+    ],
+)
+mcp.mount_http()
 
 if __name__ == "__main__":
     import uvicorn

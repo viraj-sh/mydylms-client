@@ -8,7 +8,12 @@ from core.utils import ENV_FILE
 router = APIRouter(prefix="/sem", tags=["Semester"])
 
 
-@router.get("/", summary="Get all semesters", response_model=SemestersResponse)
+@router.get(
+    "/",
+    summary="Get all semesters",
+    response_model=SemestersResponse,
+    operation_id="get_all_semesters",
+)
 def get_all_semesters():
     load_dotenv(ENV_FILE)
     token = getenv("TOKEN")
@@ -26,6 +31,7 @@ def get_all_semesters():
     "/{sem_no}/course",
     summary="Get all courses in a given semester",
     response_model=SemesterCoursesResponse,
+    operation_id="get_semester_courses",
 )
 def get_courses_in_semester(sem_no: int):
     load_dotenv(ENV_FILE)

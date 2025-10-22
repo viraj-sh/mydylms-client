@@ -28,6 +28,7 @@ router = APIRouter(prefix="/doc", tags=["Document"])
     "/{doc_id}",
     response_model=DocumentResponse,
     summary="Document metadata, view or download handler",
+    operation_id="get_document_by_id",
 )
 def handle_document(
     doc_id: int,
