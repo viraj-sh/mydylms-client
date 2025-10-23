@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const documentsContainer = document.getElementById("documentsContainer");
     const searchInput = document.getElementById("searchDocs");
     const filterSelect = document.getElementById("docFilter");
+    const dateSort = document.getElementById("dateSort");
 
     // State
     let semesters = [];
@@ -195,6 +196,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 types.map(t => `<option value="${t}">${capitalizeFirst(t)}</option>`).join("");
             filterSelect.disabled = false;
             searchInput.disabled = false;
+            dateSort.disabled = false;
+            dateSort.value = "oldToNew";
 
             renderDocuments();
         } catch (err) {
@@ -229,6 +232,10 @@ document.addEventListener("DOMContentLoaded", () => {
             showPlaceholder(documentsContainer, "No matching documents found");
             return;
         }
+        let finalDocs = [...filtered];
+        if (dateSort.value === "newToOld") {
+            finalDocs.reverse();
+        }        
 
         // Utility to format date like "08 Oct, 02:15 PM"
         const formatDate = (timestamp) => {
@@ -263,7 +270,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return clean.trim();
         };
 
-        documentsContainer.innerHTML = filtered.map(doc => {
+        documentsContainer.innerHTML = finalDocs.map(doc => {
             const modType = (doc.mod || "unknown").toLowerCase();
             const typeLabel = `Type: ${capitalizeFirst(modType)}`;
             const hideAllButtons = HIDE_ALL_BUTTONS_TYPES.has(modType);
@@ -308,6 +315,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 5. Event listeners
     searchInput.addEventListener("input", renderDocuments);
     filterSelect.addEventListener("change", renderDocuments);
+    dateSort.addEventListener("change", renderDocuments);
 
     // Init
     loadSemesters();
