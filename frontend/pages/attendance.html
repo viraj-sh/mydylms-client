@@ -6,10 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Attendance</title>
     <link rel="icon" href="/static/src/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/static/css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="/static/js/logout.js"></script>
     <script src="/static/js/attendance.js"></script>
     <script src="/static/js/user.js"></script>
+    <script src="/static/js/scrollBtn.js"></script>
 </head>
 
 <body>
@@ -98,23 +100,13 @@
         </div>
     </section>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <button id="scrollButton"
+        class="fixed bottom-6 right-6 bg-red-800 hover:bg-red-900 text-white rounded-xl w-12 h-12 flex items-center justify-center shadow-lg transition-opacity duration-300 opacity-0">
+        <svg id="scrollIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+    </button>
 
 </body>
 
