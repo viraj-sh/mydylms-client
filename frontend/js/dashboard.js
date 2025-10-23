@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function loadSemesters() {
         showPlaceholder(semesterGrid, "Loading semesters...");
         try {
-            const res = await fetch(`${API_BASE_URL}/sem`);
+            const res = await fetch(`${API_BASE_URL}/sem/`);
             if (!res.ok) throw new Error("Failed to fetch semesters");
             const data = await res.json();
             semesters = data.data || [];
