@@ -4,6 +4,20 @@
 It is developed for educational purposes and is **not affiliated with or endorsed by DY Patil or mydy**. Logos and branding are used for demonstration only.
 
 ---
+## What Makes This Client Better than Official MYDY LMS
+
+This client improves on the official MyDY LMS by making document access and browsing simpler and more efficient:
+
+* **Easy Access:** View or download any document directly—no FlexPaper or hidden links.
+* **Accurate File Names:** Displays the actual file name instead of vague titles.
+* **Direct Navigation:** One-click view/download for documents and URLs.
+* **Upload Date & Time:** See when each document was uploaded.
+* **Search & Filters:** Search by file name, sort by date, filter by mod type.
+* **Full Semester Access:** Quickly access documents from all semesters and subjects.
+* **Optimized Performance:** Caching ensures faster loading.
+* **Open API & MCP Server:** Open-sourced endpoints for custom frontends and integrations.
+
+---
 
 ## Overview
 
