@@ -36,12 +36,42 @@ Quick deployment is also supported on **Render**.
 
 ---
 
+### Available Services
+
+Once the client is running, the following endpoints are accessible (the host may vary, but the paths remain the same):
+
+- **API:** [http://127.0.0.1:8000/api](http://127.0.0.1:8000/api)
+
+  - **Swagger UI:** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+
+- **Frontend:** [http://localhost:8000](http://localhost:8000)
+- **MCP Server:** [http://localhost:8000/mcp](http://localhost:8000/mcp)
+---
+
+## Prebuilt Releases
+
+Download the latest release for your platform and run — fully functional out of the box.
+
+<a href="https://github.com/viraj-sh/mydylms-client/releases/latest">
+  <img src="https://img.shields.io/github/v/release/viraj-sh/mydylms-client?label=Latest%20Release&color=brightgreen&cacheSeconds=3600" alt="Release"/>
+</a>
+
+
+
 ## Option 1: Building from Source (Without Docker)
 
 ```bash
 git clone https://github.com/viraj-sh/mydylms-client
 cd mydylms-client
+
+python -m venv venv
+
+venv\Scripts\activate # Windows
+source venv/bin/activate # macOS/Linux
+
+pip install --upgrade pip
 pip install -r requirements.txt
+
 python app.py
 ```
 
@@ -67,18 +97,19 @@ docker build -t mydylms-client .
 docker run -p 8000:8000 mydylms-client
 ```
 
----
+### 3. Docker Compose
 
-### After Running (for Both Methods)
+A [`docker-compose.yaml`](https://github.com/viraj-sh/mydylms-client/raw/main/docker-compose.yaml) is included in the repository.
 
-Once the client is running, the following services will be available:
+```bash
+curl -L -o docker-compose.yaml https://github.com/viraj-sh/mydylms-client/raw/main/docker-compose.yaml # using curl
 
-- **API:** [http://127.0.0.1:8000/api](http://127.0.0.1:8000/api)
+wget -O docker-compose.yaml https://github.com/viraj-sh/mydylms-client/raw/main/docker-compose.yaml # using wget
 
-  - **Swagger UI:** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+docker-compose up -d
+```
 
-- **Frontend:** [http://localhost:8000](http://localhost:8000)
-- **MCP Server:** [http://localhost:8000/mcp](http://localhost:8000/mcp)
+
 
 ---
 
