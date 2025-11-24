@@ -11,7 +11,7 @@ from api.semester import router as semester_router
 from core.logging_config import setup_logging
 from core.exceptions import add_exception_handlers
 from fastapi_mcp import FastApiMCP
-
+from core.utils import frontend_path
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 import os
@@ -38,13 +38,13 @@ app.add_middleware(
 add_exception_handlers(app)
 logger.info("Application startup complete")
 
-app.mount("/static", StaticFiles(directory="frontend"), name="frontend_static")
+static_dir = frontend_path()
 
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 @app.get("/", include_in_schema=False)
 def serve_frontend():
-    return FileResponse("frontend/index.html")
-
+    return FileResponse(os.path.join(static_dir, "index.html"))
 
 # Include routers
 app.include_router(system_router, prefix="/api")

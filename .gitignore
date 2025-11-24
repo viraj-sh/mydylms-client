@@ -16,3 +16,5 @@ frontend/venv
 notes-1.md
 mcp
 .vscode
+/build
+/dist

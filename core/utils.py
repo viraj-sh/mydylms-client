@@ -4,6 +4,7 @@ import requests
 from pathlib import Path
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
+import sys
 
 ENV_FILE = Path(".env")
 DATA_DIR = Path("data")
@@ -68,3 +69,15 @@ def fetch_html(url: str, token: str):
     resp = session.get(url, timeout=10)
     resp.raise_for_status()
     return resp.text
+
+
+def resource_path(path):
+    if hasattr(sys, "_MEIPASS"):
+        return os.path.join(sys._MEIPASS, path)
+    return os.path.join(os.path.abspath("."), path)
+
+
+def frontend_path():
+    if hasattr(sys, "_MEIPASS"):
+        return resource_path("frontend")
+    return "frontend"
