@@ -22,3 +22,5 @@ notes.md
 README.md
 render.yaml
 requirements-dev.txt
+launcher.py
+winx64.spec

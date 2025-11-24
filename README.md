@@ -91,7 +91,7 @@ docker run -p 8000:8000 mydylms-client
 
 ### 3. Docker Compose
 
-A [`docker-compose.yaml`](https://github.com/viraj-sh/mydylms-client/raw/main/docker-compose.yaml) is included in the repository.
+A [`docker-compose.yaml`](https://github.com/viraj-sh/mydylms-client/blob/main/docker-compose.yaml) is included in the repository.
 
 ```bash
 # using curl
