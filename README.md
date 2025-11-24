@@ -1,10 +1,21 @@
+<div align="center">
+
 # MYDY LMS CLIENT (Unofficial)
+
+An unofficial client for **[mydylms](https://mydy.dypatil.edu/)**, including the [API](https://github.com/viraj-sh/mydylms-client/wiki/API-Documentation), [Frontend](https://github.com/viraj-sh/mydylms-client/wiki/Frontend-Documentation), and [MCP Server](https://github.com/viraj-sh/mydylms-client/wiki/MCP-Documentation), developed for educational purposes and not affiliated with DY Patil or MYDY.
+
 <a href="https://github.com/viraj-sh/mydylms-client/releases/latest">
-  <img src="https://img.shields.io/github/v/release/viraj-sh/mydylms-client?label=Latest%20Release&color=red&cacheSeconds=3600" alt="Release"/>
+  <img src="https://img.shields.io/github/v/release/viraj-sh/mydylms-client?label=Latest%20Release&color=green&style=flat-square&cacheSeconds=3600" alt="Release"/>
+</a>
+<a href="https://hub.docker.com/r/virajsh/mydylms-client">
+  <img src="https://img.shields.io/docker/v/virajsh/mydylms-client?label=Docker&color=blue&sort=semver&style=flat-square" alt="Docker"/>
+</a>
+<a href="https://github.com/viraj-sh/mydylms-client/wiki">
+  <img src="https://img.shields.io/badge/docs-wiki-orange?style=flat-square" alt="Wiki"/>
 </a>
 
-**Note:** This is an unofficial client for **[mydylms](https://mydy.dypatil.edu/)**, including the [frontend](docs/frontend.md), [api](docs/api.md), and [mcp server](docs/mcp.md).  
-It is developed for educational purposes and is **not affiliated with or endorsed by DY Patil or mydy**. Logos and branding are used for demonstration only.
+</div>
+
 
 ---
 ## What Makes This Client Better than Official MYDY LMS
@@ -26,9 +37,9 @@ This client improves on the official MyDY LMS by making document access and brow
 
 This repository includes:
 
-- **[API](docs/api.md):** FastAPI-based backend for authentication, semesters, subjects, documents, and attendance.
-- **[Frontend](docs/frontend.md):** Static interface for interacting with the API.
-- **[MCP Server](docs/mcp.md):** Endpoint (`/mcp`) compatible with Model Context Protocol (MCP) clients such as LLM Clients, LangChain bots, etc.
+- **[API](https://github.com/viraj-sh/mydylms-client/wiki/API-Documentation):** FastAPI-based backend for authentication, semesters, subjects, documents, and attendance.
+- **[Frontend](https://github.com/viraj-sh/mydylms-client/wiki/Frontend-Documentation):** Static interface for interacting with the API.
+- **[MCP Server](https://github.com/viraj-sh/mydylms-client/wiki/MCP-Documentation):** Endpoint (`/mcp`) compatible with Model Context Protocol (MCP) clients such as LLM Clients, LangChain bots, etc.
 
 The client can be run using a **[prebuilt release](https://github.com/viraj-sh/mydylms-client/releases/latest)** (recommended), **[built from source](#option-1-building-from-source-without-docker)**, or **[Docker](#option-2-running-with-docker)**. Quick deployment is also supported on **Render**.
 
