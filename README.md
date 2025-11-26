@@ -2,7 +2,7 @@
 
 # MYDY LMS CLIENT (Unofficial)
 
-An unofficial client for **[mydylms](https://mydy.dypatil.edu/)**, including the [API](https://github.com/viraj-sh/mydylms-client/wiki/API-Documentation), [Frontend](https://github.com/viraj-sh/mydylms-client/wiki/Frontend-Documentation), and [MCP Server](https://github.com/viraj-sh/mydylms-client/wiki/MCP-Documentation), developed for educational purposes and not affiliated with DY Patil or MYDY.
+An unofficial client for **[mydylms](https://mydy.dypatil.edu/)**, including the [API](https://github.com/viraj-sh/mydylms-client/wiki/API-Documentation), [Frontend](https://github.com/viraj-sh/mydylms-client/wiki/Frontend-Documentation), and [MCP Server](https://github.com/viraj-sh/mydylms-client/wiki/MCP-Documentation), with support for direct document downloads and full access across all semesters, developed for educational purposes and not affiliated with DY Patil or MYDY.
 
 <a href="https://github.com/viraj-sh/mydylms-client/releases/latest">
   <img src="https://img.shields.io/github/v/release/viraj-sh/mydylms-client?label=Latest%20Release&color=green&style=flat-square&cacheSeconds=3600" alt="Release"/>
@@ -20,16 +20,15 @@ An unofficial client for **[mydylms](https://mydy.dypatil.edu/)**, including the
 ---
 ## What Makes This Client Better than Official MYDY LMS
 
-This client improves on the official MyDY LMS by making document access and browsing simpler and more efficient:
+This client improves on the official MYDY LMS by making document access and browsing simpler and more efficient:
 
+* **Full Semester Access:** Quickly access documents from all semesters and subjects.
 * **Easy Access:** View or download any document directly—no FlexPaper or hidden links.
-* **Accurate File Names:** Displays the actual file name instead of vague titles.
 * **Direct Navigation:** One-click view/download for documents and URLs.
+* **Accurate File Names:** Displays the actual file name instead of vague titles.
 * **Upload Date & Time:** See when each document was uploaded.
 * **Search & Filters:** Search by file name, sort by date, filter by mod type.
-* **Full Semester Access:** Quickly access documents from all semesters and subjects.
-* **Optimized Performance:** Caching ensures faster loading.
-* **Open API & MCP Server:** Open-sourced endpoints for custom frontends and integrations.
+* **MCP Server Support:** Enables integration with LLMs for automation or analysis.
 
 ---
 
@@ -43,9 +42,31 @@ This repository includes:
 
 The client can be run using a **[prebuilt release](https://github.com/viraj-sh/mydylms-client/releases/latest)** (recommended), **[built from source](#option-1-building-from-source-without-docker)**, or **[Docker](#option-2-running-with-docker)**. Quick deployment is also supported on **Render**.
 
-<a href="https://render.com/deploy?repo=https://github.com/viraj-sh/mydylms-client" target="_blank">
-  <img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render" width="180"/>
-</a>
+<!-- Download Latest Releases -->
+<div style="margin-bottom: 1em;">
+  <strong style="font-size:1.1em;">Download Latest Releases:</strong>
+  <div style="margin-top:0.5em;">
+    <a href="https://github.com/viraj-sh/mydylms-client/releases/download/v1.3.0/mydylms-client.exe" target="_blank">
+      <img src="https://img.shields.io/badge/Windows-x64-blue?style=flat-square" alt="Download Windows" />
+    </a>
+    <!-- <a href="https://github.com/viraj-sh/mydylms-client/releases/latest/download/mydylms-client-linux.tar.gz" target="_blank">
+      <img src="https://img.shields.io/badge/Linux-x64-orange?style=flat-square" alt="Download Linux" />
+    </a>
+    <a href="https://github.com/viraj-sh/mydylms-client/releases/latest/download/mydylms-client-macos.zip" target="_blank">
+      <img src="https://img.shields.io/badge/macOS-x64-lightgrey?style=flat-square" alt="Download macOS" />
+    </a> -->
+  </div>
+</div>
+
+<!-- Quick Deployment -->
+<div style="margin-top:1.5em;">
+  <strong style="font-size:1.1em;">Quick Deployment:</strong>
+  <div style="margin-top:0.5em;">
+    <a href="https://render.com/deploy?repo=https://github.com/viraj-sh/mydylms-client" target="_blank">
+      <img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render" width="180"/>
+    </a>
+  </div>
+</div>
 
 ---
 
@@ -121,6 +142,6 @@ docker-compose up -d
 ## Disclaimer
 
 This project is **unofficial** and intended for personal and educational use only.
-DY Patil or MyDY is **not associated** with this project.
+DY Patil or MYDY is **not associated** with this project.
 
 Use responsibly. The author is **not liable for misuse, data loss, or violations of institutional policies**.
