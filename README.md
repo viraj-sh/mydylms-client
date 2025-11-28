@@ -32,109 +32,45 @@ This client improves on the official MYDY LMS by making document access and brow
 
 ---
 
-## Overview
+## Installation & Usage
 
-This repository includes:
+The client can be run in several ways. For detailed steps, see the **[Getting Started](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started)** wiki page.
 
-- **[API](https://github.com/viraj-sh/mydylms-client/wiki/API-Documentation):** FastAPI-based backend for authentication, semesters, subjects, documents, and attendance.
-- **[Frontend](https://github.com/viraj-sh/mydylms-client/wiki/Frontend-Documentation):** Static interface for interacting with the API.
-- **[MCP Server](https://github.com/viraj-sh/mydylms-client/wiki/MCP-Documentation):** Endpoint (`/mcp`) compatible with Model Context Protocol (MCP) clients such as LLM Clients, LangChain bots, etc.
+1. **[Prebuilt Releases](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#prebuilt-releases)** – Download and run the latest release for your platform:
 
-The client can be run using a **[prebuilt release](https://github.com/viraj-sh/mydylms-client/releases/latest)** (recommended), **[built from source](#option-1-building-from-source-without-docker)**, or **[Docker](#option-2-running-with-docker)**. Quick deployment is also supported on **Render**.
+   [![Windows (.exe)](https://img.shields.io/badge/Windows_\(.exe\)-x64-blue?style=flat-square)](https://github.com/viraj-sh/mydylms-client/releases/latest/mydylms-client.exe)
+   [![Linux (.tar.gz)](https://img.shields.io/badge/Linux_\(.tar.gz\)-x86__64-orange?style=flat-square)](https://github.com/viraj-sh/mydylms-client/releases/latest/download/mydylms-client-linux.tar.gz)
+   [![macOS (.zip)](https://img.shields.io/badge/macOS_\(.zip\)-arm64-lightgrey?style=flat-square)](https://github.com/viraj-sh/mydylms-client/releases/latest/download/mydylms-client-macos.zip)
 
-<!-- Download Latest Releases -->
-<div style="margin-bottom: 1em;">
-  <strong style="font-size:1.1em;">Download Latest Releases:</strong>
-  <div style="margin-top:0.5em;">
-    <a href="https://github.com/viraj-sh/mydylms-client/releases/download/v1.3.0/mydylms-client.exe" target="_blank">
-      <img src="https://img.shields.io/badge/Windows-x64-blue?style=flat-square" alt="Download Windows" />
-    </a>
-    <!-- <a href="https://github.com/viraj-sh/mydylms-client/releases/latest/download/mydylms-client-linux.tar.gz" target="_blank">
-      <img src="https://img.shields.io/badge/Linux-x64-orange?style=flat-square" alt="Download Linux" />
-    </a>
-    <a href="https://github.com/viraj-sh/mydylms-client/releases/latest/download/mydylms-client-macos.zip" target="_blank">
-      <img src="https://img.shields.io/badge/macOS-x64-lightgrey?style=flat-square" alt="Download macOS" />
-    </a> -->
-  </div>
-</div>
+2. **[One-Click Deployment](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#one-click-deployment-render) (Render)** – Deploy the client instantly in the cloud:
 
-<!-- Quick Deployment -->
-<div style="margin-top:1.5em;">
-  <strong style="font-size:1.1em;">Quick Deployment:</strong>
-  <div style="margin-top:0.5em;">
-    <a href="https://render.com/deploy?repo=https://github.com/viraj-sh/mydylms-client" target="_blank">
-      <img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render" width="180"/>
-    </a>
-  </div>
-</div>
+   [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=viraj-sh/mydylms-client)
+
+3. **[Build from Source](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#building-from-source)** – For developers or contributors: clone the repo, install dependencies, and run locally.
+
+4. **[Docker](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#docker-deployment)** – Run the client in a consistent containerized environment.
+
+> For complete instructions, platform-specific steps, and Docker usage, see the **[Getting Started wiki](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started)**.
 
 ---
+
+## Overview
+
+This repository includes the full **mydylms-client** stack:
+
+* **[API](https://github.com/viraj-sh/mydylms-client/wiki/API-Documentation):** FastAPI backend for authentication, semesters, subjects, documents, and attendance.
+* **[Frontend](https://github.com/viraj-sh/mydylms-client/wiki/Frontend-Documentation):** Static interface to interact with the API.
+* **[MCP Server](https://github.com/viraj-sh/mydylms-client/wiki/MCP-Documentation):** Endpoint (`/mcp`) compatible with Model Context Protocol (MCP) clients like LLM Clients or LangChain bots.
 
 ### Available Services
 
-Once the client is running, the following endpoints are accessible (the host may vary, but the paths remain the same):
+Once the client is running, these endpoints are accessible (host may vary):
 
-- **API:** [http://127.0.0.1:8000/api](http://127.0.0.1:8000/api)
+* **API Server:** [http://127.0.0.1:8000/api](http://127.0.0.1:8000/api)
 
-  - **Swagger UI:** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-
-- **Frontend:** [http://localhost:8000](http://localhost:8000)
-- **MCP Server:** [http://localhost:8000/mcp](http://localhost:8000/mcp)
----
-
-## Option 1: Building from Source (Without Docker)
-
-```bash
-git clone https://github.com/viraj-sh/mydylms-client
-cd mydylms-client
-
-python -m venv venv
-
-venv\Scripts\activate # Windows
-source venv/bin/activate # macOS/Linux
-
-pip install --upgrade pip
-pip install -r requirements.txt
-
-python app.py
-```
-
----
-
-## Option 2: Running with Docker
-
-### 1. Use Prebuilt Image from Docker Hub (Recommended)
-
-```bash
-docker pull virajsh/mydylms-client:latest
-docker run -p 8000:8000 virajsh/mydylms-client:latest
-```
-
-### 2. Build Locally
-
-A `Dockerfile` is included in the repository.
-
-```bash
-git clone https://github.com/viraj-sh/mydylms-client
-cd mydylms-client
-docker build -t mydylms-client .
-docker run -p 8000:8000 mydylms-client
-```
-
-### 3. Docker Compose
-
-A [`docker-compose.yaml`](https://github.com/viraj-sh/mydylms-client/blob/main/docker-compose.yaml) is included in the repository.
-
-```bash
-# using curl
-curl -L -o docker-compose.yaml https://github.com/viraj-sh/mydylms-client/raw/main/docker-compose.yaml 
-
-# using wget
-wget -O docker-compose.yaml https://github.com/viraj-sh/mydylms-client/raw/main/docker-compose.yaml 
-
-docker-compose up -d
-```
-
+  * **Interactive Docs:** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+* **Frontend:** [http://localhost:8000](http://localhost:8000)
+* **MCP Server:** [http://localhost:8000/mcp](http://localhost:8000/mcp)
 
 
 ---
