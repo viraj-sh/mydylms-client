@@ -39,8 +39,8 @@ The client can be run in several ways. For detailed steps, see the **[Getting St
 1. **[Prebuilt Releases](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#prebuilt-releases)** – Download and run the latest release for your platform:
 
    [![Windows (.exe)](https://img.shields.io/badge/Windows_\(.exe\)-x64-blue?style=flat-square)](https://github.com/viraj-sh/mydylms-client/releases/latest/mydylms-client.exe)
-   [![Linux (.tar.gz)](https://img.shields.io/badge/Linux_\(.tar.gz\)-x86__64-orange?style=flat-square)](https://github.com/viraj-sh/mydylms-client/releases/latest/download/mydylms-client-linux.tar.gz)
-   [![macOS (.zip)](https://img.shields.io/badge/macOS_\(.zip\)-arm64-lightgrey?style=flat-square)](https://github.com/viraj-sh/mydylms-client/releases/latest/download/mydylms-client-macos.zip)
+   [![Linux (.tar.gz)](https://img.shields.io/badge/Linux-x86__64-orange?style=flat-square)](https://github.com/viraj-sh/mydylms-client/releases/latest/download/mydylms-client-linux)
+   [![macOS (.zip)](https://img.shields.io/badge/macOS-arm64-lightgrey?style=flat-square)](https://github.com/viraj-sh/mydylms-client/releases/latest/download/mydylms-client-macos)
 
 2. **[One-Click Deployment](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#one-click-deployment-render) (Render)** – Deploy the client instantly in the cloud:
 
@@ -53,6 +53,17 @@ The client can be run in several ways. For detailed steps, see the **[Getting St
 > For complete instructions, platform-specific steps, and Docker usage, see the **[Getting Started wiki](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started)**.
 
 ---
+### Available Services
+
+Once the client is running, these endpoints are accessible (host may vary):
+
+* **Frontend:** [http://localhost:8000/](http://localhost:8000/)
+* **MCP Server:** [http://localhost:8000/mcp](http://localhost:8000/mcp)
+* **API Server:** [http://localhost:8000/api](http://127.0.0.1:8000/api)
+
+  * **Interactive Docs:** [http://localhost:8000/docs](http://127.0.0.1:8000/docs)
+
+---
 
 ## Overview
 
@@ -62,15 +73,6 @@ This repository includes the full **mydylms-client** stack:
 * **[Frontend](https://github.com/viraj-sh/mydylms-client/wiki/Frontend-Documentation):** Static interface to interact with the API.
 * **[MCP Server](https://github.com/viraj-sh/mydylms-client/wiki/MCP-Documentation):** Endpoint (`/mcp`) compatible with Model Context Protocol (MCP) clients like LLM Clients or LangChain bots.
 
-### Available Services
-
-Once the client is running, these endpoints are accessible (host may vary):
-
-* **API Server:** [http://127.0.0.1:8000/api](http://127.0.0.1:8000/api)
-
-  * **Interactive Docs:** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-* **Frontend:** [http://localhost:8000](http://localhost:8000)
-* **MCP Server:** [http://localhost:8000/mcp](http://localhost:8000/mcp)
 
 
 ---
