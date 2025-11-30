@@ -9,10 +9,10 @@ __pycache__/main.cpython-313.pyc
 test/__pycache__
 .env
 __pycache__/app.cpython-313.pyc
-frontend/.hash_mapping.json
-frontend/notes.md
-frontend/hash.py
-frontend/venv
+static/.hash_mapping.json
+static/notes.md
+static/hash.py
+static/venv
 notes-1.md
 mcp
 .vscode

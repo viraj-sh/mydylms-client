@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", async () => {
-    const API_BASE_URL = "/api";
+    const API_BASE_URL = "/api/v1";
     const userMenuBtn = document.getElementById("userMenuBtn");
     const userDropdown = document.getElementById("userDropdown");
     const userNameDisplay = document.getElementById("userNameDisplay");

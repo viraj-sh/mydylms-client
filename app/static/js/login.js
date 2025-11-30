@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("login-form");
     const feedbackMessage = document.getElementById("feedback-message");
 
-    const API_BASE_URL = "/api";
+    const API_BASE_URL = "/api/v1";
 
     // Utility function to show feedback
     function showMessage(message, type = "error") {

@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const API_BASE_URL = "/api";
+    const API_BASE_URL = "/api/v1";
     const overallValue = document.getElementById("overallValue");
     const detailedBody = document.getElementById("detailedBody");
 

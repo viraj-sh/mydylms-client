@@ -1,7 +1,7 @@
 api/**pycache**
 api/README.md
 core/**pycache**
-frontend/readme.md
+static/readme.md
 requirements-dev.txt
 README.md
 .gitignore
@@ -9,10 +9,10 @@ venv
 test
 schema/**pycache**
 logs
-frontend/src/images/preview_attendance.png
-frontend/src/images/preview_dashboard.png
-frontend/src/images/preview_login.png
-frontend/hash.py
+static/assets/images/preview_attendance.png
+static/assets/images/preview_dashboard.png
+static/assets/images/preview_login.png
+static/hash.py
 .vscode
 data
 docs

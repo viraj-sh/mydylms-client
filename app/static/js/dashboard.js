@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const API_BASE_URL = "/api"; 
+    const API_BASE_URL = "/api/v1"; 
 
     // DOM elements
     const semesterGrid = document.getElementById("semesterGrid");
