@@ -3,6 +3,6 @@ services:
     name: mydylms-client
     env: python
     branch: main
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install -r requirements/base.txt
     startCommand: python -m uvicorn app:app --host 0.0.0.0 --port $PORT
     plan: free
