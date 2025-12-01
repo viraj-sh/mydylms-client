@@ -88,17 +88,17 @@ Once the client is running, these endpoints are accessible (host may vary):
 
 | Demo |
 | :------------: |
-| <img src="./.github/assets/mcp_usage.gif" width="800"/> |
+| <img src="https://raw.githubusercontent.com/viraj-sh/mydylms-client/refs/heads/main/.github/assets/mcp_usage.gif" width="800"/> |
 
 ## Preview
 
 | Dashboard                                      | Login                                           |
 | :-------------------------------------------- | :-------------------------------------------- |
-| <img src="./.github/assets/preview_dashboard.png" width="500" height="300"/> | <img src="./.github/assets/preview_login.png" width="500" height="300"/> |
+| <img src="https://raw.githubusercontent.com/viraj-sh/mydylms-client/refs/heads/main/.github/assets/preview_dashboard.png" width="500" height="300"/> | <img src="https://raw.githubusercontent.com/viraj-sh/mydylms-client/refs/heads/main/.github/assets/preview_login.png" width="500" height="300"/> |
 
 | Attendance                                    | Profile                                         |
 | :------------------------------------------- | :-------------------------------------------- |
-| <img src="./.github/assets/preview_attendance.png" width="500" height="300"/> | <img src="./.github/assets/preview_profile.png" width="500" height="300"/> |
+| <img src="https://raw.githubusercontent.com/viraj-sh/mydylms-client/refs/heads/main/.github/assets/preview_attendance.png" width="500" height="300"/> | <img src="https://raw.githubusercontent.com/viraj-sh/mydylms-client/refs/heads/main/.github/assets/preview_profile.png" width="500" height="300"/> |
 
 
 
