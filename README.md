@@ -46,9 +46,28 @@ The client can be run in several ways. For detailed steps, see the **[Getting St
 
    [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/viraj-sh/mydylms-client)
 
-3. **[Build from Source](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#building-from-source)** – For developers or contributors: clone the repo, install dependencies, and run locally.
+3. **[Run from Source](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#running-from-source)** – Clone the repository and run the client directly in development mode.
 
-4. **[Docker](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#docker-deployment)** – Run the client in a consistent containerized environment.
+  - For developers who want to modify the client.
+
+
+    ```bash
+    git clone https://github.com/viraj-sh/mydylms-client
+    cd mydylms-client
+
+    python -m venv venv
+    venv\Scripts\activate   # Windows
+    source venv/bin/activate   # macOS/Linux
+
+    pip install --upgrade pip
+    pip install -r requirements/base.txt
+
+    python app.py
+    ```
+
+4. **[Build from Source](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#building-from-source)** – For developers or contributors: clone the repo, install dependencies, and run locally.
+
+5. **[Docker](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#docker-deployment)** – Run the client in a consistent containerized environment.
 
 > For complete instructions, platform-specific steps, and Docker usage, see the **[Getting Started wiki](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started)**.
 
@@ -57,21 +76,29 @@ The client can be run in several ways. For detailed steps, see the **[Getting St
 
 Once the client is running, these endpoints are accessible (host may vary):
 
-* **Frontend:** [http://localhost:8000/](http://localhost:8000/)
-* **MCP Server:** [http://localhost:8000/mcp](http://localhost:8000/mcp)
-* **API Server:** [http://localhost:8000/api](http://127.0.0.1:8000/api)
+* **[Frontend](https://github.com/viraj-sh/mydylms-client/wiki/Frontend-Documentation)** [[http://localhost:8000/](http://localhost:8000/)] : Static interface to interact with the API.
+* **[MCP Server](https://github.com/viraj-sh/mydylms-client/wiki/MCP-Documentation)** [[http://localhost:8000/mcp](http://localhost:8000/mcp)] : Endpoint (`/mcp`) compatible with Model Context Protocol (MCP) clients like LLM Clients or LangChain bots.
+* **[API](https://github.com/viraj-sh/mydylms-client/wiki/API-Documentation)** [[http://localhost:8000/api](http://127.0.0.1:8000/api)] : FastAPI backend for authentication, semesters, subjects, documents, and attendance.
 
-  * **Interactive Docs:** [http://localhost:8000/docs](http://127.0.0.1:8000/docs)
+  * **Interactive Docs:** [[http://localhost:8000/docs](http://127.0.0.1:8000/docs)] : API testing Swagger UI for developers.
 
 ---
 
-## Overview
+## MCP Usage
 
-This repository includes the full **mydylms-client** stack:
+| Demo |
+| :------------: |
+| <img src="./.github/assets/mcp_usage.gif" width="500"/> |
 
-* **[API](https://github.com/viraj-sh/mydylms-client/wiki/API-Documentation):** FastAPI backend for authentication, semesters, subjects, documents, and attendance.
-* **[Frontend](https://github.com/viraj-sh/mydylms-client/wiki/Frontend-Documentation):** Static interface to interact with the API.
-* **[MCP Server](https://github.com/viraj-sh/mydylms-client/wiki/MCP-Documentation):** Endpoint (`/mcp`) compatible with Model Context Protocol (MCP) clients like LLM Clients or LangChain bots.
+## Preview
+
+| Dashboard                                      | Login                                           |
+| :-------------------------------------------- | :-------------------------------------------- |
+| <img src="./.github/assets/preview_dashboard.png" width="500"/> | <img src="./.github/assets/preview_login.png" width="500"/> |
+
+| Attendance                                    | Profile                                         |
+| :------------------------------------------- | :-------------------------------------------- |
+| <img src="./.github/assets/preview_attendance.png" width="500"/> | <img src="./.github/assets/preview_profile.png" width="500"/> |
 
 
 
