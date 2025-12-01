@@ -26,7 +26,7 @@ jobs:
 
       - name: Hash JS/CSS Assets
         run: |
-          cd static
+          cd app/static
           python3 hash.py hash
 
       - name: Build latest image
