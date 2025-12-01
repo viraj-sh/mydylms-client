@@ -90,7 +90,7 @@ Once the client is running, these endpoints are accessible (host may vary):
 
 | Demo |
 | :------------: |
-| <img src="https://raw.githubusercontent.com/viraj-sh/mydylms-client/refs/heads/main/.github/assets/mcp_usage.gif" width="800"/> |
+| <img src="./.github/assets/mcp_usage.gif" width="800"/> |
 
 ## Preview
 
