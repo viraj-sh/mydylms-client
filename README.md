@@ -88,7 +88,7 @@ Once the client is running, these endpoints are accessible (host may vary):
 
 | Demo |
 | :------------: |
-| <img src="./.github/assets/mcp_usage.gif" width="1000"/> |
+| <img src="./.github/assets/mcp_usage.gif" width="800"/> |
 
 ## Preview
 
