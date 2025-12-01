@@ -94,11 +94,11 @@ Once the client is running, these endpoints are accessible (host may vary):
 
 | Dashboard                                      | Login                                           |
 | :-------------------------------------------- | :-------------------------------------------- |
-| <img src="./.github/assets/preview_dashboard.png" width="500"/> | <img src="./.github/assets/preview_login.png" width="500"/> |
+| <img src="./.github/assets/preview_dashboard.png" width="500" height="300"/> | <img src="./.github/assets/preview_login.png" width="500" height="300"/> |
 
 | Attendance                                    | Profile                                         |
 | :------------------------------------------- | :-------------------------------------------- |
-| <img src="./.github/assets/preview_attendance.png" width="500"/> | <img src="./.github/assets/preview_profile.png" width="500"/> |
+| <img src="./.github/assets/preview_attendance.png" width="500" height="300"/> | <img src="./.github/assets/preview_profile.png" width="500" height="300"/> |
 
 
 
