@@ -2,7 +2,7 @@
 
 # MYDY LMS CLIENT (Unofficial)
 
-An unofficial client for **[mydylms](https://mydy.dypatil.edu/)**, including the [API](https://github.com/viraj-sh/mydylms-client/wiki/API-Documentation), [Frontend](https://github.com/viraj-sh/mydylms-client/wiki/Frontend-Documentation), and [MCP Server](https://github.com/viraj-sh/mydylms-client/wiki/MCP-Documentation), with support for direct document downloads and full access across all semesters, developed for educational purposes and not affiliated with DY Patil or MYDY.
+An unofficial client for **[mydylms](https://mydy.dypatil.edu/)**, including the [Frontend](https://github.com/viraj-sh/mydylms-client/wiki/Frontend-Documentation), [MCP Server](https://github.com/viraj-sh/mydylms-client/wiki/MCP-Documentation), and [API](https://github.com/viraj-sh/mydylms-client/wiki/API-Documentation), with support for direct document downloads and full access across all semesters, developed for educational purposes and not affiliated with DY Patil or MYDY.
 
 <a href="https://github.com/viraj-sh/mydylms-client/releases/latest">
   <img src="https://img.shields.io/github/v/release/viraj-sh/mydylms-client?label=Latest%20Release&color=green&style=flat-square&cacheSeconds=3600" alt="Release"/>
@@ -36,17 +36,17 @@ This client improves on the official MYDY LMS by making document access and brow
 
 The client can be run in several ways. For detailed steps, see the **[Getting Started](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started)** wiki page.
 
-1. **[Prebuilt Releases](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#prebuilt-releases)** – Download and run the latest release for your platform:
+Option 1. **[Prebuilt Releases](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#prebuilt-releases)** – Download and run the latest release for your platform:
 
    [![Windows (.exe)](https://img.shields.io/badge/Windows_\(.exe\)-x64-blue?style=flat-square)](https://github.com/viraj-sh/mydylms-client/releases/latest/mydylms-client.exe)
    [![Linux (.tar.gz)](https://img.shields.io/badge/Linux-x86__64-orange?style=flat-square)](https://github.com/viraj-sh/mydylms-client/releases/latest/download/mydylms-client-linux)
    [![macOS (.zip)](https://img.shields.io/badge/macOS-arm64-lightgrey?style=flat-square)](https://github.com/viraj-sh/mydylms-client/releases/latest/download/mydylms-client-macos)
 
-2. **[One-Click Deployment](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#one-click-deployment-render) (Render)** – Deploy the client instantly in the cloud:
+Option 2. **[One-Click Deployment](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#one-click-deployment-render) (Render)** – Deploy the client instantly in the cloud:
 
    [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/viraj-sh/mydylms-client)
 
-3. **[Run from Source](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#running-from-source)** – Clone the repository and run the client directly in development mode.
+Option 3. **[Run from Source](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#running-from-source)** – Clone the repository and run the client directly in development mode.
 
   - For developers who want to modify the client.
 
@@ -65,9 +65,9 @@ The client can be run in several ways. For detailed steps, see the **[Getting St
     python app.py
     ```
 
-4. **[Build from Source](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#building-from-source)** – For developers or contributors: clone the repo, install dependencies, and run locally.
+Option 4. **[Build from Source](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#building-from-source)** – For developers or contributors: clone the repo, install dependencies, and run locally.
 
-5. **[Docker](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#docker-deployment)** – Run the client in a consistent containerized environment.
+Option 5. **[Docker](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#docker-deployment)** – Run the client in a consistent containerized environment.
 
 > For complete instructions, platform-specific steps, and Docker usage, see the **[Getting Started wiki](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started)**.
 
@@ -85,6 +85,8 @@ Once the client is running, these endpoints are accessible (host may vary):
 ---
 
 ## MCP Usage
+
+> For full instructions on configuring the MCP server, check out the **[MCP Documentation](https://github.com/viraj-sh/mydylms-client/wiki/MCP-Documentation)**.
 
 | Demo |
 | :------------: |
