@@ -41,4 +41,8 @@ def health_check():
 
 @router.get("/favicon.ico", include_in_schema=False)
 async def favicon():
-    return FileResponse(os.path.join(ASSETS_DIR, "favicon.ico"))
+    path = os.path.join(ASSETS_DIR, "favicon.ico")
+    if not os.path.exists(path):
+        import logging
+        logging.warning(f"favicon not found: {path}")
+    return FileResponse(path)
