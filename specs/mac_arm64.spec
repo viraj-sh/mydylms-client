@@ -15,11 +15,11 @@ a = Analysis(
     pathex=[project_root, os.path.join(project_root, 'app')],
     binaries=[],
     datas=[
-        (os.path.join(project_root, 'app/static'), 'app/static'),
+        (os.path.join(project_root, 'app/static'), 'static'),
         (os.path.join(project_root, 'app/core'), 'app/core'),
         (os.path.join(project_root, 'app/api'), 'app/api'),
         (os.path.join(project_root, 'app/schema'), 'app/schema'),
-        (os.path.join(project_root, 'app/static/assets/favicon.ico'), 'app/static/src'),
+        (os.path.join(project_root, 'app/static/assets/favicon.ico'), 'static/src'),
     ],
     hiddenimports=hidden,
     hookspath=[],
