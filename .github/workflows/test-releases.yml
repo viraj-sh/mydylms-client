@@ -9,32 +9,12 @@ on:
 permissions:
   contents: read
 
-jobs:
-  determine:
-    name: Check if Build Was for Tag
-    runs-on: ubuntu-latest
-    outputs:
-      should_test: ${{ steps.check.outputs.should_test }}
-
-    steps:
-      - id: check
-        name: Determine if build should be tested
-        run: |
-          echo "Event: ${{ github.event.workflow_run.event }}"
-          if [ "${{ github.event.workflow_run.event }}" = "push" ] &&
-             [[ "${{ github.event.workflow_run.head_branch }}" == refs/tags/* ]]; then
-            echo "should_test=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "should_test=false" >> "$GITHUB_OUTPUT"
-          fi
-
   # -------------------------
   # Windows Test Job
   # -------------------------
+jobs:
   test-windows:
-    name: Test Windows Release
-    needs: determine
-    if: needs.determine.outputs.should_test == 'true'
+    name: Test Windows Executable
     runs-on: windows-latest
 
     steps:
@@ -45,7 +25,7 @@ jobs:
         id: find
         shell: pwsh
         run: |
-          $file = Get-ChildItem -Recurse -Filter "*win-x64.exe" | Select-Object -First 1
+          $file = Get-ChildItem -Recurse -Filter "mydylms-client-*-win-x64.exe" | Select-Object -First 1
           if (-Not $file) { Write-Error "Windows binary not found" }
           echo "exe_path=$($file.FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
@@ -77,9 +57,7 @@ jobs:
   # macOS Test Job
   # -------------------------
   test-macos:
-    name: Test macOS Release
-    needs: determine
-    if: needs.determine.outputs.should_test == 'true'
+    name: Test macOS Executable
     runs-on: macos-14
 
     steps:
@@ -89,7 +67,7 @@ jobs:
       - name: Locate macOS binary
         id: find
         run: |
-          file=$(find . -type f -name "*macos-arm64" | head -n 1)
+          file=$(find . -type f -name "mydylms-client-*-macos-arm64" | head -n 1)
           if [ -z "$file" ]; then
             echo "macOS binary not found" >&2
             exit 1
