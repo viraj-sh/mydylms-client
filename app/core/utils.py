@@ -39,6 +39,13 @@ NON_VIEWABLE_MODS = {"url"}
 FRONTEND_VIEWABLE_EXTENSIONS = {".pptx", ".docx"}
 CHUNK_SIZE = 64 * 1024  # 64 KB, tune if desired
 
+# ASCII COLORS
+RESET = "\033[0m"
+BOLD = "\033[1m"
+FG_RED = "\033[31m" 
+FG_WHITE = "\033[97m" 
+FG_GREEN = "\033[32m" 
+FG_YELLOW = "\033[33m" 
 
 def dump_json(data, json_path: Path, indent: int = 4):
     json_path.parent.mkdir(parents=True, exist_ok=True)

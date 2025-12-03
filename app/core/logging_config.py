@@ -1,13 +1,15 @@
 import logging
 import logging.config
 import os
-import json
 from pythonjsonlogger import json
 
 
 def setup_logging():
     log_dir = "logs"
     os.makedirs(log_dir, exist_ok=True)
+
+    # Determine quiet mode
+    QUIET_MODE = os.environ.get("QUIET", "1") == "1"
 
     logging_config = {
         "version": 1,
@@ -23,7 +25,9 @@ def setup_logging():
             "console": {
                 "class": "logging.StreamHandler",
                 "formatter": "standard",
-                "level": "DEBUG",
+                "level": (
+                    "DEBUG" if not QUIET_MODE else "CRITICAL"
+                ),
             },
             "file": {
                 "class": "logging.handlers.RotatingFileHandler",
@@ -31,17 +35,19 @@ def setup_logging():
                 "filename": os.path.join(log_dir, "app.log"),
                 "maxBytes": 5 * 1024 * 1024,  # 5MB per file
                 "backupCount": 5,
-                "level": "INFO",
+                "level": (
+                    "INFO" if not QUIET_MODE else "CRITICAL"
+                ),  # suppress file if quiet
             },
         },
         "root": {
             "handlers": ["console", "file"],
-            "level": "INFO",
+            "level": "INFO" if not QUIET_MODE else "CRITICAL",
         },
         "loggers": {
             "mydylms": {
                 "handlers": ["console", "file"],
-                "level": "DEBUG",  # dev: DEBUG, prod: INFO
+                "level": "DEBUG" if not QUIET_MODE else "CRITICAL",
                 "propagate": False,
             },
         },
