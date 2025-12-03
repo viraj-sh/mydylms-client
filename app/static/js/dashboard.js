@@ -197,7 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
             filterSelect.disabled = false;
             searchInput.disabled = false;
             dateSort.disabled = false;
-            dateSort.value = "oldToNew";
+            dateSort.value = "newToOld"; // Set default to newest first
 
             renderDocuments();
         } catch (err) {
@@ -232,10 +232,19 @@ document.addEventListener("DOMContentLoaded", () => {
             showPlaceholder(documentsContainer, "No matching documents found");
             return;
         }
+
+        // Sort documents by time/date
         let finalDocs = [...filtered];
-        if (dateSort.value === "newToOld") {
-            finalDocs.reverse();
-        }        
+        finalDocs.sort((a, b) => {
+            const timeA = a.time || 0;
+            const timeB = b.time || 0;
+            
+            if (dateSort.value === "newToOld") {
+                return timeB - timeA; // Newer first (descending)
+            } else {
+                return timeA - timeB; // Older first (ascending)
+            }
+        });
 
         // Utility to format date like "08 Oct, 02:15 PM"
         const formatDate = (timestamp) => {
