@@ -20,12 +20,14 @@ jobs:
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts        
 
       - name: Locate Windows binary
         id: find
         shell: pwsh
         run: |
-          $file = Get-ChildItem -Recurse -Filter "mydylms-client-*-win-x64.exe" | Select-Object -First 1
+          $file = Get-ChildItem -Path ./artifacts -Recurse -File -Filter "mydylms-client-*-win-x64.exe" | Select-Object -First 1
           if (-Not $file) { Write-Error "Windows binary not found" }
           echo "exe_path=$($file.FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
@@ -63,11 +65,12 @@ jobs:
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
-
+        with:
+          path: ./artifacts 
       - name: Locate macOS binary
         id: find
         run: |
-          file=$(find . -type f -name "mydylms-client-*-macos-arm64" | head -n 1)
+          file=$(find ./artifacts -type f -name "mydylms-client-*-macos-arm64" | head -n 1)
           if [ -z "$file" ]; then
             echo "macOS binary not found" >&2
             exit 1
