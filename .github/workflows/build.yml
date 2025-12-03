@@ -38,6 +38,11 @@ jobs:
           pip install -r requirements/base.txt
           pip install pyinstaller
 
+      - name: Hash JS/CSS Assets
+        run: |
+          cd app/static
+          python3 hash.py hash
+
       - name: Build executable
         shell: bash
         run: |
