@@ -1,8 +1,32 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const loginForm = document.getElementById("login-form");
     const feedbackMessage = document.getElementById("feedback-message");
 
     const API_BASE_URL = "/api/v1";
+    try {
+        const tokenCheck = await fetch(`${API_BASE_URL}/auth/token`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        const tokenData = await tokenCheck.json().catch(() => null);
+
+        if (tokenData?.status === "success" && tokenData?.data?.valid) {
+            if (feedbackMessage) {
+                feedbackMessage.textContent = "Active session found — redirecting...";
+                feedbackMessage.classList.remove("hidden", "text-red-600");
+                feedbackMessage.classList.add("text-green-600");
+            }
+
+            setTimeout(() => {
+                window.location.href = "/static/pages/dashboard.html";
+            }, 800);
+
+            return;
+        }
+    } catch (err) {
+        console.warn("Session check failed:", err);
+    }
 
     // Utility function to show feedback
     function showMessage(message, type = "error") {
@@ -68,6 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             "Content-Type": "application/json",
                             "Authorization": `Bearer ${data.data.sesskey}`,
                         },
+                        credentials: "include",
                     });
 
                     const credsData = await credsRes.json().catch(() => null);
