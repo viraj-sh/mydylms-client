@@ -31,8 +31,29 @@ os.environ["UVICORN_NO_COLOR"] = "1"
 
 enable_vt100()
 
+# ------------------------------
+# ADD THIS SMALL BLOCK
+# ------------------------------
+import argparse
+
+parser = argparse.ArgumentParser(add_help=False)
+parser.add_argument("--debug", action="store_true")
+args, _ = parser.parse_known_args()
+# ------------------------------
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
-    print(f"Starting MYDYLMS API on http://127.0.0.1:{port}")
-    uvicorn.run(app, host="0.0.0.0", port=port)
+
+    if args.debug:
+        print(f"[DEBUG MODE] Starting MYDYLMS API on http://127.0.0.1:{port}")
+        uvicorn.run(
+            app,
+            host="0.0.0.0",
+            port=port,
+            reload=False,  # safe inside PyInstaller
+            log_level="debug",
+        )
+    else:
+        print(f"Starting MYDYLMS API on http://127.0.0.1:{port}")
+        uvicorn.run(app, host="0.0.0.0", port=port)
