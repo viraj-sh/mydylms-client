@@ -1,13 +1,18 @@
 import os
-import uvicorn
-import ctypes
 import sys
-from app.core.utils import RESET, BOLD, FG_RED, FG_WHITE, FG_GREEN, FG_YELLOW
+import uvicorn
+import threading
+import time
+import socket
 
+# -------------------------------------------------------------------
+# Minimal path setup for PyInstaller
+# -------------------------------------------------------------------
 if getattr(sys, "frozen", False):
     base_dir = sys._MEIPASS
 else:
     base_dir = os.path.dirname(os.path.abspath(__file__))
+
 app_dir = os.path.join(base_dir, "app")
 if app_dir not in sys.path:
     sys.path.insert(0, app_dir)
@@ -15,57 +20,59 @@ if app_dir not in sys.path:
 from app.main import app
 
 
-def enable_vt100():
-    if os.name == "nt":
-        try:
-            kernel32 = ctypes.windll.kernel32
-            handle = kernel32.GetStdHandle(-11)
-            mode = ctypes.c_uint()
-            kernel32.GetConsoleMode(handle, ctypes.byref(mode))
-            kernel32.SetConsoleMode(handle, mode.value | 0x0004)
-        except Exception:
-            pass
+# -------------------------------------------------------------------
+# Helper: wait for server
+# -------------------------------------------------------------------
+def wait_for_server(port, timeout=10):
+    start = time.time()
+    while time.time() - start < timeout:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            if s.connect_ex(("127.0.0.1", port)) == 0:
+                return True
+        time.sleep(0.1)
+    return False
 
 
-os.environ["NO_COLOR"] = "1"
-os.environ["UVICORN_NO_COLOR"] = "1"
-
-enable_vt100()
-
-# ------------------------------
-# ADD THIS SMALL BLOCK
-# ------------------------------
-import argparse
-
-parser = argparse.ArgumentParser(add_help=False)
-parser.add_argument("--debug", action="store_true")
-args, _ = parser.parse_known_args()
-# ------------------------------
-
-
+# -------------------------------------------------------------------
+# SKELETON MAIN LOGIC (Quiet only)
+# -------------------------------------------------------------------
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8000))
 
-    if args.debug:
-        print(
-            f"""
-{BOLD}{FG_RED}🚀 Starting application{RESET}
-{FG_WHITE}• URL:{RESET} {BOLD}http://127.0.0.1:{port}{RESET}
-{FG_WHITE}• Host:{RESET} 127.0.0.1
-{FG_WHITE}• Port:{RESET} {BOLD}{port}{RESET}
-{FG_WHITE}• Mode:{RESET} {BOLD}DEBUG{RESET}
-{FG_WHITE}• Reload:{RESET} enabled
-{FG_WHITE}• Log level:{RESET} info
-{FG_WHITE}• Access log:{RESET} enabled
-        """
-        )
-        uvicorn.run(
-            app,
-            host="0.0.0.0",
-            port=port,
-            reload=False,  # safe inside PyInstaller
-            log_level="debug",
-        )
+    port = 8000  # temporary hard-coded
+
+    print(">>> Starting server (quiet mode)...")
+
+    # silence uvicorn
+    import logging
+
+    logging.getLogger("uvicorn").setLevel(logging.CRITICAL)
+    logging.getLogger("uvicorn.error").setLevel(logging.CRITICAL)
+    logging.getLogger("uvicorn.access").disabled = True
+
+    # create uvicorn server object
+    config = uvicorn.Config(
+        app,
+        host="127.0.0.1",
+        port=port,
+        log_level="critical",
+        access_log=False,
+    )
+    server = uvicorn.Server(config)
+
+    # run in thread
+    t = threading.Thread(target=server.run, daemon=True)
+    t.start()
+
+    # wait until available
+    if wait_for_server(port):
+        print(">>> Server is ready on http://127.0.0.1:8000")
     else:
-        print(f"Starting MYDYLMS API on http://127.0.0.1:{port}")
-        uvicorn.run(app, host="0.0.0.0", port=port)
+        print(">>> Server FAILED to start")
+        sys.exit(1)
+
+    # keep alive
+    try:
+        while t.is_alive():
+            time.sleep(0.2)
+    except KeyboardInterrupt:
+        server.should_exit = True
