@@ -2,6 +2,7 @@ import os
 import uvicorn
 import ctypes
 import sys
+from app.core.utils import RESET, BOLD, FG_RED, FG_WHITE, FG_GREEN, FG_YELLOW
 
 if getattr(sys, "frozen", False):
     base_dir = sys._MEIPASS
@@ -46,7 +47,18 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
 
     if args.debug:
-        print(f"[DEBUG MODE] Starting MYDYLMS API on http://127.0.0.1:{port}")
+        print(
+            f"""
+{BOLD}{FG_RED}🚀 Starting application{RESET}
+{FG_WHITE}• URL:{RESET} {BOLD}http://127.0.0.1:{port}{RESET}
+{FG_WHITE}• Host:{RESET} 127.0.0.1
+{FG_WHITE}• Port:{RESET} {BOLD}{port}{RESET}
+{FG_WHITE}• Mode:{RESET} {BOLD}DEBUG{RESET}
+{FG_WHITE}• Reload:{RESET} enabled
+{FG_WHITE}• Log level:{RESET} info
+{FG_WHITE}• Access log:{RESET} enabled
+        """
+        )
         uvicorn.run(
             app,
             host="0.0.0.0",
