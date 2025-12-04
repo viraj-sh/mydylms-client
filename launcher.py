@@ -7,6 +7,7 @@ import socket
 import argparse
 import logging
 import requests
+import signal
 
 if getattr(sys, "frozen", False):
     base_dir = sys._MEIPASS
@@ -56,6 +57,15 @@ def open_browser(url):
     except Exception:
         pass
 
+def _sigint_handler(signum, frame):
+    try:
+        server.should_exit = True
+    except NameError:
+        pass
+    os._exit(0)
+
+signal.signal(signal.SIGINT, _sigint_handler)
+
 if __name__ == "__main__":
 
     env_port = os.environ.get("PORT")
@@ -74,13 +84,16 @@ if __name__ == "__main__":
 """
         )
 
-        uvicorn.run(
-            app,
-            host="127.0.0.1",
-            port=port,
-            log_level="debug",
-            reload=False,
-        )
+        try:
+            uvicorn.run(
+                app,
+                host="127.0.0.1",
+                port=port,
+                log_level="debug",
+                reload=False,
+            )
+        except KeyboardInterrupt:
+            os._exit(0)
         sys.exit(0)
 
     print(
@@ -141,7 +154,7 @@ if __name__ == "__main__":
         while t.is_alive():
             time.sleep(0.2)
     except KeyboardInterrupt:
-        sys.stdout = open(os.devnull, "w")
-        sys.stderr = open(os.devnull, "w")
+        # Do not reassign sys.stdout/sys.stderr; that triggers PyInstaller codec errors
         server.should_exit = True
         t.join()
+        os._exit(0)
