@@ -23,6 +23,9 @@ jobs:
           - os: macos-14
             spec: specs/mac_arm64.spec
             ext: macos-arm64
+          - os: ubuntu-24.04
+            spec: specs/linux_x86_64.spec
+            ext: linux-x86_64
 
     steps:
       - name: Checkout code
@@ -127,7 +130,6 @@ jobs:
               exit 1
           }
 
-
       - name: Stop server
         shell: pwsh
         continue-on-error: true
@@ -151,6 +153,52 @@ jobs:
           file=$(find ./artifacts -type f -name "mydylms-client-*-macos-arm64" | head -n 1)
           if [ -z "$file" ]; then
             echo "macOS binary not found" >&2
+            exit 1
+          fi
+          echo "exe_path=$file" >> $GITHUB_OUTPUT
+
+      - name: Make executable
+        run: chmod +x "${{ steps.find.outputs.exe_path }}"
+
+      - name: Start server
+        run: |
+          "${{ steps.find.outputs.exe_path }}" &
+          SERVER_PID=$!
+          echo "SERVER_PID=$SERVER_PID" >> $GITHUB_ENV
+          sleep 30
+
+      - name: Test /api/v1/health
+        run: |
+          for i in {1..10}; do
+            curl -sf "http://127.0.0.1:8000/api/v1/health" && exit 0
+            echo "Waiting for server..."
+            sleep 1
+          done
+          echo "Health check failed" >&2
+          exit 1
+
+      - name: Stop server
+        if: always()
+        run: |
+          kill -9 $SERVER_PID || true
+
+  test-linux:
+    name: Test Linux Executable
+    needs: build
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Locate Linux binary
+        id: find
+        run: |
+          file=$(find ./artifacts -type f -name "mydylms-client-*-linux-x86_64" | head -n 1)
+          if [ -z "$file" ]; then
+            echo "Linux binary not found" >&2
             exit 1
           fi
           echo "exe_path=$file" >> $GITHUB_OUTPUT
