@@ -41,6 +41,10 @@ app.mount("/static", StaticFiles(directory=static_dir), name="static")
 def serve_frontend():
     return FileResponse(os.path.join(static_dir, "index.html"))
 
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return FileResponse(os.path.join(static_dir, "assets", "favicon.ico"))
+
 logger.info("Application startup complete")
 
 # Include routers
