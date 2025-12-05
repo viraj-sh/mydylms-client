@@ -62,3 +62,29 @@ class LogoutResponseModel(BaseModel):
                 "status_code": 200,
             }
         }
+class UserProfileData(BaseModel):
+    user_name: str = Field(..., description="Full name of the user")
+    roll_no: str = Field(..., description="User roll number")
+    mob_no: Optional[str] = Field(None, description="Mobile number")
+    email_id: Optional[str] = Field(None, description="Email address")
+    coll_name: Optional[str] = Field(None, description="College name")
+    degree_name: Optional[str] = Field(None, description="Degree name")
+    gender: Optional[str] = Field(None, description="Gender")
+    dob: Optional[str] = Field(None, description="Date of birth")
+    postal_code: Optional[str] = Field(None, description="Postal code")
+    city: Optional[str] = Field(None, description="City name")
+    country: Optional[str] = Field(None, description="Country name")
+    religion: Optional[str] = Field(None, description="Religion")
+    category: Optional[str] = Field(None, description="Category or caste")
+    father_name: Optional[str] = Field(None, description="Father’s name")
+    mother_name: Optional[str] = Field(None, description="Mother’s name")
+    pmob_no: Optional[str] = Field(None, description="Parent mobile number")
+    femail_id: Optional[str] = Field(None, description="Parent email address")
+    address: Optional[str] = Field(None, description="Permanent address")
+
+
+class UserProfileResponse(BaseModel):
+    success: bool = Field(..., description="Indicates whether the request succeeded")
+    error: Optional[str] = Field(None, description="Error message if any")
+    data: Optional[UserProfileData] = Field(None, description="User profile data")
+    status_code: int = Field(..., description="HTTP status code of the response")

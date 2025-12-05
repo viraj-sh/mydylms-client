@@ -1,16 +1,17 @@
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, Query
 from fastapi.responses import JSONResponse
-from typing import Dict, Any
+from typing import Optional, Dict, Any
 
 from core.utils import standard_response
 from core.logging import setup_logging
 from core.exceptions import handle_exception
-from services.auth import login, validate_moodle_token, logout
+from services.auth import login, validate_moodle_token, logout, user_profile
 from schema.pydantic_auth import (
     LoginRequest,
     StandardResponse,
     ValidateSessionResponse,
     LogoutResponseModel,
+    UserProfileResponse
 )
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -88,3 +89,25 @@ async def logout_endpoint() -> JSONResponse:
         )
     except Exception as exc:
         return handle_exception(logger, exc, context="logout_endpoint")
+
+
+@router.get(
+    "/profile",
+    response_model=UserProfileResponse,
+    operation_id="getUserProfile",
+)
+async def get_user_profile(
+    refetch: Optional[bool] = Query(
+        False, description="Bypass cache and refetch fresh data"
+    )
+):
+
+    logger = setup_logging(name="api.get_user_profile", level="INFO")
+
+    try:
+        result = user_profile(refetch=refetch)
+
+        return JSONResponse(content=result, status_code=result.get("status_code", 200))
+
+    except Exception as exc:
+        return handle_exception(logger, exc, context="get_user_profile")

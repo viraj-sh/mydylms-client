@@ -55,6 +55,7 @@ mcp = FastApiMCP(
         "logoutUser",
         "get_semesters_list",
         "get_courses_in_semester",
+        "getUserProfile",
     ],
 )
 mcp.mount_http()
