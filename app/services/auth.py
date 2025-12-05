@@ -173,3 +173,95 @@ def validate_moodle_token() -> Dict[str, Any]:
 
     except Exception as exc:
         return handle_exception(logger, exc, context="validate_moodle_token")
+
+def logout() -> Dict[str, Any]:
+    log_prefix = "[MoodleAPI] "
+    logger = setup_logging(name="core.logout_moodle", level="INFO")
+
+    try:
+        # Fetch credentials
+        token = EnvManager.get("MOODLE_COOKIE", default=None)
+        sesskey = EnvManager.get("MOODLE_SESSKEY", default=None)
+        logger.info(f"{log_prefix}Initiating logout process...")
+
+        # If sesskey missing, skip logout request but still cleanup
+        if not sesskey:
+            logger.warning(f"{log_prefix}No sesskey found. Performing cleanup anyway.")
+            for key in [
+                "MOODLE_COOKIE",
+                "MOODLE_SESSKEY",
+                "MOODLE_USER_ID",
+                "MOODLE_WEB_KEY",
+                "MOODLE_FEATURES_KEY",
+                "MOODLE_MY_KEY",
+            ]:
+                try:
+                    EnvManager.unset(key)
+                    logger.info(f"{log_prefix}Unset environment key: {key}")
+                except Exception as e:
+                    logger.warning(f"{log_prefix}Failed to unset {key}: {e}")
+
+            return standard_response(
+                success=False,
+                error="No active Moodle session found. Environment cleared.",
+                status_code=400,
+            )
+
+        # Attempt Moodle logout
+        logout_url = f"https://mydy.dypatil.edu/rait/login/logout.php?sesskey={sesskey}"
+        session = requests.Session()
+        if token:
+            session.cookies.set("MoodleSession", token)
+
+        logger.info(f"{log_prefix}Sending logout request to {logout_url}")
+        response = session.get(logout_url, timeout=10)
+        response.raise_for_status()
+
+        # Verify if logout succeeded
+        logger.info(
+            f"{log_prefix}Verifying logout status via validate_moodle_token()..."
+        )
+        validation_result = validate_moodle_token()
+
+        if validation_result.get("success", False):
+            # Token still valid → logout unsuccessful
+            logger.warning(f"{log_prefix}Logout request sent, but token still valid.")
+            return standard_response(
+                success=False,
+                error="Logout request failed; session still active.",
+                status_code=400,
+            )
+
+        # Logout successful — cleanup all Moodle-related env vars
+        logger.info(f"{log_prefix}Logout verified. Performing cleanup...")
+        for key in [
+            "MOODLE_COOKIE",
+            "MOODLE_SESSKEY",
+            "MOODLE_USER_ID",
+            "MOODLE_WEB_KEY",
+            "MOODLE_FEATURES_KEY",
+            "MOODLE_MY_KEY",
+        ]:
+            try:
+                EnvManager.unset(key)
+                logger.info(f"{log_prefix}Unset environment key: {key}")
+            except Exception as e:
+                logger.warning(f"{log_prefix}Failed to unset {key}: {e}")
+
+        logger.info(f"{log_prefix}Logout successful and environment cleared.")
+        return standard_response(
+            success=True,
+            data={"message": "Logout successful and environment cleared."},
+            status_code=200,
+        )
+
+    except requests.RequestException as req_err:
+        logger.warning(f"{log_prefix}Network or HTTP error during logout: {req_err}")
+        return standard_response(
+            success=False,
+            error="Network or server error during logout.",
+            status_code=502,
+        )
+
+    except Exception as exc:
+        return handle_exception(logger, exc, context="logout_moodle")

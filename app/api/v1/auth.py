@@ -5,8 +5,13 @@ from typing import Dict, Any
 from core.utils import standard_response
 from core.logging import setup_logging
 from core.exceptions import handle_exception
-from services.auth import login, validate_moodle_token
-from schema.pydantic_auth import LoginRequest, StandardResponse, ValidateSessionResponse
+from services.auth import login, validate_moodle_token, logout
+from schema.pydantic_auth import (
+    LoginRequest,
+    StandardResponse,
+    ValidateSessionResponse,
+    LogoutResponseModel,
+)
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -24,8 +29,6 @@ async def login_user(
         result: Dict[str, Any] = login(
             user_email=payload.user_email, password=payload.password
         )
-
-        # Ensure valid response structure
         if not isinstance(result, dict) or "status_code" not in result:
             logger.warning("[AuthAPI] Unexpected return format from core.login()")
             result = standard_response(
@@ -42,7 +45,7 @@ async def login_user(
         )
 
 
-@router.post(
+@router.get(
     "/validate-session",
     response_model=ValidateSessionResponse,
     operation_id="validateMoodleSession",
@@ -67,3 +70,21 @@ def validate_session_endpoint() -> JSONResponse:
 
     except Exception as exc:
         return handle_exception(logger, exc, context="validate_session_endpoint")
+
+
+@router.post(
+    "/logout",
+    response_model=LogoutResponseModel,
+    operation_id="logoutUser",
+)
+async def logout_endpoint() -> JSONResponse:
+    logger = setup_logging(name="api.logout")
+
+    try:
+        result: Dict[str, Any] = logout()
+        return JSONResponse(
+            content=result,
+            status_code=result.get("status_code", 200),
+        )
+    except Exception as exc:
+        return handle_exception(logger, exc, context="logout_endpoint")

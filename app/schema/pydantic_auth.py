@@ -39,3 +39,26 @@ class ValidateSessionResponse(BaseModel):
     status_code: int = Field(
         ..., description="HTTP-like status code returned by the core function."
     )
+class LogoutResponseModel(BaseModel):
+    success: bool = Field(
+        ..., description="Indicates if the logout operation succeeded."
+    )
+    error: Optional[str] = Field(
+        None, description="Error details if the logout failed."
+    )
+    data: Optional[Dict[str, Any]] = Field(
+        None, description="Payload data, usually a message or status info."
+    )
+    status_code: int = Field(
+        ..., description="HTTP status code representing the result."
+    )
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "success": True,
+                "error": None,
+                "data": {"message": "Logout successful and environment cleared."},
+                "status_code": 200,
+            }
+        }
