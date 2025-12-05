@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, Dict, Any
+from typing import Optional, Any, Dict, List
 
 
 @dataclass
@@ -25,7 +25,6 @@ class UserProfile:
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> Optional["UserProfile"]:
-        """Parses and validates raw profile data."""
         required = ["user_name", "roll_no"]
         if not all(k in data and data[k] for k in required):
             return None

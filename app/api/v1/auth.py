@@ -73,7 +73,7 @@ def validate_session_endpoint() -> JSONResponse:
         return handle_exception(logger, exc, context="validate_session_endpoint")
 
 
-@router.post(
+@router.delete(
     "/logout",
     response_model=LogoutResponseModel,
     operation_id="logoutUser",

@@ -5,6 +5,9 @@ import logging
 from api.v1.system import router as system_router
 from api.v1.auth import router as auth_router
 from api.v1.semester import router as semester_router
+from api.v1.course import router as course_router
+from api.v1.docs import router as docs_router
+from api.v1.attendance import router as attendance_router
 from core.logging import setup_logging
 from core.utils import frontend_path
 from fastapi_mcp import FastApiMCP
@@ -44,6 +47,9 @@ logger.info("Application startup complete")
 app.include_router(system_router, prefix="/api/v1")
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(semester_router, prefix="/api/v1")
+app.include_router(course_router, prefix="/api/v1")
+app.include_router(docs_router, prefix="/api/v1")
+app.include_router(attendance_router, prefix="/api/v1")
 
 mcp = FastApiMCP(
     app,
@@ -56,6 +62,9 @@ mcp = FastApiMCP(
         "get_semesters_list",
         "get_courses_in_semester",
         "getUserProfile",
+        "get_course_contents_endpoint",
+        "getCourseDocument",
+        "getAttendanceData",
     ],
 )
 mcp.mount_http()

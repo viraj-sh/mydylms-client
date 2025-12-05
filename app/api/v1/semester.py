@@ -51,7 +51,6 @@ async def get_semesters_endpoint(
 
 @router.get(
     "/{sem_no}/course",
-    summary="Get all courses in a given semester",
     response_model=SemesterCourseResponse,
     operation_id="get_courses_in_semester",
 )
