@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Path
 from fastapi.responses import JSONResponse
 from typing import Any, Dict
 
@@ -9,9 +9,10 @@ from core.exceptions import handle_exception
 from schema.pydantic_semester import (
     GetSemestersRequest,
     GetSemestersResponse,
+    SemesterCourseResponse
 )
 
-from services.semester import get_semesters
+from services.semester import get_semesters, get_courses_in_semester
 
 
 router = APIRouter(
@@ -46,3 +47,27 @@ async def get_semesters_endpoint(
 
     except Exception as exc:
         return handle_exception(logger, exc, context="get_semesters_endpoint")
+
+
+@router.get(
+    "/{sem_no}/course",
+    summary="Get all courses in a given semester",
+    response_model=SemesterCourseResponse,
+    operation_id="get_courses_in_semester",
+)
+async def get_courses_in_semester_endpoint(
+    sem_no: int = Path(
+        ..., description="Semester number (1-indexed or negative for reverse indexing)"
+    ),
+    refetch: bool = Query(
+        False, description="If true, re-fetch semester data bypassing cache."
+    ),
+) -> JSONResponse:
+    logger = setup_logging(name="api.get_courses_in_semester", level="INFO")
+
+    try:
+        result = get_courses_in_semester(sem_no=sem_no, refetch=refetch)
+        return JSONResponse(content=result, status_code=result.get("status_code", 200))
+
+    except Exception as exc:
+        return handle_exception(logger, exc, context="get_courses_in_semester_endpoint")

@@ -54,6 +54,7 @@ mcp = FastApiMCP(
         "validateMoodleSession",
         "logoutUser",
         "get_semesters_list",
+        "get_courses_in_semester",
     ],
 )
 mcp.mount_http()

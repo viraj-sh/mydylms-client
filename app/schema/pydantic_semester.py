@@ -25,3 +25,12 @@ class GetSemestersResponse(BaseModel):
         None, description="List of semesters and subjects"
     )
     status_code: int = Field(..., description="HTTP status code of the response")
+class SemesterCourseResponse(BaseModel):
+    success: bool = Field(
+        ..., description="Indicates whether the request was successful."
+    )
+    error: Optional[str] = Field(None, description="Error message, if any.")
+    data: Optional[Any] = Field(None, description="Semester course data or details.")
+    status_code: int = Field(
+        ..., description="HTTP status code representing the result."
+    )

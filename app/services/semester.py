@@ -110,3 +110,53 @@ def get_semesters(refetch: bool = False) -> Dict[str, Any]:
 
     except Exception as exc:
         return handle_exception(logger, exc, context="get_semesters")
+
+
+def get_courses_in_semester(sem_no: int, refetch: bool = False) -> Dict[str, Any]:
+    log_prefix = "[MoodleAPI] "
+    logger = setup_logging(name="core.get_courses_in_semester", level="INFO")
+
+    try:
+        token = EnvManager.get("MOODLE_COOKIE", default=None)
+        if not token:
+            logger.warning(f"{log_prefix}Missing Moodle token in environment.")
+            return standard_response(False, error="User not logged in", status_code=401)
+
+        semesters_response = get_semesters(refetch=refetch)
+        if not semesters_response.get("success", False):
+            logger.warning(
+                f"{log_prefix}Failed to fetch semesters: {semesters_response.get('error')}"
+            )
+            return standard_response(
+                False, error="Failed to fetch semesters", status_code=500
+            )
+
+        semesters_data = semesters_response.get("data")
+        if not isinstance(semesters_data, list):
+            logger.warning(f"{log_prefix}Invalid semesters data structure.")
+            return standard_response(
+                False, error="Invalid semesters data structure", status_code=500
+            )
+
+        if len(semesters_data) == 0:
+            logger.info(f"{log_prefix}No semesters found for the user.")
+            return standard_response(False, error="No semesters found", status_code=404)
+
+        total = len(semesters_data)
+
+        index = total + sem_no if sem_no < 0 else sem_no - 1
+        if index < 0 or index >= total:
+            logger.warning(f"{log_prefix}Invalid semester number: {sem_no}")
+            return standard_response(
+                False, error="Invalid semester number", status_code=400
+            )
+
+        semester = semesters_data[index]
+        logger.info(
+            f"{log_prefix}Fetched semester data successfully for sem_no={sem_no}"
+        )
+
+        return standard_response(True, data=semester, status_code=200)
+
+    except Exception as exc:
+        return handle_exception(logger, exc, context="get_courses_in_semester")
