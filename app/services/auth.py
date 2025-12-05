@@ -2,19 +2,18 @@ from typing import Optional, Any, Dict
 from datetime import timedelta
 import re
 import requests
+from requests.adapters import HTTPAdapter, Retry
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, parse_qs
 from core.utils import EnvManager, standard_response
 from core.logging import setup_logging
 from core.exceptions import handle_exception
 
-
 def login(user_email: str, password: str) -> Dict[str, Any]:
     log_prefix = "[MoodleAPI] "
     logger = setup_logging(name="core.moodle_login", level="INFO")
 
     try:
-        # --- Step 1: Initial login ---
         url_login = "https://mydy.dypatil.edu/rait/login/index.php"
         payload = {
             "uname_static": user_email,
@@ -43,7 +42,6 @@ def login(user_email: str, password: str) -> Dict[str, Any]:
                 False, error="Unexpected login response", status_code=400
             )
 
-        # --- Step 2: Extract sesskey ---
         sesskey_match = re.search(r'sesskey["\'=:\s>]+([a-zA-Z0-9]{8,})', html)
         sesskey = sesskey_match.group(1) if sesskey_match else None
 
@@ -51,7 +49,6 @@ def login(user_email: str, password: str) -> Dict[str, Any]:
             logger.warning(f"{log_prefix}Sesskey not found in HTML response.")
             return standard_response(False, error="Sesskey not found", status_code=400)
 
-        # --- Step 3: Extract user_id ---
         user_id_match = re.search(r"/user/profile\.php\?id=(\d+)", html)
         user_id = int(user_id_match.group(1)) if user_id_match else None
 
@@ -59,7 +56,6 @@ def login(user_email: str, password: str) -> Dict[str, Any]:
             logger.warning(f"{log_prefix}User ID not found in HTML response.")
             return standard_response(False, error="User ID not found", status_code=400)
 
-        # --- Step 4: Fetch security keys ---
         url_keys = (
             f"https://mydy.dypatil.edu/rait/user/managetoken.php?sesskey={sesskey}"
         )
@@ -77,13 +73,11 @@ def login(user_email: str, password: str) -> Dict[str, Any]:
             if re.fullmatch(r"[a-fA-F0-9]{32}", cell.get_text(strip=True))
         ]
 
-        # Pad to 3 elements if fewer found
         while len(keys) < 3:
             keys.append(None)
 
         web_key, features_key, my_key = keys[:3]
 
-        # --- Step 5: Store everything in EnvManager ---
         logger.info(f"{log_prefix}Storing session data in EnvManager")
         EnvManager.set("MOODLE_COOKIE", session.cookies.get("MoodleSession"))
         EnvManager.set("MOODLE_SESSKEY", sesskey)
@@ -107,3 +101,75 @@ def login(user_email: str, password: str) -> Dict[str, Any]:
 
     except Exception as exc:
         return handle_exception(logger, exc, context="moodle_login")
+
+
+def validate_moodle_token() -> Dict[str, Any]:
+    log_prefix = "[MoodleAPI] "
+    logger = setup_logging(name="core.validate_moodle_token", level="INFO")
+
+    try:
+        token: Optional[str] = EnvManager.get("MOODLE_COOKIE", default=None)
+        if not token:
+            logger.warning(f"{log_prefix}Missing MOODLE_COOKIE in environment.")
+            return standard_response(
+                success=False,
+                error="Missing Moodle token in environment (MOODLE_COOKIE).",
+                status_code=400,
+            )
+
+        retry_strategy = Retry(
+            total=5,
+            connect=5,
+            read=5,
+            backoff_factor=1,
+            status_forcelist=[502, 503, 504, 408],
+            allowed_methods=["HEAD", "GET", "OPTIONS"],
+            raise_on_status=False,
+        )
+        adapter = HTTPAdapter(max_retries=retry_strategy)
+        session = requests.Session()
+        session.mount("https://", adapter)
+        session.mount("http://", adapter)
+
+        url = "https://mydy.dypatil.edu/rait/my"
+        session.cookies.set("MoodleSession", token)
+
+        logger.info(f"{log_prefix}Validating Moodle token via {url}...")
+        response = session.get(url, timeout=10)
+        response.raise_for_status()
+
+        html = response.text
+
+        if "Academic Status" in html:
+            logger.info(f"{log_prefix}Token validation successful.")
+            return standard_response(
+                success=True,
+                data={"valid": True, "url": url},
+                status_code=200,
+            )
+
+        if "notloggedin" in html or "Login" in html:
+            logger.warning(f"{log_prefix}Token appears invalid or expired.")
+            return standard_response(
+                success=False,
+                error="Invalid or expired Moodle token.",
+                status_code=401,
+            )
+
+        logger.warning(f"{log_prefix}Unable to determine token validity.")
+        return standard_response(
+            success=False,
+            error="Unable to determine Moodle token validity.",
+            status_code=400,
+        )
+
+    except requests.RequestException as req_err:
+        logger.warning(f"{log_prefix}Network or HTTP error: {req_err}")
+        return standard_response(
+            success=False,
+            error=f"Network or request error: {str(req_err)}",
+            status_code=502,
+        )
+
+    except Exception as exc:
+        return handle_exception(logger, exc, context="validate_moodle_token")

@@ -49,6 +49,7 @@ mcp = FastApiMCP(
         "get_system_info",
         "check_system_health",
         "login_user",
+        "validateMoodleSession",
     ],
 )
 mcp.mount_http()

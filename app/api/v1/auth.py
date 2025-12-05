@@ -5,8 +5,8 @@ from typing import Dict, Any
 from core.utils import standard_response
 from core.logging import setup_logging
 from core.exceptions import handle_exception
-from services.auth import login
-from schema.pydantic_auth import LoginRequest, StandardResponse
+from services.auth import login, validate_moodle_token
+from schema.pydantic_auth import LoginRequest, StandardResponse, ValidateSessionResponse
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -40,3 +40,30 @@ async def login_user(
         return JSONResponse(
             content=error_response, status_code=error_response.get("status_code", 500)
         )
+
+
+@router.post(
+    "/validate-session",
+    response_model=ValidateSessionResponse,
+    operation_id="validateMoodleSession",
+)
+def validate_session_endpoint() -> JSONResponse:
+    logger = setup_logging(name="api.validate_session", level="INFO")
+    log_prefix = "[MoodleAPI] "
+
+    try:
+        logger.info(f"{log_prefix}Incoming /validate-session request...")
+        result: Dict[str, Any] = validate_moodle_token()
+        if not isinstance(result, dict):
+            logger.warning(
+                f"{log_prefix}Unexpected non-dict response from core function."
+            )
+            result = standard_response(
+                success=False,
+                error="Internal server error: invalid core response.",
+                status_code=500,
+            )
+        return JSONResponse(content=result, status_code=result.get("status_code", 200))
+
+    except Exception as exc:
+        return handle_exception(logger, exc, context="validate_session_endpoint")

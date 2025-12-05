@@ -1,6 +1,5 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
 from typing import Optional, Any, Dict
-
 
 class LoginRequest(BaseModel):
     user_email: str = Field(..., description="User's Moodle email address")
@@ -25,3 +24,18 @@ class StandardResponse(BaseModel):
     error: Optional[str] = Field(None, description="Error message if any")
     data: Optional[Dict[str, Any]] = Field(None, description="Response data payload")
     status_code: int = Field(..., description="HTTP status code")
+
+
+class ValidateSessionResponse(BaseModel):
+    success: bool = Field(
+        ..., description="Indicates whether the validation was successful."
+    )
+    error: Optional[str] = Field(
+        None, description="Error message if validation failed."
+    )
+    data: Optional[Dict[str, Any]] = Field(
+        None, description="Contains validation result data."
+    )
+    status_code: int = Field(
+        ..., description="HTTP-like status code returned by the core function."
+    )
