@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const API_BASE_URL = "/api/v1";
     try {
-        const tokenCheck = await fetch(`${API_BASE_URL}/auth/token`, {
+        const tokenCheck = await fetch(`${API_BASE_URL}/auth/validate-session`, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
         });
@@ -70,11 +70,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             // 4. Validate successful login structure
             if (
-                data.status === "success" &&
+                data.success === true &&
                 data.data &&
-                data.data.status === "success" &&
                 data.data.cookie &&
                 data.data.sesskey &&
+                data.data.web_key &&
+                data.data.features_key &&
+                data.data.my_key &&
                 data.data.user_id
             ) {
                 // Store session info
@@ -85,32 +87,32 @@ document.addEventListener("DOMContentLoaded", async () => {
                 showMessage("Login successful! Fetching credentials...", "success");
 
                 // 5. Call /auth/creds before redirecting
-                try {
-                    const credsRes = await fetch(`${API_BASE_URL}/auth/creds`, {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${data.data.sesskey}`,
-                        },
-                        credentials: "include",
-                    });
+                // try {
+                //     const credsRes = await fetch(`${API_BASE_URL}/auth/creds`, {
+                //         method: "GET",
+                //         headers: {
+                //             "Content-Type": "application/json",
+                //             "Authorization": `Bearer ${data.data.sesskey}`,
+                //         },
+                //         credentials: "include",
+                //     });
 
-                    const credsData = await credsRes.json().catch(() => null);
+                //     const credsData = await credsRes.json().catch(() => null);
 
-                    if (!credsRes.ok || !credsData) {
-                        showMessage("Failed to initialize user credentials. Please try again.", "error");
-                        return;
-                    }
+                //     if (!credsRes.ok || !credsData) {
+                //         showMessage("Failed to initialize user credentials. Please try again.", "error");
+                //         return;
+                //     }
 
-                    // Success — all steps complete
-                    showMessage("Login successful! Redirecting...", "success");
-                    setTimeout(() => {
-                        window.location.href = "/static/pages/dashboard.html";
-                    }, 1000);
-                } catch (credsErr) {
-                    console.error("Error fetching /auth/creds:", credsErr);
-                    showMessage("Error initializing credentials. Please try again.", "error");
-                }
+                //     // Success — all steps complete
+                //     showMessage("Login successful! Redirecting...", "success");
+                //     setTimeout(() => {
+                //         window.location.href = "/static/pages/dashboard.html";
+                //     }, 1000);
+                // } catch (credsErr) {
+                //     console.error("Error fetching /auth/creds:", credsErr);
+                //     showMessage("Error initializing credentials. Please try again.", "error");
+                // }
             } else {
                 showMessage("Login failed. Please try again.", "error");
             }

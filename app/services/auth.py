@@ -11,21 +11,21 @@ from core.exceptions import handle_exception
 from core.cache import cached_request, invalidate_cache
 from .model.model_auth import UserProfile
 
-def login(user_email: str, password: str) -> Dict[str, Any]:
+def login(email: str, password: str) -> Dict[str, Any]:
     log_prefix = "[MoodleAPI] "
     logger = setup_logging(name="core.moodle_login", level="INFO")
 
     try:
         url_login = "https://mydy.dypatil.edu/rait/login/index.php"
         payload = {
-            "uname_static": user_email,
-            "username": user_email,
-            "uname": user_email,
+            "uname_static": email,
+            "username": email,
+            "uname": email,
             "password": password,
         }
 
         session = requests.Session()
-        logger.info(f"{log_prefix}Attempting Moodle login for {user_email}")
+        logger.info(f"{log_prefix}Attempting Moodle login for {email}")
 
         response = session.post(
             url_login, data=payload, allow_redirects=True, timeout=15
@@ -33,7 +33,7 @@ def login(user_email: str, password: str) -> Dict[str, Any]:
         html = response.text
 
         if "Invalid login, please try again" in html:
-            logger.warning(f"{log_prefix}Invalid login credentials for {user_email}")
+            logger.warning(f"{log_prefix}Invalid login credentials for {email}")
             return standard_response(
                 False, error="Invalid credentials", status_code=401
             )

@@ -26,10 +26,8 @@ async def login_user(
 ) -> JSONResponse:
     logger = setup_logging(name="auth_router.login", level="INFO")
     try:
-        logger.info(f"[AuthAPI] Login attempt for user: {payload.user_email}")
-        result: Dict[str, Any] = login(
-            user_email=payload.user_email, password=payload.password
-        )
+        logger.info(f"[AuthAPI] Login attempt for user: {payload.email}")
+        result: Dict[str, Any] = login(email=payload.email, password=payload.password)
         if not isinstance(result, dict) or "status_code" not in result:
             logger.warning("[AuthAPI] Unexpected return format from core.login()")
             result = standard_response(

@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from typing import Optional, Any, Dict
 
 class LoginRequest(BaseModel):
-    user_email: str = Field(..., description="User's Moodle email address")
+    email: str = Field(..., description="User's Moodle email address")
     password: str = Field(
         ..., min_length=3, description="User's Moodle account password"
     )
