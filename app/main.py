@@ -4,6 +4,7 @@ import logging
 
 from api.v1.system import router as system_router
 from api.v1.auth import router as auth_router
+from api.v1.semester import router as semester_router
 from core.logging import setup_logging
 from core.utils import frontend_path
 from fastapi_mcp import FastApiMCP
@@ -42,6 +43,7 @@ logger.info("Application startup complete")
 # Include routers
 app.include_router(system_router, prefix="/api/v1")
 app.include_router(auth_router, prefix="/api/v1")
+app.include_router(semester_router, prefix="/api/v1")
 
 mcp = FastApiMCP(
     app,
@@ -51,6 +53,7 @@ mcp = FastApiMCP(
         "login_user",
         "validateMoodleSession",
         "logoutUser",
+        "get_semesters_list",
     ],
 )
 mcp.mount_http()
