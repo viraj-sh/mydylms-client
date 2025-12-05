@@ -19,7 +19,13 @@ def get_assets_dir():
 
 ASSETS_DIR = get_assets_dir()
 ENV_PATH = ".env"
-
+# ASCII COLORS
+RESET = "\033[0m"
+BOLD = "\033[1m"
+FG_RED = "\033[31m"
+FG_WHITE = "\033[97m"
+FG_GREEN = "\033[32m"
+FG_YELLOW = "\033[33m"
 
 class EnvManager:
     path: Path = Path(ENV_PATH).resolve()

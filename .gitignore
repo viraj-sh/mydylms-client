@@ -1,8 +1,6 @@
-app/core/__pycache__
-app/schema/__pycache__
-app/__pycache__
-app/api/v1/__pycache__
-test/__pycache__
+*/*/__pycache__
+*/__pycache__
+*/*/*/__pycache__
 static/.hash_mapping.json
 static/notes.md
 static/hash.py
