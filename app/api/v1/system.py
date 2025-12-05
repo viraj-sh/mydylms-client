@@ -19,9 +19,10 @@ router = APIRouter(tags=["System"])
 )
 def home():
     return MessageResponse(
-        status="success",
-        data=MessageData(message="Unofficial mydylms API"),
-        errors=[],
+        success=True,
+        data=MessageData(message="Unofficial mydylms API - v1"),
+        error=None,
+        status_code=200,
     )
 
 
@@ -33,16 +34,14 @@ def home():
 )
 def health_check():
     return HealthResponse(
-        status="success",
+        success=True,
         data=HealthData(status="OK"),
-        errors=[],
+        error=None,
+        status_code=200,
     )
 
 
 @router.get("/favicon.ico", include_in_schema=False)
 async def favicon():
-    path = os.path.join(ASSETS_DIR, "favicon.ico")
-    if not os.path.exists(path):
-        import logging
-        logging.warning(f"favicon not found: {path}")
-    return FileResponse(path)
+    print(os.path.join(ASSETS_DIR, "favicon.ico"))
+    return FileResponse(os.path.join(ASSETS_DIR, "favicon.ico"))

@@ -1,32 +1,24 @@
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Optional
 
 
 class MessageData(BaseModel):
-    message: str = Field(
-        ..., description="A human-readable message describing the response"
-    )
+    message: str = Field(...)
 
 
 class MessageResponse(BaseModel):
-    status: str = Field(
-        ..., description="Status of the response, e.g., 'success' or 'error'"
-    )
-    data: MessageData = Field(..., description="Payload containing the response data")
-    errors: List[str] = Field(
-        default_factory=list, description="List of error messages if any"
-    )
+    success: bool = Field(...)
+    data: MessageData = Field(...)
+    error: Optional[str] = Field(None)
+    status_code: int = Field(...)
 
 
 class HealthData(BaseModel):
-    status: str = Field(..., description="Current health status of the system")
+    status: str = Field(...)
 
 
 class HealthResponse(BaseModel):
-    status: str = Field(
-        ..., description="Status of the response, e.g., 'success' or 'error'"
-    )
-    data: HealthData = Field(..., description="Payload containing health information")
-    errors: List[str] = Field(
-        default_factory=list, description="List of error messages if any"
-    )
+    success: bool = Field(...)
+    data: HealthData = Field(...)
+    error: Optional[str] = Field(None)
+    status_code: int = Field(...)

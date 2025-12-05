@@ -1,9 +1,7 @@
 import os
-import json
-import requests
 from pathlib import Path
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
+from dotenv import load_dotenv, set_key
+from typing import Any, Optional
 import sys
 
 
@@ -18,78 +16,61 @@ def get_assets_dir():
             "assets",
         )
 
+
 ASSETS_DIR = get_assets_dir()
-
-ENV_FILE = Path(".env")
-DATA_DIR = Path("data")
-PROFILE_CACHE_NAME = "user_profile"
-PROFILE_TTL_HOURS = 12
-
-SEM_CACHE_NAME = "semesters"
-SEM_TTL_HOURS = 6
-COURSE_CACHE_PREFIX = "course_"
-COURSE_TTL_HOURS = 1
-
-OVERALL_TTL = 1  # hour
-COURSES_TTL = 1  # hour
-COURSE_TTL = 0.5  # 30 minutes
-
-NON_DOWNLOADABLE_MODS = {"url"}
-NON_VIEWABLE_MODS = {"url"}
-FRONTEND_VIEWABLE_EXTENSIONS = {".pptx", ".docx"}
-CHUNK_SIZE = 64 * 1024  # 64 KB, tune if desired
-
-# ASCII COLORS
-RESET = "\033[0m"
-BOLD = "\033[1m"
-FG_RED = "\033[31m" 
-FG_WHITE = "\033[97m" 
-FG_GREEN = "\033[32m" 
-FG_YELLOW = "\033[33m" 
-
-def dump_json(data, json_path: Path, indent: int = 4):
-    json_path.parent.mkdir(parents=True, exist_ok=True)
-    with json_path.open("w", encoding="utf-8") as f:
-        json.dump(data, f, indent=indent, ensure_ascii=False)
+ENV_PATH = ".env"
 
 
-def load_json(json_path):
-    json_path = Path(json_path)
-    if not json_path.exists():
-        return None
+class EnvManager:
+    path: Path = Path(ENV_PATH).resolve()
+    _loaded = False
 
-    with json_path.open("r", encoding="utf-8") as f:
-        return json.load(f)
+    @classmethod
+    def _ensure_loaded(cls, force: bool = True):
+        if not cls._loaded or force:
+            if cls.path.exists():
+                load_dotenv(cls.path, override=True)
+            cls._loaded = True
+
+    @classmethod
+    def get(
+        cls, key: str, default: str | None = None, *, force_reload: bool = True
+    ) -> str | None:
+        cls._ensure_loaded(force=force_reload)
+        return os.getenv(key, default)
+
+    @classmethod
+    def set(cls, key: str, value: str) -> None:
+        try:
+            if not cls.path.exists():
+                cls.path.touch()
+            set_key(str(cls.path), key, value)
+            cls._loaded = False  # force reload next time
+        except Exception as e:
+            raise RuntimeError(f"Failed to set environment variable '{key}': {e}")
+
+    @classmethod
+    def unset(cls, key: str) -> None:
+        if cls.path.exists():
+            lines = cls.path.read_text().splitlines()
+            new_lines = [l for l in lines if not l.startswith(f"{key}=")]
+            cls.path.write_text("\n".join(new_lines))
+        os.environ.pop(key, None)
+        cls._loaded = False
 
 
-def retry_session() -> requests.Session:
-    retry_strategy = Retry(
-        total=5,  # increased retries
-        connect=5,  # retry connection errors
-        read=5,  # retry read timeouts
-        backoff_factor=1,  # exponential backoff: 1s, 2s, 4s...
-        status_forcelist=[502, 503, 504, 408],
-        allowed_methods=[
-            "HEAD",
-            "GET",
-            "OPTIONS",
-            "POST",
-        ],  # explicitly allow POST retries
-        raise_on_status=False,  # don't raise immediately, let requests handle it
-    )
-    adapter = HTTPAdapter(max_retries=retry_strategy)
-    session = requests.Session()
-    session.mount("https://", adapter)
-    session.mount("http://", adapter)
-    return session
-
-
-def fetch_html(url: str, token: str):
-    session = requests.Session()
-    session.cookies.set("MoodleSession", token)
-    resp = session.get(url, timeout=10)
-    resp.raise_for_status()
-    return resp.text
+def standard_response(
+    success: bool,
+    error_msg: Optional[str] = None,
+    data: Optional[Any] = None,
+    status_code: int | None = None,
+) -> dict[str, Any]:
+    return {
+        "success": bool(success),
+        "error": error_msg if not success else None,
+        "data": data if success else None,
+        "status_code": status_code,
+    }
 
 
 def resource_path(relative_path: str) -> str:
