@@ -27,7 +27,6 @@ if not args.debug:
     logging.disable(logging.CRITICAL)
     os.environ["MYDYLMS_QUIET"] = "1"
 
-from app.main import app
 from app.core.utils import RESET, BOLD, FG_RED, FG_WHITE, FG_GREEN, FG_YELLOW
 
 def find_free_port(start=8000, end=8100):
@@ -87,6 +86,11 @@ if __name__ == "__main__":
 {FG_WHITE}• Log level:{RESET} debug
 """
         )
+        prev_disable_level = logging.root.manager.disable
+        logging.disable(logging.CRITICAL)
+        from app.main import app  
+        logging.disable(logging.NOTSET)  
+        logging.root.manager.disable = prev_disable_level 
 
         try:
             uvicorn.run(
@@ -104,6 +108,7 @@ if __name__ == "__main__":
         f"""{BOLD}{FG_RED}🚀 Starting application{RESET}
 {FG_WHITE}• Mode:{RESET} {BOLD}QUIET{RESET}"""
     )
+    from app.main import app
 
     logging.getLogger("uvicorn").setLevel(logging.CRITICAL)
     logging.getLogger("uvicorn.error").setLevel(logging.CRITICAL)
