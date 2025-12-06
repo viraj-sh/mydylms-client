@@ -1,11 +1,10 @@
-name: Update README with latest release version
+name: Update README with latest release version (manual)
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
 
 permissions:
-  contents: write  # Needed to push changes back
+  contents: write
 
 jobs:
   update-readme:
@@ -16,43 +15,55 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
-          fetch-tags: true
           ref: ${{ github.event.repository.default_branch }}
+          fetch-tags: true
 
-      - name: Determine version from tag
-        id: get_tag
+      - name: Verify Python and jq installation
         run: |
-          echo "RELEASE_TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
-          echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          python3 --version
+          jq --version
 
-      - name: Update README.md with new version
+      - name: Get latest release tag
+        id: latest
         env:
-          VERSION: ${{ env.RELEASE_TAG }}
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          FILE="README.md"
+          api="https://api.github.com/repos/${GH_REPO}/releases/latest"
+          tag=$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" "$api" | jq -r '.tag_name')
+          if [ -z "${tag}" ] || [ "${tag}" = "null" ]; then
+            echo "Failed to fetch latest release tag" >&2
+            exit 1
+          fi
+          echo "Latest tag: ${tag}"
+          echo "LATEST_TAG=${tag}" >> "$GITHUB_ENV"
 
-          # Windows: releases/download/<tag>/mydylms-client-v<tag>-win-x64.exe
-          sed -i -E "s#(releases/download/)[^/]+(/mydylms-client-v)[^/]+(-win-x64\.exe)#\1${VERSION}\2${VERSION}\3#g" "$FILE"
+      - name: Show current README versions
+        run: |
+          grep -E 'releases/(download|tag)/' README.md || true
 
-          # Linux: handle both releases/download and releases/tag links, optional .tar.gz
-          sed -i -E "s#(releases/(download|tag)/)[^/]+(/mydylms-client-v)[^/]+(-linux-x86__64(\.tar\.gz)?)#\1${VERSION}\3${VERSION}\4#g" "$FILE"
+      - name: Update README.md if needed
+        env:
+          LATEST_TAG: ${{ env.LATEST_TAG }}
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/update_readme_version.py "${LATEST_TAG}"
 
-          # macOS: allow optional .zip suffix
-          sed -i -E "s#(releases/download/)[^/]+(/mydylms-client-v)[^/]+(-macos-arm64(\.zip)?)#\1${VERSION}\2${VERSION}\3#g" "$FILE"
-
-      - name: Commit and push changes
+      - name: Commit and push changes (if any)
         env:
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-          VERSION: ${{ env.RELEASE_TAG }}
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add README.md
-          git diff --staged --quiet && echo "No changes to commit" && exit 0
+          if git diff --quiet README.md; then
+            echo "No changes to commit"
+            exit 0
+          fi
 
-          git commit -m "chore(docs): update download links to ${VERSION}"
+          git add README.md
+          git commit -m "chore(docs): sync README download links to ${LATEST_TAG}"
           git pull --rebase origin "${DEFAULT_BRANCH}"
           git push origin HEAD:"${DEFAULT_BRANCH}"
