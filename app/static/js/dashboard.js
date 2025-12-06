@@ -14,12 +14,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let subjects = [];
     let documents = [];
     let selectedSemester = null;
-    let selectedSubject = null;
+    let selectedSubject = null; // global courseId for selected subject
 
     // Types that should NOT show Download button
     const HIDE_ALL_BUTTONS_TYPES = new Set(["quiz", "forum", "assign"]);
     const HIDE_DOWNLOAD_TYPES = new Set(["url"]);
-    const DIRECT_URL_TYPES = new Set([]);
+    const DIRECT_URL_TYPES = new Set(["url"]); // NEW: open URL mods directly
     const HIDE_ALL_MESSAGE = "Manual Task";
     // Helpers
     function capitalizeFirst(s) {
@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!res.ok) throw new Error("Failed to fetch subjects");
 
             const data = await res.json().catch(() => null);
-            if (!data || data.status !== "success" || !data.data) {
+            if (!data || data.success !== true || !data.data) {
                 showError(subjectGrid, "Unexpected response from server.");
                 return;
             }
@@ -139,7 +139,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     clearActiveSelector(".subject-item");
                     item.classList.add("bg-red-50", "font-semibold");
 
-                    const selectedSubject = item.dataset.sub;
+                    // IMPORTANT: set the global selectedSubject, don't shadow it
+                    selectedSubject = item.dataset.sub;
 
                     // Reset document-related UI
                     documentsContainer.innerHTML = "";
@@ -147,8 +148,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     searchInput.disabled = true;
                     filterSelect.innerHTML = `<option value="all">All</option>`;
                     filterSelect.disabled = true;
+                    dateSort.disabled = true;
 
-                    // ✅ Updated: loadDocuments now only needs subId
+                    // Load documents for the selected subject
                     loadDocuments(selectedSubject);
                 })
             );
@@ -176,7 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!res.ok) throw new Error("Failed to fetch documents");
 
             const data = await res.json().catch(() => null);
-            if (!data || data.status !== "success" || !Array.isArray(data.data)) {
+            if (!data || data.success !== true || !Array.isArray(data.data)) {
                 showError(documentsContainer, "Unexpected server response.");
                 return;
             }
@@ -197,9 +199,12 @@ document.addEventListener("DOMContentLoaded", () => {
             filterSelect.disabled = false;
             searchInput.disabled = false;
             dateSort.disabled = false;
-            dateSort.value = "newToOld"; // Set default to newest first
+            dateSort.value = "newToOld";
 
-            renderDocuments();
+            // Ensure our global is aligned (belt-and-suspenders)
+            selectedSubject = courseId;
+
+            renderDocuments(courseId);
         } catch (err) {
             console.error("loadDocuments:", err);
             showError(documentsContainer, "Error loading documents. Please try again.");
@@ -210,8 +215,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // 4. Render documents
-    function renderDocuments() {
-        if (!documents || !documents.length) {
+    function renderDocuments(courseId) {
+        // If courseId is missing, try the global; otherwise block rendering
+        const effectiveCourseId = courseId || selectedSubject;
+        if (!documents || !documents.length || !effectiveCourseId) {
             showPlaceholder(documentsContainer, "Select a subject to load documents");
             return;
         }
@@ -233,16 +240,15 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Sort documents by time/date
         let finalDocs = [...filtered];
         finalDocs.sort((a, b) => {
             const timeA = a.time || 0;
             const timeB = b.time || 0;
             
             if (dateSort.value === "newToOld") {
-                return timeB - timeA; // Newer first (descending)
+                return timeB - timeA;
             } else {
-                return timeA - timeB; // Older first (ascending)
+                return timeA - timeB; 
             }
         });
 
@@ -272,7 +278,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     break;
                 }
             }
-            // Fallback: strip anything after last '.' if any
             if (clean.includes(".")) {
                 clean = clean.substring(0, clean.lastIndexOf("."));
             }
@@ -282,16 +287,27 @@ document.addEventListener("DOMContentLoaded", () => {
         documentsContainer.innerHTML = finalDocs.map(doc => {
             const modType = (doc.mod || "unknown").toLowerCase();
             const typeLabel = `Type: ${capitalizeFirst(modType)}`;
+
+            // Define docId BEFORE using it
+            const docId = doc.doc_id;
+
             const hideAllButtons = HIDE_ALL_BUTTONS_TYPES.has(modType);
             const hideDownload = HIDE_DOWNLOAD_TYPES.has(modType);
-            const useDirectUrl = DIRECT_URL_TYPES.has(modType);
+
+            // Use direct URL for URL-type mods or when doc_id is missing
+            const useDirectUrl = DIRECT_URL_TYPES.has(modType) || !docId;
+
+            // Guard against missing courseId
+            const safeCourseId = effectiveCourseId;
 
             const viewHref = useDirectUrl
                 ? (doc.doc_url || "#")
-                : (doc.view_id ? `${API_BASE_URL}/doc/${doc.view_id}?action=view` : "#");
+                : (docId && safeCourseId
+                    ? `${API_BASE_URL}/course/${safeCourseId}/doc?doc_id=${docId}&action=view`
+                    : "#");
 
-            const downloadHref = doc.view_id
-                ? `${API_BASE_URL}/doc/${doc.view_id}?action=download`
+            const downloadHref = (!hideDownload && docId && safeCourseId)
+                ? `${API_BASE_URL}/course/${safeCourseId}/doc?doc_id=${docId}&action=download`
                 : "#";
 
             const displayName = cleanFileName(doc.doc_name || doc.module || "Untitled");
@@ -305,16 +321,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="text-xs text-gray-500">View ID: ${doc.view_id || "N/A"}</div>
                     <div class="flex gap-3">
                         ${hideAllButtons
-                    ? `<span class="text-gray-400 text-sm italic">${HIDE_ALL_MESSAGE}</span>`
-                    : `
-                                    <a href="${viewHref}" target="_blank" rel="noopener noreferrer" class="text-red-700 font-medium hover:underline text-sm">View</a>
-                                    ${hideDownload ? "" : `<a href="${downloadHref}" class="text-red-700 font-medium hover:underline text-sm">Download</a>`}
-                                `
-                }
+                            ? `<span class="text-gray-400 text-sm italic">${HIDE_ALL_MESSAGE}</span>`
+                            : `
+                                <a href="${viewHref}" target="_blank" rel="noopener noreferrer" class="text-red-700 font-medium hover:underline text-sm">View</a>
+                                ${hideDownload ? "" : `<a href="${downloadHref}" class="text-red-700 font-medium hover:underline text-sm">Download</a>`}
+                              `
+                        }
                     </div>
                 </div>
             </div>
-        `;
+            `;
         }).join("");
     }
 
@@ -322,9 +338,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // 5. Event listeners
-    searchInput.addEventListener("input", renderDocuments);
-    filterSelect.addEventListener("change", renderDocuments);
-    dateSort.addEventListener("change", renderDocuments);
+    searchInput.addEventListener("input", () => renderDocuments(selectedSubject));
+    filterSelect.addEventListener("change", () => renderDocuments(selectedSubject));
+    dateSort.addEventListener("change", () => renderDocuments(selectedSubject));
 
     // Init
     loadSemesters();

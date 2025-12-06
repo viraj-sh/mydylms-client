@@ -140,7 +140,6 @@ def course_att(altid: str, refetch: bool = False) -> Dict[str, Any]:
 
         for row in rows:
             cells = row.find_all("td")
-            print(cells)
             if len(cells) < 5:
                 continue
             status_cell = cells[4]

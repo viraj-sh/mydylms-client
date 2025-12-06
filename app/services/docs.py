@@ -9,6 +9,7 @@ from core.logging import setup_logging
 from core.cache import cached_request, invalidate_cache
 from core.exceptions import handle_exception
 from urllib.parse import urlparse, unquote
+import mimetypes
 from core.utils import (
     NON_DOWNLOADABLE_MODS,
     NON_VIEWABLE_MODS,
@@ -120,15 +121,6 @@ def fetch_course_document(
         if action is None:
             return standard_response(True, data=found_doc_data, status_code=200)
 
-        moodle_key = EnvManager.get("MOODLE_COOKIE", default=None)
-        logger.info(f"{log_prefix}Using MOODLE_COOKIE")
-
-        if not moodle_key:
-            return standard_response(
-                False, error="Missing MOODLE_COOKIE in environment", status_code=401
-            )
-
-        doc_url = f"{doc.doc_url}?token={moodle_key}"
         mod = getattr(doc, "mod", None)
         doc_name = doc.doc_name or "file"
         file_ext = doc_name.lower().split(".")[-1] if "." in doc_name else ""
@@ -137,6 +129,12 @@ def fetch_course_document(
             if mod in NON_DOWNLOADABLE_MODS:
                 return RedirectResponse(url=doc.doc_url)
 
+            moodle_key = EnvManager.get("MOODLE_COOKIE", default=None)
+            if not moodle_key:
+                return standard_response(
+                    False, error="Missing MOODLE_COOKIE in environment", status_code=401
+                )
+            doc_url = f"{doc.doc_url}?token={moodle_key}"
             if "forcedownload=1" not in doc_url:
                 sep = "&" if "?" in doc_url else "?"
                 doc_url = f"{doc_url}{sep}forcedownload=1"
@@ -149,10 +147,19 @@ def fetch_course_document(
                 raise HTTPException(
                     status_code=400, detail=f"Error downloading file: {e}"
                 )
+
         if action == "view":
             if mod in NON_VIEWABLE_MODS:
-                return RedirectResponse(url=doc_url)
+                # Non-viewable mods (e.g., external links): just redirect to raw doc_url
+                return RedirectResponse(url=doc.doc_url)
+
             if file_ext in FRONTEND_VIEWABLE_EXTENSIONS:
+                moodle_key = EnvManager.get("MOODLE_COOKIE", default=None)
+                doc_url = (
+                    f"{doc.doc_url}?token={moodle_key}"
+                    if moodle_key
+                    else doc.doc_url
+                )
                 mime_type = _guess_media_type(doc_name)
                 return JSONResponse(
                     content={
@@ -167,6 +174,12 @@ def fetch_course_document(
                     }
                 )
 
+            moodle_key = EnvManager.get("MOODLE_COOKIE", default=None)
+            if not moodle_key:
+                return standard_response(
+                    False, error="Missing MOODLE_COOKIE in environment", status_code=401
+                )
+            doc_url = f"{doc.doc_url}?token={moodle_key}"
             try:
                 return _stream_file_with_token(doc_url, inline=True)
             except HTTPException:

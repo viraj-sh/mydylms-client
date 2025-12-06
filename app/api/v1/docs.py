@@ -8,7 +8,7 @@ from core.utils import standard_response
 from services.docs import fetch_course_document
 from schema.pydantic_docs import StandardResponseModel, CourseDocumentModel
 
-router = APIRouter(prefix="/api", tags=["Documents"])
+router = APIRouter(prefix="", tags=["Documents"])
 
 logger = setup_logging(name="api.doc_router", level="INFO")
 

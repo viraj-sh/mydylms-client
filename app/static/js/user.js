@@ -14,10 +14,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Fetch user info
     try {
-        const res = await fetch(`${API_BASE_URL}/auth/me`);
+        const res = await fetch(`${API_BASE_URL}/auth/profile`);
         const data = await res.json();
 
-        if (data.status === "success" && data.data?.user_name) {
+        if (data.success === true && data.data?.user_name) {
             userNameDisplay.textContent = data.data.user_name;
             // Save the user info locally for profile.html
             localStorage.setItem("userInfo", JSON.stringify(data.data));

@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
         detailedBody.innerHTML = `<tr><td colspan="6" class="text-center text-gray-500 py-6 italic">${message}</td></tr>`;
     }
 
+    // Updated: Accepts both old and new key formats for subject records
     function createIndividualTableHTML(data) {
         if (!data || !data.length)
             return `<div class="text-gray-500 italic py-2 text-center">No records found</div>`;
@@ -25,11 +26,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 <tbody>
                     ${data.map(d => `
                         <tr class="hover:bg-gray-50 transition-colors duration-200 border-b last:border-b-0">
-                            <td class="px-4 py-2">${d['Class No'] || '-'}</td>
-                            <td class="px-4 py-2">${d['Date'] || '-'}</td>
-                            <td class="px-4 py-2">${d['Time'] || '-'}</td>
-                            <td class="px-4 py-2 font-medium ${d['Status']?.startsWith('A') ? 'text-yellow-500' : 'text-green-600'}">
-                                ${d['Status'] || '-'}
+                            <td class="px-4 py-2">${d['Class No'] ?? d['class_no'] ?? '-'}</td>
+                            <td class="px-4 py-2">${d['Date'] ?? d['date'] ?? '-'}</td>
+                            <td class="px-4 py-2">${d['Time'] ?? d['time'] ?? '-'}</td>
+                            <td class="px-4 py-2 font-medium ${(d['Status'] ?? d['status'] ?? '').startsWith('A') ? 'text-yellow-500' : 'text-green-600'}">
+                                ${d['Status'] ?? d['status'] ?? '-'}
                             </td>
                         </tr>`).join('')}
                 </tbody>
@@ -37,24 +38,27 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>`;
     }
 
-    async function loadOverallAttendance() {
+    // Updated: Use new /attendance/overall endpoint and new response structure
+    async function loadOverallAndDetailedAttendance() {
         overallValue.textContent = "--%";
-        try {
-            const res = await fetch(`${API_BASE_URL}/att/`);
-            const data = await res.json();
-            overallValue.textContent = data.data ? `${data.data}%` : "N/A";
-        } catch (err) {
-            console.error("Error fetching overall attendance:", err);
-            overallValue.textContent = "Error";
-        }
-    }
-
-    async function loadDetailedAttendance() {
         showLoaderRow("Loading detailed attendance...");
         try {
-            const res = await fetch(`${API_BASE_URL}/att/courses`);
+            const res = await fetch(`${API_BASE_URL}/attendance/overall`);
             const data = await res.json();
-            const detailed = data.data || [];
+
+            if (!data.success || !data.data) {
+                overallValue.textContent = "N/A";
+                showLoaderRow("No detailed attendance found.");
+                return;
+            }
+
+            // Set overall percentage
+            overallValue.textContent =
+                typeof data.data.overall_percentage === "number"
+                    ? `${data.data.overall_percentage}%`
+                    : "N/A";
+
+            const detailed = Array.isArray(data.data.records) ? data.data.records : [];
 
             if (!detailed.length) {
                 showLoaderRow("No detailed attendance found.");
@@ -68,14 +72,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 tr.className = "border-b hover:bg-gray-50 transition-colors duration-200";
 
                 tr.innerHTML = `
-                    <td class="px-4 py-3 font-medium">${sub.Subject || '-'}</td>
-                    <td class="px-4 py-3">${sub['Total Classes'] ?? '-'}</td>
-                    <td class="px-4 py-3">${sub.Present ?? '-'}</td>
-                    <td class="px-4 py-3">${sub.Absent ?? '-'}</td>
-                    <td class="px-4 py-3">${sub.Percentage !== null ? sub.Percentage + "%" : '-'}</td>
+                    <td class="px-4 py-3 font-medium">${sub.Subject || sub.subject || '-'}</td>
+                    <td class="px-4 py-3">${sub['Total Classes'] ?? sub['Total_Classes'] ?? sub['total_classes'] ?? '-'}</td>
+                    <td class="px-4 py-3">${sub.Present ?? sub.present ?? '-'}</td>
+                    <td class="px-4 py-3">${sub.Absent ?? sub.absent ?? '-'}</td>
+                    <td class="px-4 py-3">${sub.Percentage !== null && sub.Percentage !== undefined ? sub.Percentage : (sub.percentage !== null && sub.percentage !== undefined ? sub.percentage : '-')}%</td>
                     <td class="px-4 py-3">
                         ${sub.altid
-                        ? `<button class="view-sub-btn text-red-900 font-medium hover:underline text-sm" data-altid="${sub.altid}" data-subject="${sub.Subject}">View</button>`
+                        ? `<button class="view-sub-btn text-red-900 font-medium hover:underline text-sm" data-altid="${sub.altid}" data-subject="${sub.Subject || sub.subject}">View</button>`
                         : '-'}
                     </td>
                 `;
@@ -97,16 +101,17 @@ document.addEventListener("DOMContentLoaded", () => {
                         const td = document.createElement("td");
                         td.colSpan = 6;
                         td.className = "p-4";
-                        td.innerHTML = `<p class="text-gray-500 text-center italic">Loading ${sub.Subject} attendance...</p>`;
+                        td.innerHTML = `<p class="text-gray-500 text-center italic">Loading ${sub.Subject || sub.subject} attendance...</p>`;
                         detailsTr.appendChild(td);
                         tr.after(detailsTr);
 
                         try {
-                            const res = await fetch(`${API_BASE_URL}/att/course/${sub.altid}`);
+                            const res = await fetch(`${API_BASE_URL}/attendance/course/${sub.altid}`);
                             const data = await res.json();
-                            td.innerHTML = createIndividualTableHTML(data.data || []);
+                            // New API: data.data.attendance is the array
+                            td.innerHTML = createIndividualTableHTML(Array.isArray(data.data?.attendance) ? data.data.attendance : []);
                         } catch (err) {
-                            console.error(`Error loading attendance for ${sub.Subject}:`, err);
+                            console.error(`Error loading attendance for ${sub.Subject || sub.subject}:`, err);
                             td.innerHTML = `<p class="text-yellow-500 text-center italic">Error loading attendance</p>`;
                         }
                     });
@@ -114,11 +119,12 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
         } catch (err) {
-            console.error("Error fetching detailed attendance:", err);
+            console.error("Error fetching overall/detailed attendance:", err);
+            overallValue.textContent = "Error";
             showLoaderRow("Error loading detailed attendance.");
         }
     }
 
-    loadOverallAttendance();
-    loadDetailedAttendance();
+    // Init
+    loadOverallAndDetailedAttendance();
 });

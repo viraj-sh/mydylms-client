@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const tokenData = await tokenCheck.json().catch(() => null);
 
-        if (tokenData?.status === "success" && tokenData?.data?.valid) {
+        if (tokenData?.success === true && tokenData?.data?.valid) {
             if (feedbackMessage) {
                 feedbackMessage.textContent = "Active session found — redirecting...";
                 feedbackMessage.classList.remove("hidden", "text-red-600");
@@ -86,33 +86,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 showMessage("Login successful! Fetching credentials...", "success");
 
-                // 5. Call /auth/creds before redirecting
-                // try {
-                //     const credsRes = await fetch(`${API_BASE_URL}/auth/creds`, {
-                //         method: "GET",
-                //         headers: {
-                //             "Content-Type": "application/json",
-                //             "Authorization": `Bearer ${data.data.sesskey}`,
-                //         },
-                //         credentials: "include",
-                //     });
-
-                //     const credsData = await credsRes.json().catch(() => null);
-
-                //     if (!credsRes.ok || !credsData) {
-                //         showMessage("Failed to initialize user credentials. Please try again.", "error");
-                //         return;
-                //     }
-
-                //     // Success — all steps complete
-                //     showMessage("Login successful! Redirecting...", "success");
-                //     setTimeout(() => {
-                //         window.location.href = "/static/pages/dashboard.html";
-                //     }, 1000);
-                // } catch (credsErr) {
-                //     console.error("Error fetching /auth/creds:", credsErr);
-                //     showMessage("Error initializing credentials. Please try again.", "error");
-                // }
+                setTimeout(() => {
+                    window.location.href = "/static/pages/dashboard.html";
+                }, 800); // Add this redirect
             } else {
                 showMessage("Login failed. Please try again.", "error");
             }

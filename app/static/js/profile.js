@@ -62,19 +62,4 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
     </div>
 `).join("");
-
-
-    // Logout button
-    // const logoutBtn = document.getElementById("profileLogoutBtn");
-    // logoutBtn.addEventListener("click", async (e) => {
-    //     e.preventDefault();
-    //     try {
-    //         await fetch("http://127.0.0.1:8000/auth/logout", { method: "DELETE" });
-    //     } catch { }
-    //     finally {
-    //         localStorage.clear();
-    //         sessionStorage.clear();
-    //         window.location.href = "/static/index.html";
-    //     }
-    // });
 });

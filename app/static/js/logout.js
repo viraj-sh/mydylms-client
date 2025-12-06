@@ -17,12 +17,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await res.json().catch(() => ({}));
 
             // ✅ Successful logout
-            if (res.ok && data?.status === "success" && data?.data?.success) {
-                console.log("Logout successful.");
+            if (res.ok && data?.success === true && data?.data?.message) {
+                console.log(data.data.message);
             }
             // ⚠️ User already logged out or session expired
-            else if (data?.detail === "User not logged in") {
-                console.warn("User already logged out or session expired.");
+            else if (data?.success === false && data?.error === "No active Moodle session found. Environment cleared.") {
+                console.warn(data.error);
             }
             // ❌ Some other server error
             else {
