@@ -4,7 +4,6 @@ from typing import List, Optional, Dict, Any
 
 @dataclass
 class Subject:
-
     id: int
     name: str
 
@@ -24,7 +23,6 @@ class Subject:
 
 @dataclass
 class Semester:
-
     semester: str
     subjects: List[Subject]
 

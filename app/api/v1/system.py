@@ -1,12 +1,10 @@
 from fastapi import APIRouter
-import os
 from schema.pydantic_system import (
     MessageResponse,
     MessageData,
     HealthResponse,
     HealthData,
 )
-from fastapi.responses import FileResponse
 
 router = APIRouter(tags=["System"])
 
@@ -39,4 +37,3 @@ def health_check():
         error=None,
         status_code=200,
     )
-

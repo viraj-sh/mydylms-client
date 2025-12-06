@@ -7,9 +7,8 @@ from core.logging import setup_logging
 from core.exceptions import handle_exception
 
 from schema.pydantic_semester import (
-    GetSemestersRequest,
     GetSemestersResponse,
-    SemesterCourseResponse
+    SemesterCourseResponse,
 )
 
 from services.semester import get_semesters, get_courses_in_semester
@@ -30,7 +29,7 @@ async def get_semesters_endpoint(
     refetch: bool = Query(
         False,
         description="If true, bypass cache and refetch data directly from Moodle.",
-    )
+    ),
 ) -> JSONResponse:
     logger = setup_logging(name="api.get_semesters", level="INFO")
 

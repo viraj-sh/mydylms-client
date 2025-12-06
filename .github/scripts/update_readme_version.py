@@ -24,22 +24,31 @@ content = readme_path.read_text(encoding="utf-8")
 win_pattern = re.compile(
     r"(releases/download/)[^/]+(/mydylms-client-)v+[^/]+(-win-x64\.exe)"
 )
+
+
 def win_repl(m: re.Match) -> str:
     return f"{m.group(1)}{tag}{m.group(2)}v{version}{m.group(3)}"
+
 
 # Linux (download or tag)
 linux_pattern = re.compile(
     r"(releases/(?:download|tag)/)[^/]+(/mydylms-client-)v+[^/]+(-linux-x86__64(?:\.tar\.gz)?)"
 )
+
+
 def linux_repl(m: re.Match) -> str:
     return f"{m.group(1)}{tag}{m.group(2)}v{version}{m.group(3)}"
+
 
 # macOS
 mac_pattern = re.compile(
     r"(releases/download/)[^/]+(/mydylms-client-)v+[^/]+(-macos-arm64(?:\.zip)?)"
 )
+
+
 def mac_repl(m: re.Match) -> str:
     return f"{m.group(1)}{tag}{m.group(2)}v{version}{m.group(3)}"
+
 
 updated = content
 updated = win_pattern.sub(win_repl, updated)

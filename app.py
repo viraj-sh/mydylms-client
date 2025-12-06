@@ -67,8 +67,6 @@ def open_browser(url):
         pass
 
 
-
-
 if __name__ == "__main__":
     args = parse_args()
     env_port = os.environ.get("PORT")
@@ -104,7 +102,7 @@ if __name__ == "__main__":
         stdout_setting = None
         stderr_setting = None
         log_level = "info"
-        access_log_flag = [] 
+        access_log_flag = []
     else:
         stdout_setting = subprocess.DEVNULL
         stderr_setting = subprocess.DEVNULL

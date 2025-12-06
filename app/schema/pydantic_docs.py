@@ -1,9 +1,8 @@
 from pydantic import BaseModel, Field
-from typing import Optional, Any, List, Dict
+from typing import Optional, Any, List
 
 
 class CourseDocumentModel(BaseModel):
-
     view_id: int = Field(..., description="Unique view identifier")
     doc_id: Optional[int] = Field(
         None, description="Document id (may be null for external URLs)"
@@ -20,7 +19,6 @@ class CourseDocumentModel(BaseModel):
 
 
 class WeekDocsModel(BaseModel):
-
     week: Optional[str] = Field(None, description="Week name or grouping")
     docs: List[CourseDocumentModel] = Field(default_factory=list)
 

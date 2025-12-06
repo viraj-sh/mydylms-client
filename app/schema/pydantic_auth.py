@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional, Any, Dict
 
+
 class LoginRequest(BaseModel):
     email: str = Field(..., description="User's Moodle email address")
     password: str = Field(
@@ -39,6 +40,8 @@ class ValidateSessionResponse(BaseModel):
     status_code: int = Field(
         ..., description="HTTP-like status code returned by the core function."
     )
+
+
 class LogoutResponseModel(BaseModel):
     success: bool = Field(
         ..., description="Indicates if the logout operation succeeded."
@@ -62,6 +65,8 @@ class LogoutResponseModel(BaseModel):
                 "status_code": 200,
             }
         }
+
+
 class UserProfileData(BaseModel):
     user_name: str = Field(..., description="Full name of the user")
     roll_no: str = Field(..., description="User roll number")

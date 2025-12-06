@@ -1,14 +1,11 @@
-import re
-from typing import Optional, Dict, Any
+from typing import Dict, Any, List
 from datetime import timedelta
-from bs4 import BeautifulSoup 
-from datetime import timedelta
+from bs4 import BeautifulSoup
 from core.utils import EnvManager, standard_response
 from core.logging import setup_logging
 from core.cache import cached_request, invalidate_cache
 from core.exceptions import handle_exception
 from .model.model_attendance import (
-    AttendanceData,
     AttendanceRecord,
     CourseAttendanceRecord,
 )
@@ -101,9 +98,9 @@ def fetch_attendance(refetch: bool = False) -> Dict[str, Any]:
     except Exception as exc:
         return handle_exception(logger, exc, context="fetch_attendance")
 
+
 def course_att(altid: str, refetch: bool = False) -> Dict[str, Any]:
     logger = setup_logging(name="core.course_att", level="INFO")
-    log_prefix = "[AcademicAPI] "
     try:
         token = EnvManager.get("MOODLE_COOKIE", default=None)
         if not token:

@@ -4,12 +4,12 @@ import re
 import requests
 from requests.adapters import HTTPAdapter, Retry
 from bs4 import BeautifulSoup
-from urllib.parse import urlparse, parse_qs
 from core.utils import EnvManager, standard_response
 from core.logging import setup_logging
 from core.exceptions import handle_exception
 from core.cache import cached_request, invalidate_cache
 from .model.model_auth import UserProfile
+
 
 def login(email: str, password: str) -> Dict[str, Any]:
     log_prefix = "[MoodleAPI] "
@@ -175,6 +175,7 @@ def validate_moodle_token() -> Dict[str, Any]:
 
     except Exception as exc:
         return handle_exception(logger, exc, context="validate_moodle_token")
+
 
 def logout() -> Dict[str, Any]:
     log_prefix = "[MoodleAPI] "

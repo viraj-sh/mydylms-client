@@ -1,10 +1,9 @@
 # models/course_models.py
-from pydantic import BaseModel, Field, HttpUrl
-from typing import Optional, Any, List, Dict
+from pydantic import BaseModel, Field
+from typing import Optional, Any, List
 
 
 class CourseDocumentModel(BaseModel):
-
     view_id: Optional[int] = Field(None, description="Internal view id for the module")
     doc_id: Optional[int] = Field(
         None, description="Parsed document id from pluginfile url if available"
@@ -39,7 +38,6 @@ class CourseDocsRequestModel(BaseModel):
 
 
 class StandardResponseModel(BaseModel):
-
     success: bool = Field(..., description="Whether the operation succeeded")
     error: Optional[Any] = Field(None, description="Error information or message")
     data: Optional[Any] = Field(

@@ -1,12 +1,10 @@
 import os
 import requests
 from typing import Optional, Any, Dict, List
-from datetime import timedelta
 from fastapi.responses import StreamingResponse, RedirectResponse, JSONResponse
 from fastapi import HTTPException
 from core.utils import EnvManager, standard_response
 from core.logging import setup_logging
-from core.cache import cached_request, invalidate_cache
 from core.exceptions import handle_exception
 from urllib.parse import urlparse, unquote
 import mimetypes
@@ -14,7 +12,7 @@ from core.utils import (
     NON_DOWNLOADABLE_MODS,
     NON_VIEWABLE_MODS,
     FRONTEND_VIEWABLE_EXTENSIONS,
-    CHUNK_SIZE
+    CHUNK_SIZE,
 )
 from .course import get_course_contents
 from .model.model_docs import CourseDocument
@@ -24,7 +22,6 @@ def fetch_course_document(
     course_id: int, doc_id: int, action: Optional[str] = None, refetch: bool = False
 ):
     logger = setup_logging(name="core.fetch_course_document", level="INFO")
-    log_prefix = "[MoodleAPI] "
 
     def _stream_file_with_token(
         file_url: str, inline: bool = False
@@ -156,9 +153,7 @@ def fetch_course_document(
             if file_ext in FRONTEND_VIEWABLE_EXTENSIONS:
                 moodle_key = EnvManager.get("MOODLE_COOKIE", default=None)
                 doc_url = (
-                    f"{doc.doc_url}?token={moodle_key}"
-                    if moodle_key
-                    else doc.doc_url
+                    f"{doc.doc_url}?token={moodle_key}" if moodle_key else doc.doc_url
                 )
                 mime_type = _guess_media_type(doc_name)
                 return JSONResponse(

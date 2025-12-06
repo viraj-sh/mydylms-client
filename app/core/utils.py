@@ -3,14 +3,11 @@ from pathlib import Path
 from dotenv import load_dotenv, set_key
 from typing import Any, Optional
 import sys
-from fastapi.responses import StreamingResponse
-from urllib.parse import urlparse, unquote
-import requests
 
 NON_DOWNLOADABLE_MODS = {"url"}
 NON_VIEWABLE_MODS = {"url"}
 FRONTEND_VIEWABLE_EXTENSIONS = {".pptx", ".docx"}
-CHUNK_SIZE = 64 * 1024 
+CHUNK_SIZE = 64 * 1024
 ENV_PATH = ".env"
 
 # ASCII COLORS
@@ -20,6 +17,7 @@ FG_RED = "\033[31m"
 FG_WHITE = "\033[97m"
 FG_GREEN = "\033[32m"
 FG_YELLOW = "\033[33m"
+
 
 class EnvManager:
     path: Path = Path(ENV_PATH).resolve()
@@ -87,4 +85,3 @@ def frontend_path() -> str:
     else:
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     return os.path.join(base_dir, "static")
-

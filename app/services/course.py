@@ -1,4 +1,4 @@
-from typing import Optional, Any, Dict, List
+from typing import Any, Dict, List
 from datetime import timedelta
 import re
 from dataclasses import asdict

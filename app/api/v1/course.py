@@ -5,8 +5,11 @@ from pydantic import ValidationError
 from core.logging import setup_logging
 from core.exceptions import handle_exception
 from core.utils import standard_response
-from services.course import get_course_contents  
-from schema.pydantic_course import CourseDocsRequestModel, StandardResponseModel, CourseSectionModel
+from services.course import get_course_contents
+from schema.pydantic_course import (
+    CourseDocsRequestModel,
+    StandardResponseModel,
+)
 
 router = APIRouter(
     prefix="/course",
@@ -27,7 +30,6 @@ async def get_course_docs(
         False, description="If true, bypass cache and refetch from Moodle"
     ),
 ):
-
     try:
         try:
             req = CourseDocsRequestModel(course_id=course_id, refetch=refetch)

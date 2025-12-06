@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const API_BASE_URL = "/api/v1"; 
+    const API_BASE_URL = "/api/v1";
 
     // DOM elements
     const semesterGrid = document.getElementById("semesterGrid");
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             semesterGrid.innerHTML = semesters
                 .map((sem, idx) => `
-                    <button data-sem="${idx + 1}" 
+                    <button data-sem="${idx + 1}"
                         class="semester-btn bg-white shadow-sm border border-gray-200 px-4 py-2 rounded-xl hover:bg-red-50 transition text-sm font-medium flex-shrink-0">
                         ${sem.semester}
                     </button>
@@ -124,7 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${subjects
                     .map(
                         sub => `
-                            <li data-sub="${sub.id}" 
+                            <li data-sub="${sub.id}"
                                 class="subject-item px-3 py-2 cursor-pointer hover:bg-red-50 rounded transition">
                                 ${sub.name}
                             </li>`
@@ -244,11 +244,11 @@ document.addEventListener("DOMContentLoaded", () => {
         finalDocs.sort((a, b) => {
             const timeA = a.time || 0;
             const timeB = b.time || 0;
-            
+
             if (dateSort.value === "newToOld") {
                 return timeB - timeA;
             } else {
-                return timeA - timeB; 
+                return timeA - timeB;
             }
         });
 

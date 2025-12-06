@@ -1,10 +1,9 @@
 from fastapi import APIRouter, Query
 from fastapi.responses import JSONResponse
-from typing import Optional
+from typing import Optional, Dict, Any
 from core.logging import setup_logging
 from core.exceptions import handle_exception
-from core.utils import standard_response
-from services.attendance import fetch_attendance, course_att 
+from services.attendance import fetch_attendance, course_att
 from schema.pydantic_attendance import AttendanceResponseModel, CourseAttendanceResponse
 
 router = APIRouter(prefix="/attendance", tags=["Attendance"])
@@ -17,7 +16,7 @@ logger = setup_logging(name="attendance_router")
     operation_id="get_overall_attendance",
 )
 async def get_overall_attendance(
-    refetch: Optional[bool] = Query(False, description="Set true to bypass cache")
+    refetch: Optional[bool] = Query(False, description="Set true to bypass cache"),
 ):
     try:
         result = fetch_attendance(refetch=refetch)

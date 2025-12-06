@@ -8,6 +8,7 @@ import argparse
 import logging
 import requests
 import signal
+from app.core.utils import RESET, BOLD, FG_RED, FG_WHITE, FG_GREEN, FG_YELLOW
 
 if getattr(sys, "frozen", False):
     base_dir = sys._MEIPASS
@@ -27,7 +28,6 @@ if not args.debug:
     logging.disable(logging.CRITICAL)
     os.environ["MYDYLMS_QUIET"] = "1"
 
-from app.core.utils import RESET, BOLD, FG_RED, FG_WHITE, FG_GREEN, FG_YELLOW
 
 def find_free_port(start=8000, end=8100):
     for port in range(start, end + 1):
@@ -38,6 +38,7 @@ def find_free_port(start=8000, end=8100):
             except OSError:
                 continue
     raise RuntimeError("No free port available")
+
 
 def wait_for_server(port, timeout=10):
     url = f"http://127.0.0.1:{port}/docs"
@@ -52,6 +53,7 @@ def wait_for_server(port, timeout=10):
         time.sleep(0.1)
     return False
 
+
 def open_browser(url):
     try:
         import webbrowser
@@ -60,6 +62,7 @@ def open_browser(url):
     except Exception:
         pass
 
+
 def _sigint_handler(signum, frame):
     try:
         server.should_exit = True
@@ -67,10 +70,10 @@ def _sigint_handler(signum, frame):
         pass
     os._exit(0)
 
+
 signal.signal(signal.SIGINT, _sigint_handler)
 
 if __name__ == "__main__":
-
     env_port = os.environ.get("PORT")
     port = args.port or (
         int(env_port) if env_port and env_port.isdigit() else find_free_port()
@@ -88,9 +91,10 @@ if __name__ == "__main__":
         )
         prev_disable_level = logging.root.manager.disable
         logging.disable(logging.CRITICAL)
-        from app.main import app  
-        logging.disable(logging.NOTSET)  
-        logging.root.manager.disable = prev_disable_level 
+        from app.main import app
+
+        logging.disable(logging.NOTSET)
+        logging.root.manager.disable = prev_disable_level
 
         try:
             uvicorn.run(

@@ -1,17 +1,15 @@
 from typing import Optional
 from fastapi import APIRouter, Query, Path
 from fastapi.responses import JSONResponse, StreamingResponse
-from pydantic import BaseModel
 from core.logging import setup_logging
 from core.exceptions import handle_exception
 from core.utils import standard_response
 from services.docs import fetch_course_document
-from schema.pydantic_docs import StandardResponseModel, CourseDocumentModel
+from schema.pydantic_docs import StandardResponseModel
 
 router = APIRouter(prefix="", tags=["Documents"])
 
 logger = setup_logging(name="api.doc_router", level="INFO")
-
 
 
 @router.get(

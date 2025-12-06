@@ -1,5 +1,5 @@
-from dataclasses import dataclass, Field
-from typing import Optional, Dict, Any
+from dataclasses import dataclass
+from typing import Optional, Any, Dict
 
 
 @dataclass
@@ -48,8 +48,6 @@ class AttendanceRecord:
             return None
 
 
-
-
 @dataclass
 class CourseAttendanceRecord:
     class_no: str
@@ -60,7 +58,6 @@ class CourseAttendanceRecord:
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> Optional["CourseAttendanceRecord"]:
-
         required = ["Class No", "Subject", "Date", "Time", "Status"]
 
         if not all(key in data and data[key] for key in required):

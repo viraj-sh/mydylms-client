@@ -21,9 +21,7 @@ def handle_exception(
 
     if isinstance(exc, requests.RequestException):
         logger.error(f"{log_prefix}Network error: {exc}")
-        return standard_response(
-            False, error="Network error occurred", status_code=503
-        )
+        return standard_response(False, error="Network error occurred", status_code=503)
 
     if isinstance(exc, ValueError):
         logger.error(f"{log_prefix}Failed to parse JSON response: {exc}")

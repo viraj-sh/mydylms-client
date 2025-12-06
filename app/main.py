@@ -1,7 +1,5 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import logging
-
 from api.v1.system import router as system_router
 from api.v1.auth import router as auth_router
 from api.v1.semester import router as semester_router
@@ -37,13 +35,16 @@ static_dir = frontend_path()
 
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
+
 @app.get("/", include_in_schema=False)
 def serve_frontend():
     return FileResponse(os.path.join(static_dir, "index.html"))
 
+
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
     return FileResponse(os.path.join(static_dir, "assets", "favicon.ico"))
+
 
 logger.info("Application startup complete")
 

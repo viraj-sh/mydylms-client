@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, Any, Dict, List
+from typing import Optional, List
 
 
 class AttendanceDataModel(BaseModel):
@@ -15,7 +15,6 @@ class AttendanceResponseModel(BaseModel):
         None, description="Attendance data if request was successful"
     )
     status_code: int = Field(..., description="HTTP status code")
-
 
 
 class AttendanceRecord(BaseModel):

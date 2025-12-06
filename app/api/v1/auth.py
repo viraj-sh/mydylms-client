@@ -11,10 +11,11 @@ from schema.pydantic_auth import (
     StandardResponse,
     ValidateSessionResponse,
     LogoutResponseModel,
-    UserProfileResponse
+    UserProfileResponse,
 )
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
+
 
 @router.post(
     "/login",
@@ -22,7 +23,7 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
     operation_id="login_user",
 )
 async def login_user(
-    payload: LoginRequest = Body(..., description="Moodle user credentials")
+    payload: LoginRequest = Body(..., description="Moodle user credentials"),
 ) -> JSONResponse:
     logger = setup_logging(name="auth_router.login", level="INFO")
     try:
@@ -97,9 +98,8 @@ async def logout_endpoint() -> JSONResponse:
 async def get_user_profile(
     refetch: Optional[bool] = Query(
         False, description="Bypass cache and refetch fresh data"
-    )
+    ),
 ):
-
     logger = setup_logging(name="api.get_user_profile", level="INFO")
 
     try:

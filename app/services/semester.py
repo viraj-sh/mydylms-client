@@ -1,5 +1,5 @@
 import re
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, List
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, parse_qs
 from datetime import timedelta
@@ -9,6 +9,7 @@ from core.logging import setup_logging
 from core.cache import cached_request, invalidate_cache
 from core.exceptions import handle_exception
 from .model.model_semester import Semester
+
 
 def get_semesters(refetch: bool = False) -> Dict[str, Any]:
     log_prefix = "[MoodleAPI] "

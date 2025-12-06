@@ -1,5 +1,6 @@
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from typing import Optional, Dict, Any, List
+
 
 @dataclass
 class CourseDocument:
@@ -46,7 +47,6 @@ class CourseSection:
             if parsed:
                 docs.append(parsed)
         return cls(week=data.get("week"), docs=docs)
-
 
 
 @dataclass
