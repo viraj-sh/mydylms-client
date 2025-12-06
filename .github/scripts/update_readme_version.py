@@ -13,29 +13,33 @@ if not tag:
     sys.exit(2)
 
 # Normalize: ensure tag has single leading 'v'
-tag = ("v" + tag.lstrip("v"))
+tag = "v" + tag.lstrip("v")
 version = tag.lstrip("v")  # version without leading 'v' for filenames
 
 readme_path = Path("README.md")
 content = readme_path.read_text(encoding="utf-8")
 
-# Windows: releases/download/<tag>/mydylms-client-v<version>-win-x64.exe
+# Update URLs to the latest tag and filenames to exactly 'mydylms-client-v<version>-...'
+# Windows
 win_pattern = re.compile(
-    r"(releases/download/)[^/]+(/mydylms-client-v)[^/]+(-win-x64\.exe)"
+    r"(releases/download/)[^/]+(/mydylms-client-)v+[^/]+(-win-x64\.exe)"
 )
-win_repl = r"\1" + tag + r"\2" + version + r"\3"
+def win_repl(m: re.Match) -> str:
+    return f"{m.group(1)}{tag}{m.group(2)}v{version}{m.group(3)}"
 
-# Linux: releases/(download|tag)/<tag>/mydylms-client-v<version>-linux-x86__64(.tar.gz optional)
+# Linux (download or tag)
 linux_pattern = re.compile(
-    r"(releases/(?:download|tag)/)[^/]+(/mydylms-client-v)[^/]+(-linux-x86__64(?:\.tar\.gz)?)"
+    r"(releases/(?:download|tag)/)[^/]+(/mydylms-client-)v+[^/]+(-linux-x86__64(?:\.tar\.gz)?)"
 )
-linux_repl = r"\1" + tag + r"\2" + version + r"\3"
+def linux_repl(m: re.Match) -> str:
+    return f"{m.group(1)}{tag}{m.group(2)}v{version}{m.group(3)}"
 
-# macOS: releases/download/<tag>/mydylms-client-v<version>-macos-arm64(.zip optional)
+# macOS
 mac_pattern = re.compile(
-    r"(releases/download/)[^/]+(/mydylms-client-v)[^/]+(-macos-arm64(?:\.zip)?)"
+    r"(releases/download/)[^/]+(/mydylms-client-)v+[^/]+(-macos-arm64(?:\.zip)?)"
 )
-mac_repl = r"\1" + tag + r"\2" + version + r"\3"
+def mac_repl(m: re.Match) -> str:
+    return f"{m.group(1)}{tag}{m.group(2)}v{version}{m.group(3)}"
 
 updated = content
 updated = win_pattern.sub(win_repl, updated)
