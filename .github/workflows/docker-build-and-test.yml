@@ -66,6 +66,7 @@ jobs:
           platforms: linux/amd64
           # always build locally first; push happens later only on tags
           push: false
+          load: true  # <-- ensure image is available to 'docker tag' and 'docker run'
           tags: |
             ${{ env.IMAGE }}:latest
           # cache for faster builds between runs
