@@ -18,13 +18,17 @@ app_dir = os.path.join(base_dir, "app")
 if app_dir not in sys.path:
     sys.path.insert(0, app_dir)
 
-from app.main import app
-from app.core.utils import RESET, BOLD, FG_RED, FG_WHITE, FG_GREEN, FG_YELLOW
-
 parser = argparse.ArgumentParser(add_help=True)
 parser.add_argument("--debug", action="store_true")
 parser.add_argument("--port", type=int, default=None)
 args = parser.parse_args()
+
+if not args.debug:
+    logging.disable(logging.CRITICAL)
+    os.environ["MYDYLMS_QUIET"] = "1"
+
+from app.main import app
+from app.core.utils import RESET, BOLD, FG_RED, FG_WHITE, FG_GREEN, FG_YELLOW
 
 def find_free_port(start=8000, end=8100):
     for port in range(start, end + 1):
@@ -129,8 +133,7 @@ if __name__ == "__main__":
 {FG_YELLOW}GitHub:{RESET} https://github.com/viraj-sh/mydylms-client
 {FG_YELLOW}Docs:{RESET}   https://github.com/viraj-sh/mydylms-client/wiki
 
-{FG_RED}Note:{RESET} Keep this window open; closing it stops the server.
-"""
+{FG_RED}Note:{RESET} Keep this window open; closing it stops the server."""
         )
 
         open_browser(url)
@@ -145,7 +148,6 @@ if __name__ == "__main__":
 {FG_YELLOW}Troubleshooting:{RESET}
 • Try: mydylms-client.exe --debug
 • Check: port availability, app/main.py, uvicorn startup errors
-
 """
         )
         sys.exit(1)
@@ -154,7 +156,6 @@ if __name__ == "__main__":
         while t.is_alive():
             time.sleep(0.2)
     except KeyboardInterrupt:
-        # Do not reassign sys.stdout/sys.stderr; that triggers PyInstaller codec errors
         server.should_exit = True
         t.join()
         os._exit(0)
