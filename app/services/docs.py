@@ -16,6 +16,7 @@ from core.utils import (
 )
 from .course import get_course_contents
 from .model.model_docs import CourseDocument
+from dataclasses import asdict
 
 
 def fetch_course_document(
@@ -107,7 +108,7 @@ def fetch_course_document(
                 status_code=404,
             )
 
-        doc = CourseDocument.from_json(found_doc_data)
+        doc = CourseDocument.from_json(found_doc_data, course_id)
         if not doc:
             return standard_response(
                 False,
@@ -116,7 +117,7 @@ def fetch_course_document(
             )
 
         if action is None:
-            return standard_response(True, data=found_doc_data, status_code=200)
+            return standard_response(True, data=asdict(doc), status_code=200)
 
         mod = getattr(doc, "mod", None)
         doc_name = doc.doc_name or "file"
@@ -161,6 +162,7 @@ def fetch_course_document(
                         "status": "success",
                         "data": {
                             "viewer_type": "frontend",
+                            "course_id": doc.course_id,
                             "doc_name": doc_name,
                             "mime_type": mime_type,
                             "doc_url": doc_url,

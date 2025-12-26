@@ -4,6 +4,7 @@ from typing import Optional, Dict, Any
 
 @dataclass
 class CourseDocument:
+    course_id: int
     view_id: int
     doc_id: Optional[int]
     module: Optional[str]
@@ -15,12 +16,15 @@ class CourseDocument:
     time: Optional[int]
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> Optional["CourseDocument"]:
+    def from_json(
+        cls, data: Dict[str, Any], course_id: int
+    ) -> Optional["CourseDocument"]:
         required = ["view_id", "doc_url"]
         if any(key not in data or data[key] is None for key in required):
             return None
 
         return cls(
+            course_id=course_id,
             view_id=data.get("view_id"),
             doc_id=data.get("doc_id"),
             module=data.get("module"),

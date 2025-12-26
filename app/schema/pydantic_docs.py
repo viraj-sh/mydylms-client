@@ -3,6 +3,7 @@ from typing import Optional, Any, List
 
 
 class CourseDocumentModel(BaseModel):
+    course_id: int = Field(..., description="Unique course identifier")
     view_id: int = Field(..., description="Unique view identifier")
     doc_id: Optional[int] = Field(
         None, description="Document id (may be null for external URLs)"
