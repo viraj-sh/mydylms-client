@@ -4,6 +4,7 @@ from typing import Optional, Any, List
 
 
 class CourseDocumentModel(BaseModel):
+    course_id: int = Field(..., description="Unique course identifier")
     view_id: Optional[int] = Field(None, description="Internal view id for the module")
     doc_id: Optional[int] = Field(
         None, description="Parsed document id from pluginfile url if available"
@@ -58,6 +59,7 @@ class StandardResponseModel(BaseModel):
                         "week": "Week 1",
                         "docs": [
                             {
+                                "course_id": 123,
                                 "view_id": 123,
                                 "doc_id": 456,
                                 "module": "Lecture notes",

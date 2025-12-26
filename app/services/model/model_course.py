@@ -4,6 +4,7 @@ from typing import Optional, Dict, Any, List
 
 @dataclass
 class CourseDocument:
+    course_id: int
     view_id: int
     doc_id: Optional[int] = None
     module: Optional[str] = None
@@ -19,6 +20,7 @@ class CourseDocument:
         if not isinstance(data, dict) or "view_id" not in data:
             return None
         return cls(
+            course_id=data["course_id"],
             view_id=data["view_id"],
             doc_id=data.get("doc_id"),
             module=data.get("module"),

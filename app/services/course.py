@@ -97,6 +97,7 @@ def get_course_contents(course_id: int, refetch: bool = False) -> Dict[str, Any]
 
                     doc = CourseDocument.from_json(
                         {
+                            "course_id": course_id,
                             "view_id": view_id,
                             "doc_id": doc_id,
                             "module": doc_name_module,
