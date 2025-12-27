@@ -35,6 +35,7 @@ def fetch_course_document(
 
         parsed = urlparse(file_url)
         filename = unquote(os.path.basename(parsed.path)) or "downloaded_file"
+        file_ext = filename.lower().split(".")[-1] if "." in filename else ""
 
         session = requests.Session()
         session.cookies.set("MoodleSession", TOKEN, domain=parsed.netloc)
@@ -52,8 +53,12 @@ def fetch_course_document(
                 status_code=resp.status_code,
                 detail=f"Failed to fetch file from Moodle ({resp.status_code})",
             )
-
-        content_type = resp.headers.get("Content-Type") or "application/octet-stream"
+        if file_ext == "pdf":
+            content_type = "application/pdf"
+        else:
+            content_type = (
+                resp.headers.get("Content-Type") or "application/octet-stream"
+            )
         content_length = resp.headers.get("Content-Length")
 
         def _iter_file():
