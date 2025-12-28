@@ -3,8 +3,11 @@ import re
 import sys
 from pathlib import Path
 
-if len(sys.argv) != 2:
-    print("Usage: update_readme_version.py <tag>", file=sys.stderr)
+# Backward compatible:
+# - 1 arg  -> updates README.md
+# - 2 args -> updates provided file path
+if len(sys.argv) not in (2, 3):
+    print("Usage: update_readme_version.py <tag> [file]", file=sys.stderr)
     sys.exit(2)
 
 tag = sys.argv[1].strip()  # expected like v1.2.0 or 1.2.0
@@ -16,10 +19,15 @@ if not tag:
 tag = "v" + tag.lstrip("v")
 version = tag.lstrip("v")  # version without leading 'v' for filenames
 
-readme_path = Path("README.md")
-content = readme_path.read_text(encoding="utf-8")
+# Default remains README.md (important for compatibility)
+target_path = Path(sys.argv[2]) if len(sys.argv) == 3 else Path("README.md")
 
-# Update URLs to the latest tag and filenames to exactly 'mydylms-client-v<version>-...'
+if not target_path.exists():
+    print(f"File not found: {target_path}", file=sys.stderr)
+    sys.exit(1)
+
+content = target_path.read_text(encoding="utf-8")
+
 # Windows
 win_pattern = re.compile(
     r"(releases/download/)[^/]+(/mydylms-client-)v+[^/]+(-win-x64\.exe)"
@@ -56,7 +64,7 @@ updated = linux_pattern.sub(linux_repl, updated)
 updated = mac_pattern.sub(mac_repl, updated)
 
 if updated != content:
-    readme_path.write_text(updated, encoding="utf-8")
-    print(f"README.md updated to {tag}")
+    target_path.write_text(updated, encoding="utf-8")
+    print(f"{target_path} updated to {tag}")
 else:
-    print("README.md already up-to-date")
+    print(f"{target_path} already up-to-date")

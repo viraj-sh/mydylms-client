@@ -1,4 +1,4 @@
-name: Update README with latest release version (manual)
+name: Update README and Wiki with latest release version (manual)
 
 on:
   workflow_dispatch:
@@ -7,8 +7,9 @@ permissions:
   contents: write
 
 jobs:
-  update-readme:
+  update-docs:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout default branch
         uses: actions/checkout@v4
@@ -18,24 +19,35 @@ jobs:
           ref: ${{ github.event.repository.default_branch }}
           fetch-tags: true
 
+      - name: Checkout wiki repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}.wiki
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: wiki
+
       - name: Verify Python and jq installation
         run: |
           python3 --version
           jq --version
 
       - name: Get latest release tag
-        id: latest
         env:
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           api="https://api.github.com/repos/${GH_REPO}/releases/latest"
-          tag=$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" "$api" | jq -r '.tag_name')
+          tag=$(curl -fsSL \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "$api" | jq -r '.tag_name')
+
           if [ -z "${tag}" ] || [ "${tag}" = "null" ]; then
             echo "Failed to fetch latest release tag" >&2
             exit 1
           fi
+
           echo "Latest tag: ${tag}"
           echo "LATEST_TAG=${tag}" >> "$GITHUB_ENV"
 
@@ -44,13 +56,18 @@ jobs:
           grep -E 'releases/(download|tag)/' README.md || true
 
       - name: Update README.md if needed
-        env:
-          LATEST_TAG: ${{ env.LATEST_TAG }}
         run: |
           set -euo pipefail
           python3 .github/scripts/update_readme_version.py "${LATEST_TAG}"
 
-      - name: Commit and push changes (if any)
+      - name: Update Wiki (Getting-Started.md) if needed
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/update_readme_version.py \
+            "${LATEST_TAG}" \
+            wiki/Getting-Started.md
+
+      - name: Commit and push README changes (if any)
         env:
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
@@ -59,11 +76,27 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           if git diff --quiet README.md; then
-            echo "No changes to commit"
+            echo "No README changes to commit"
+          else
+            git add README.md
+            git commit -m "chore(docs): sync README download links to ${LATEST_TAG}"
+            git pull --rebase origin "${DEFAULT_BRANCH}"
+            git push origin HEAD:"${DEFAULT_BRANCH}"
+          fi
+
+      - name: Commit and push Wiki changes (if any)
+        run: |
+          set -euo pipefail
+          cd wiki
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if git diff --quiet; then
+            echo "No Wiki changes to commit"
             exit 0
           fi
 
-          git add README.md
-          git commit -m "chore(docs): sync README download links to ${LATEST_TAG}"
-          git pull --rebase origin "${DEFAULT_BRANCH}"
-          git push origin HEAD:"${DEFAULT_BRANCH}"
+          git add .
+          git commit -m "chore(docs): sync wiki download links to ${LATEST_TAG}"
+          git push
