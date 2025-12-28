@@ -29,7 +29,7 @@ async def get_overall_attendance(
 @router.get(
     "/course/{alt_id}",
     response_model=CourseAttendanceResponse,
-    operation_id="getCourseAttendance",
+    operation_id="get_course_attendance",
 )
 def get_course_attendance(
     alt_id: str,

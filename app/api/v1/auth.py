@@ -48,7 +48,7 @@ async def login_user(
 @router.get(
     "/validate-session",
     response_model=ValidateSessionResponse,
-    operation_id="validateMoodleSession",
+    operation_id="validate_login_session",
 )
 def validate_session_endpoint() -> JSONResponse:
     logger = setup_logging(name="api.validate_session", level="INFO")
@@ -75,7 +75,7 @@ def validate_session_endpoint() -> JSONResponse:
 @router.delete(
     "/logout",
     response_model=LogoutResponseModel,
-    operation_id="logoutUser",
+    operation_id="logout_user",
 )
 async def logout_endpoint() -> JSONResponse:
     logger = setup_logging(name="api.logout")
@@ -93,7 +93,7 @@ async def logout_endpoint() -> JSONResponse:
 @router.get(
     "/profile",
     response_model=UserProfileResponse,
-    operation_id="getUserProfile",
+    operation_id="get_user_profile",
 )
 async def get_user_profile(
     refetch: Optional[bool] = Query(

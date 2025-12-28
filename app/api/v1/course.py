@@ -21,7 +21,7 @@ logger = setup_logging(name="core.course_contents_endpoint")
 
 @router.get(
     "/{course_id}/docs",
-    operation_id="get_course_docs",
+    operation_id="get_course_documents",
     response_model=StandardResponseModel,
 )
 async def get_course_docs(

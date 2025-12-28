@@ -36,7 +36,7 @@ This client improves on the official MYDY LMS by making document access and brow
 
 The client can be run in several ways. For detailed steps, see the **[Getting Started](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started)** wiki page.
 
-Option 1. **[Prebuilt Releases](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#prebuilt-releases)** – Download and run the latest release for your platform:
+Option 1. **[Prebuilt Releases](https://github.com/viraj-sh/mydylms-client/releases/latest)** – Download and run the latest release for your platform:
 
    [![Windows (.exe)](https://img.shields.io/badge/Windows_\(.exe\)-x64-blue?style=flat-square)](https://github.com/viraj-sh/mydylms-client/releases/download/v1.2.0/mydylms-client-v1.2.0-win-x64.exe)
    [![Linux (.tar.gz)](https://img.shields.io/badge/Linux-x86__64-orange?style=flat-square)](https://github.com/viraj-sh/mydylms-client/releases/download/v1.2.0/mydylms-client-v1.2.0-linux-x86__64)
@@ -69,18 +69,18 @@ Option 4. **[Build from Source](https://github.com/viraj-sh/mydylms-client/wiki/
 
 Option 5. **[Docker](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#docker-deployment)** – Run the client in a consistent containerized environment.
 
-> For complete instructions, platform-specific steps, and Docker usage, see the **[Getting Started wiki](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started)**.
+> For complete instructions, platform-specific steps, and Docker usage, see the **[Getting Started](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started)** wiki.
 
 ---
 ### Available Services
 
 Once the client is running, these endpoints are accessible (host may vary):
 
-* **[Frontend](https://github.com/viraj-sh/mydylms-client/wiki/Frontend-Documentation)** [[http://localhost:8000/](http://localhost:8000/)] : Static interface to interact with the API.
-* **[MCP Server](https://github.com/viraj-sh/mydylms-client/wiki/MCP-Documentation)** [[http://localhost:8000/mcp](http://localhost:8000/mcp)] : Endpoint (`/mcp`) compatible with Model Context Protocol (MCP) clients like LLM Clients or LangChain bots.
-* **[API](https://github.com/viraj-sh/mydylms-client/wiki/API-Documentation)** [[http://localhost:8000/api](http://127.0.0.1:8000/api)] : FastAPI backend for authentication, semesters, subjects, documents, and attendance.
+* **[Frontend](https://github.com/viraj-sh/mydylms-client/wiki/Frontend-Documentation)** -  [`localhost:8000`](http://localhost:8000/) : Static interface to interact with the API.
+* **[MCP Server](https://github.com/viraj-sh/mydylms-client/wiki/MCP-Documentation)**  - [`localhost:8000/mcp`](http://localhost:8000/mcp) : Endpoint (`/mcp`) compatible with Model Context Protocol (MCP) clients like LLM Clients or LangChain bots.
+* **[API](https://github.com/viraj-sh/mydylms-client/wiki/API-Documentation)** - [`localhost:8000/api`](http://localhost:8000/api) : FastAPI backend for authentication, semesters, subjects, documents, and attendance.
 
-  * **Interactive Docs:** [[http://localhost:8000/docs](http://127.0.0.1:8000/docs)] : API testing Swagger UI for developers.
+  * **Interactive Docs:** [`localhost:8000/docs`](http://localhost:8000/docs) : API testing Swagger UI for developers.
 
 ---
 

@@ -14,7 +14,7 @@ logger = setup_logging(name="api.doc_router", level="INFO")
 
 @router.get(
     "/course/{course_id}/doc",
-    operation_id="getCourseDocument",
+    operation_id="get_document",
     response_model=StandardResponseModel,
     responses={
         200: {

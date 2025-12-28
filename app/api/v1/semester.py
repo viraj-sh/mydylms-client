@@ -23,7 +23,7 @@ router = APIRouter(
 @router.get(
     "/",
     response_model=GetSemestersResponse,
-    operation_id="get_semesters_list",
+    operation_id="get_all_semesters",
 )
 async def get_semesters_endpoint(
     refetch: bool = Query(
@@ -51,7 +51,7 @@ async def get_semesters_endpoint(
 @router.get(
     "/{sem_no}/course",
     response_model=SemesterCourseResponse,
-    operation_id="get_courses_in_semester",
+    operation_id="get_semester_courses",
 )
 async def get_courses_in_semester_endpoint(
     sem_no: int = Path(
