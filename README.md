@@ -2,7 +2,7 @@
 
 # MYDY LMS CLIENT (Unofficial)
 
-An unofficial client for **[mydylms](https://mydy.dypatil.edu/)**, including the [Frontend](https://github.com/viraj-sh/mydylms-client/wiki/Frontend-Documentation), [MCP Server](https://github.com/viraj-sh/mydylms-client/wiki/MCP-Documentation), and [API](https://github.com/viraj-sh/mydylms-client/wiki/API-Documentation), with support for direct document downloads and full access across all semesters, developed for educational purposes and not affiliated with DY Patil or MYDY.
+An unofficial client for **[mydylms](https://mydy.dypatil.edu/)**, with support for direct document downloads and full access across all semesters. Includes the [Frontend](https://github.com/viraj-sh/mydylms-client/wiki/Frontend-Documentation), [MCP Server](https://github.com/viraj-sh/mydylms-client/wiki/MCP-Documentation), and [API](https://github.com/viraj-sh/mydylms-client/wiki/API-Documentation) developed for educational purposes and not affiliated with DY Patil or MYDY, .
 
 <a href="https://github.com/viraj-sh/mydylms-client/releases/latest">
   <img src="https://img.shields.io/github/v/release/viraj-sh/mydylms-client?label=Latest%20Release&color=green&style=flat-square&cacheSeconds=3600" alt="Release"/>

@@ -10,6 +10,14 @@ import requests
 import signal
 from app.core.utils import RESET, BOLD, FG_RED, FG_WHITE, FG_GREEN, FG_YELLOW
 
+if os.name == "nt":
+    try:
+        import ctypes
+        ctypes.windll.kernel32.SetConsoleOutputCP(65001)
+        ctypes.windll.kernel32.SetConsoleCP(65001)
+    except Exception:
+        pass
+
 if getattr(sys, "frozen", False):
     base_dir = sys._MEIPASS
 else:
