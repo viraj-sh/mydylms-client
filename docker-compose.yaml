@@ -1,5 +1,6 @@
 services:
   mydylms-client:
+    container_name: mydylms-client
     image: virajsh/mydylms-client:latest
     ports:
       - "8000:8000"
