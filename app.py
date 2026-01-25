@@ -1,4 +1,4 @@
-import subprocess
+import subprocess  # nosec: B404
 import sys
 import time
 import socket
@@ -6,7 +6,9 @@ import requests
 import os
 import argparse
 from app.core.utils import RESET, BOLD, FG_RED, FG_WHITE, FG_GREEN, FG_YELLOW
+from app.core.logging import setup_logging
 
+logger = setup_logging(name="app.py", level="INFO")
 app_dir = os.path.join(os.path.dirname(__file__), "app")
 sys.path.insert(0, app_dir)
 
@@ -63,8 +65,8 @@ def open_browser(url):
         import webbrowser
 
         webbrowser.open(url, new=2)
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning(f"Failed to open browser: {e}")
 
 
 if __name__ == "__main__":
@@ -122,7 +124,7 @@ if __name__ == "__main__":
             "--log-level",
             log_level,
             *access_log_flag,
-        ],
+        ],  # nosec: B603
         stdout=stdout_setting,
         stderr=stderr_setting,
         env=env,
