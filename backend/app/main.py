@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 import httpx
 
-from app.routes import content, system, auth, user, attendance, annoucement
+from app.routes import content, system, auth, user, attendance, annoucement, calendar
 from app.core.config import settings
 from app.core.http import http_state
 
@@ -31,3 +31,4 @@ app.include_router(router=content.router, prefix="/content", tags=["content"])
 app.include_router(
     router=annoucement.router, prefix="/annoucement", tags=["annoucement"]
 )
+app.include_router(router=calendar.router, prefix="/calendar", tags=["calendar"])
