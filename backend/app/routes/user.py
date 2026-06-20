@@ -79,7 +79,7 @@ async def fetch_profile(
 ):
     try:
         response = await profile(user_id, key, token, client)
-        print(response.status_code)
+
         if response.status_code == 200:
             if (
                 isinstance(response.json(), dict)
