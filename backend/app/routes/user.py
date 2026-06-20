@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Header
 from fastapi.security import HTTPAuthorizationCredentials
 from typing import Annotated
 import re
@@ -73,9 +73,9 @@ async def fetch_profile_old(
 @router.get("/profile", response_model=ProfileResponse, status_code=status.HTTP_200_OK)
 async def fetch_profile(
     user_id: str,
-    key: str,
     token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     client: HTTPClientDep,
+    key: str = Header(..., alias="X-API-Key"),
 ):
     try:
         response = await profile(user_id, key, token, client)

@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 import httpx
 
-from app.routes import system, auth, user
+from app.routes import system, auth, user, attendance
 from app.core.config import settings
 from app.core.http import http_state
 
@@ -26,3 +26,4 @@ app = FastAPI(
 app.include_router(router=system.router, prefix="", tags=["system"])
 app.include_router(router=auth.router, prefix="/auth", tags=["auth"])
 app.include_router(router=user.router, prefix="/user", tags=["user"])
+app.include_router(router=attendance.router, prefix="/attendance", tags=["attendance"])
