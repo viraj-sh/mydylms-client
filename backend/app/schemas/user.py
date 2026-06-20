@@ -8,7 +8,7 @@ class KeyResponse(BaseModel):
     service_key: Optional[str] = Field(None)
 
 
-class ProfileResponse(BaseModel):
+class ProfileOldResponse(BaseModel):
     user_name: Optional[str] = Field(None)
     roll_no: Optional[str] = Field(None)
     gender: Optional[str] = Field(None)
@@ -23,3 +23,16 @@ class ProfileResponse(BaseModel):
     pmob_no: Optional[str] = Field(None)
     femail_id: Optional[str] = Field(None)
     address: Optional[str] = Field(None)
+
+
+class ProfileResponse(BaseModel):
+    firstname: Optional[str] = Field(None)
+    lastname: Optional[str] = Field(None)
+    rollid: Optional[str] = Field(None)
+    dob: Optional[str] = Field(None)
+    city: Optional[str] = Field(None)
+    fathername: Optional[str] = Field(None)
+    mothername: Optional[str] = Field(None)
+    phonenumber: Optional[str] = Field(None)
+    town: Optional[str] = Field(None)
+    email: Optional[str] = Field(None)

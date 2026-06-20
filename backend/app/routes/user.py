@@ -4,8 +4,8 @@ from typing import Annotated
 import re
 
 from app.core.http import HTTPClientDep, security
-from app.services.user import profile, keys
-from app.schemas.user import KeyResponse, ProfileResponse
+from app.services.user import old_profile, keys, profile
+from app.schemas.user import KeyResponse, ProfileOldResponse, ProfileResponse
 
 router = APIRouter()
 
@@ -39,19 +39,21 @@ async def fetch_keys(
         raise
 
 
-@router.get("/profile", status_code=status.HTTP_200_OK)
-async def fetch_profile(
+@router.get(
+    "/v1/profile", response_model=ProfileOldResponse, status_code=status.HTTP_200_OK
+)
+async def fetch_profile_old(
     user_id: str,
     token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     client: HTTPClientDep,
 ):
     try:
-        response = await profile(user_id, token, client)
+        response = await old_profile(user_id, token, client)
         if response.status_code == 200:
-            return ProfileResponse(
+            return ProfileOldResponse(
                 **dict(
                     zip(
-                        ProfileResponse.model_fields.keys(),
+                        ProfileOldResponse.model_fields.keys(),
                         re.findall(
                             r'<span\s+class=["\']profile_td2["\']>([^<]*)</span>',
                             response.text,
@@ -59,6 +61,35 @@ async def fetch_profile(
                     )
                 )
             )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="invalid or unauthorized request",
+            )
+    except HTTPException:
+        raise
+
+
+@router.get("/profile", response_model=ProfileResponse, status_code=status.HTTP_200_OK)
+async def fetch_profile(
+    user_id: str,
+    key: str,
+    token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
+    client: HTTPClientDep,
+):
+    try:
+        response = await profile(user_id, key, token, client)
+        print(response.status_code)
+        if response.status_code == 200:
+            if (
+                isinstance(response.json(), dict)
+                and response.json().get("exception") is not None
+            ):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"invalid or expired key -> {response.json().get('message')}",
+                )
+            return response.json()[-1]
         else:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,

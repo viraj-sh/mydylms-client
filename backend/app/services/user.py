@@ -17,7 +17,7 @@ async def keys(
     )
 
 
-async def profile(
+async def old_profile(
     user_id: str,
     token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     client: HTTPClientDep,
@@ -25,5 +25,23 @@ async def profile(
     return await client.get(
         url="https://mydy.dypatil.edu/rait/local/users/profile.php",
         params={"id": user_id},
+        headers={"Cookie": f"MoodleSession={token.credentials}"},
+    )
+
+
+async def profile(
+    user_id: str,
+    key: str,
+    token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
+    client: HTTPClientDep,
+):
+    return await client.get(
+        url="https://mydy.dypatil.edu/rait/webservice/rest/server.php",
+        params={
+            "wstoken": key,
+            "moodlewsrestformat": "json",
+            "wsfunction": "local_user_details_custom",
+            "userid": user_id,
+        },
         headers={"Cookie": f"MoodleSession={token.credentials}"},
     )
