@@ -20,13 +20,13 @@ async def login(username: str, password: str, client: HTTPClientDep):
     )
 
 
-async def keys(
+async def logout(
     session_key: str,
     token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     client: HTTPClientDep,
 ):
     return await client.get(
-        url="https://mydy.dypatil.edu/rait/user/managetoken.php",
+        url="https://mydy.dypatil.edu/rait/login/logout.php",
         params={"sesskey": session_key},
         headers={"Cookie": f"MoodleSession={token.credentials}"},
     )

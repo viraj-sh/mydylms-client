@@ -4,8 +4,8 @@ from fastapi.security import HTTPAuthorizationCredentials
 from typing import Annotated
 
 from app.core.http import HTTPClientDep, security
-from app.services.auth import login, keys
-from app.schemas.auth import LoginResponse, KeyResponse
+from app.services.auth import login, logout
+from app.schemas.auth import LoginResponse
 
 router = APIRouter()
 
@@ -47,30 +47,14 @@ async def auth_login(username: str, password: str, client: HTTPClientDep):
         raise
 
 
-@router.get("/keys", response_model=KeyResponse, status_code=status.HTTP_200_OK)
-async def fetch_keys(
-    token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
+@router.get("/logout", status_code=200)
+async def auth_logout(
     session_key: str,
+    token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     client: HTTPClientDep,
 ):
     try:
-        response = await keys(session_key, token, client)
-        if response.status_code == 200:
-            key = re.findall(r"[a-fA-F0-9]{32}", response.text)
-            key = (key + [None] * 3)[:3]
-            if not any(key):
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="No security keys found",
-                )
-            return KeyResponse(
-                web_service_key=key[0],
-                features_service_key=key[1],
-                service_key=key[-1],
-            )
-        else:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="No security keys found"
-            )
-    except HTTPException:
+        resposne = await logout(session_key, token, client)
+        return resposne.text
+    except Exception:
         raise
