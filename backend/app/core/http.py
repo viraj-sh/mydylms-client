@@ -1,6 +1,9 @@
 import httpx
 from typing import Annotated
 from fastapi import Depends
+from fastapi.security import HTTPBearer
+
+security = HTTPBearer()
 
 
 class HTTPClientState:
