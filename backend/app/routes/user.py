@@ -1,16 +1,17 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Header
-from fastapi.security import HTTPAuthorizationCredentials
-from typing import Annotated
 import re
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, Header, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials
 
 from app.core.http import HTTPClientDep, security
-from app.services.user import old_profile, keys, profile
 from app.schemas.user import KeyResponse, ProfileOldResponse, ProfileResponse
+from app.services.user import keys, old_profile, profile
 
 router = APIRouter()
 
 
-@router.get("/keys", response_model=KeyResponse, status_code=status.HTTP_200_OK)
+@router.get("/v1/user/keys", response_model=KeyResponse, status_code=status.HTTP_200_OK)
 async def fetch_keys(
     token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     client: HTTPClientDep,
@@ -40,7 +41,9 @@ async def fetch_keys(
 
 
 @router.get(
-    "/v1/profile", response_model=ProfileOldResponse, status_code=status.HTTP_200_OK
+    "/v0/user/profile",
+    response_model=ProfileOldResponse,
+    status_code=status.HTTP_200_OK,
 )
 async def fetch_profile_old(
     user_id: str,
@@ -70,7 +73,9 @@ async def fetch_profile_old(
         raise
 
 
-@router.get("/profile", response_model=ProfileResponse, status_code=status.HTTP_200_OK)
+@router.get(
+    "/v1/user/profile", response_model=ProfileResponse, status_code=status.HTTP_200_OK
+)
 async def fetch_profile(
     user_id: str,
     token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
@@ -79,7 +84,6 @@ async def fetch_profile(
 ):
     try:
         response = await profile(user_id, key, token, client)
-
         if response.status_code == 200:
             if (
                 isinstance(response.json(), dict)

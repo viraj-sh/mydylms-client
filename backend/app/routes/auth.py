@@ -1,19 +1,24 @@
 import re
-from fastapi import APIRouter, HTTPException, status, Depends
-from fastapi.security import HTTPAuthorizationCredentials
 from typing import Annotated
 
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials
+
 from app.core.http import HTTPClientDep, security
-from app.services.auth import login, logout
 from app.schemas.auth import LoginResponse
+from app.services.auth import (
+    login,
+    logout,
+)
 
 router = APIRouter()
 
 
 @router.post("/login", response_model=LoginResponse, status_code=201)
-async def auth_login(username: str, password: str, client: HTTPClientDep):
+async def auth_login(username: str, password: str):
     try:
-        response = await login(username, password, client)
+        response, moodle_session = await login(username, password)
+        print(f"Response: {response}, Session: {moodle_session}")
         if (
             "Invalid login, please try again" in response.text
             or "Academic Status" not in response.text
@@ -34,7 +39,7 @@ async def auth_login(username: str, password: str, client: HTTPClientDep):
 
             return LoginResponse(
                 user_id=user_id,
-                session_token=client.cookies.get("MoodleSession"),
+                session_token=moodle_session,
                 session_key=sesskey,
             )
 

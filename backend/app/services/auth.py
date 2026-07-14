@@ -1,23 +1,26 @@
 from typing import Annotated
-from fastapi.security import HTTPAuthorizationCredentials
+
+import httpx
 from fastapi import Depends
+from fastapi.security import HTTPAuthorizationCredentials
 
 from app.core.http import HTTPClientDep, security
 
 
-async def login(username: str, password: str, client: HTTPClientDep):
-
+async def login(username: str, password: str) -> tuple[httpx.Response, str | None]:
     data = {
         "uname_static": username,
         "username": username,
         "uname": username,
         "password": password,
     }
-    return await client.post(
-        url="https://mydy.dypatil.edu/rait/login/index.php",
-        data=data,
-        follow_redirects=True,
-    )
+    async with httpx.AsyncClient(follow_redirects=True) as temp_client:
+        response = await temp_client.post(
+            url="https://mydy.dypatil.edu/rait/login/index.php",
+            data=data,
+        )
+        moodle_session = temp_client.cookies.get("MoodleSession")
+        return response, moodle_session
 
 
 async def logout(

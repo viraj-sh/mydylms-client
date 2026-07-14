@@ -1,6 +1,7 @@
-from fastapi.security import HTTPAuthorizationCredentials
-from fastapi import Depends
 from typing import Annotated
+
+from fastapi import Depends
+from fastapi.security import HTTPAuthorizationCredentials
 
 from app.core.http import HTTPClientDep, security
 
@@ -13,7 +14,7 @@ async def keys(
     return await client.get(
         url="https://mydy.dypatil.edu/rait/user/managetoken.php",
         params={"sesskey": session_key},
-        headers={"Cookie": f"MoodleSession={token.credentials}"},
+        cookies={"MoodleSession": token.credentials},
     )
 
 
