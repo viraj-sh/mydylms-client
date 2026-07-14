@@ -1,10 +1,11 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
-import httpx
 
-from app.routes import content, system, auth, user, attendance, annoucement, calendar
+import httpx
+from fastapi import FastAPI
+
 from app.core.config import settings
-from app.core.http import http_state
+from app.core.http import NullCookieJar, http_state
+from app.routes import annoucement, attendance, auth, calendar, content, system, user
 
 
 @asynccontextmanager
@@ -17,6 +18,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
+    cookies=NullCookieJar(),
     title=settings.project_name,
     description=settings.project_name,
     version=settings.version,
