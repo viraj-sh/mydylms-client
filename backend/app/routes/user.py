@@ -44,11 +44,12 @@ async def fetch_keys(
     "/v0/user/profile",
     response_model=ProfileOldResponse,
     status_code=status.HTTP_200_OK,
+    operation_id="get_user_profile_detailed",
 )
 async def fetch_profile_old(
-    user_id: str,
     token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     client: HTTPClientDep,
+    user_id: str = Header(..., alias="x-user-id"),
 ):
     try:
         response = await old_profile(user_id, token, client)
@@ -74,12 +75,15 @@ async def fetch_profile_old(
 
 
 @router.get(
-    "/v1/user/profile", response_model=ProfileResponse, status_code=status.HTTP_200_OK
+    "/v1/user/profile",
+    response_model=ProfileResponse,
+    status_code=status.HTTP_200_OK,
+    operation_id="get_user_profile",
 )
 async def fetch_profile(
-    user_id: str,
     token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     client: HTTPClientDep,
+    user_id: str = Header(..., alias="x-user-id"),
     key: str = Header(..., alias="X-API-Key"),
 ):
     try:

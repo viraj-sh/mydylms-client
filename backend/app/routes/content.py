@@ -1,15 +1,15 @@
-from fastapi import APIRouter, status, HTTPException, Depends, Header
-from fastapi.security import HTTPAuthorizationCredentials
 from typing import Annotated
 
+from fastapi import APIRouter, Depends, Header, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials
 
 from app.core.http import HTTPClientDep, security
-from app.services.content import sem, course, docs
 from app.schemas.content import (
-    SubjectDetail,
     CourseDetail,
+    SubjectDetail,
     WeekBase,
 )
+from app.services.content import course, docs, sem
 
 router = APIRouter()
 
@@ -18,11 +18,12 @@ router = APIRouter()
     "/current-course",
     response_model=list[SubjectDetail],
     status_code=status.HTTP_200_OK,
+    operation_id="get_current_semester_courses",
 )
 async def fetch_current_semester_data(
-    user_id: str,
     token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     client: HTTPClientDep,
+    user_id: str = Header(..., alias="x-user-id"),
     key: str = Header(..., alias="X-API-Key"),
 ):
     try:
@@ -39,12 +40,15 @@ async def fetch_current_semester_data(
 
 
 @router.get(
-    "/course", response_model=list[CourseDetail], status_code=status.HTTP_200_OK
+    "/course",
+    response_model=list[CourseDetail],
+    status_code=status.HTTP_200_OK,
+    operation_id="get_enrolled_courses",
 )
 async def fetch_enrolled_courses(
-    user_id: str,
     token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     client: HTTPClientDep,
+    user_id: str = Header(..., alias="x-user-id"),
     key: str = Header(..., alias="X-API-Key"),
 ):
     try:
@@ -61,7 +65,10 @@ async def fetch_enrolled_courses(
 
 
 @router.get(
-    "/course/{course_id}", response_model=list[WeekBase], status_code=status.HTTP_200_OK
+    "/course/{course_id}",
+    response_model=list[WeekBase],
+    status_code=status.HTTP_200_OK,
+    operation_id="get_course_docs",
 )
 async def fetch_course_docs(
     course_id: str,

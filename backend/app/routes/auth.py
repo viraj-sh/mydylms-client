@@ -18,7 +18,6 @@ router = APIRouter()
 async def auth_login(username: str, password: str):
     try:
         response, moodle_session = await login(username, password)
-        print(f"Response: {response}, Session: {moodle_session}")
         if (
             "Invalid login, please try again" in response.text
             or "Academic Status" not in response.text

@@ -1,20 +1,25 @@
-from fastapi import APIRouter, status, HTTPException, Depends, Header
-from fastapi.security import HTTPAuthorizationCredentials
 from typing import Annotated
 
+from fastapi import APIRouter, Depends, Header, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials
 
 from app.core.http import HTTPClientDep, security
-from app.services.attendance import attendance
 from app.schemas.attendance import SubAttendance
+from app.services.attendance import attendance
 
 router = APIRouter()
 
 
-@router.get("", response_model=list[SubAttendance], status_code=status.HTTP_200_OK)
+@router.get(
+    "",
+    response_model=list[SubAttendance],
+    status_code=status.HTTP_200_OK,
+    operation_id="get_attendance",
+)
 async def fetch_attentdance(
-    user_id: str,
     token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
     client: HTTPClientDep,
+    user_id: str = Header(..., alias="x-user-id"),
     key: str = Header(..., alias="X-API-Key"),
 ):
     try:

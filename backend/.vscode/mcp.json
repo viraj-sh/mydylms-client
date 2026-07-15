@@ -1,0 +1,33 @@
+{
+  "servers": {
+    "mydylms-mcp": {
+      "type": "http",
+      "url": "http://localhost:8000/mcp",
+      "headers": {
+        "Authorization": "Bearer ${input:auth-token}",
+        "x-api-key": "${input:api-key}",
+        "x-user-id": "${input:user-id}"
+      }
+    }
+  },
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "auth-token",
+      "description": "Enter your Authorization Bearer Token",
+      "password": true
+    },
+    {
+      "type": "promptString",
+      "id": "api-key",
+      "description": "Enter your X-API-Key",
+      "password": true
+    },
+    {
+      "type": "promptString",
+      "id": "user-id",
+      "description": "Enter your User ID",
+      "password": false
+    }
+  ]
+}
