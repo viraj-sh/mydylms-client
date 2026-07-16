@@ -2,9 +2,9 @@
 
 # MYDY LMS CLIENT (Unofficial)
 
-An unofficial client for **[mydylms](https://mydy.dypatil.edu/)**, with support for direct document downloads and full access across all semesters. Includes the [Frontend](https://github.com/viraj-sh/mydylms-client/wiki/Frontend-Documentation), [MCP Server](https://github.com/viraj-sh/mydylms-client/wiki/MCP-Documentation), and [API](https://github.com/viraj-sh/mydylms-client/wiki/API-Documentation) developed for educational purposes and not affiliated with DY Patil or MYDY, .
+An unofficial client for **[mydylms](https://mydy.dypatil.edu/)**, with support for direct document downloads and full access across all semesters. Includes the [Frontend](https://github.com/viraj-sh/mydylms-client/wiki/Frontend-Documentation), [MCP Server](https://github.com/viraj-sh/mydylms-client/wiki/MCP-Documentation), and [API](https://github.com/viraj-sh/mydylms-client/wiki/API-Documentation) developed for educational purposes and not affiliated with DY Patil or MYDY.
 
-<a href="https://github.com/viraj-sh/mydylms-client/releases/latest">
+<!-- <a href="https://github.com/viraj-sh/mydylms-client/releases/latest">
   <img src="https://img.shields.io/github/v/release/viraj-sh/mydylms-client?label=Latest%20Release&color=green&style=flat-square&cacheSeconds=3600" alt="Release"/>
 </a>
 <a href="https://hub.docker.com/r/virajsh/mydylms-client">
@@ -12,7 +12,7 @@ An unofficial client for **[mydylms](https://mydy.dypatil.edu/)**, with support 
 </a>
 <a href="https://github.com/viraj-sh/mydylms-client/wiki">
   <img src="https://img.shields.io/badge/docs-wiki-orange?style=flat-square" alt="Wiki"/>
-</a>
+</a> -->
 
 </div>
 
@@ -34,81 +34,23 @@ This client improves on the official MYDY LMS by making document access and brow
 
 ## Installation & Usage
 
-The client can be run in several ways. For detailed steps, see the **[Getting Started](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started)** wiki page.
+☁️ **Web version:** [https://mydylms.netlify.app](https://mydylms.netlify.app)
+> *(No installation required – just open and use.)*
 
-Option 1. **[Prebuilt Releases](https://github.com/viraj-sh/mydylms-client/releases/latest)** – Download and run the latest release for your platform:
+### Run from Source
 
-   [![Windows (.exe)](https://img.shields.io/badge/Windows_\(.exe\)-x64-blue?style=flat-square)](https://github.com/viraj-sh/mydylms-client/releases/download/v1.2.0/mydylms-client-v1.2.0-win-x64.exe)
-   [![Linux (.tar.gz)](https://img.shields.io/badge/Linux-x86__64-orange?style=flat-square)](https://github.com/viraj-sh/mydylms-client/releases/download/v1.2.0/mydylms-client-v1.2.0-linux-x86__64)
-   [![macOS (.zip)](https://img.shields.io/badge/macOS-arm64-lightgrey?style=flat-square)](https://github.com/viraj-sh/mydylms-client/releases/download/v1.2.0/mydylms-client-v1.2.0-macos-arm64)
-
-Option 2. **[One-Click Deployment](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#one-click-deployment-render) (Render)** – Deploy the client instantly in the cloud:
-
-   [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/viraj-sh/mydylms-client)
-
-Option 3. **[Run from Source](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#running-from-source)** – Clone the repository and run the client directly in development mode.
-
-  - For developers who want to modify the client.
+**Prerequisites** – [Python 3.10+](https://www.python.org/) and [Node.js](https://nodejs.org/) (with npm) installed and available on your PATH.
 
 
-    ```bash
-    git clone https://github.com/viraj-sh/mydylms-client
-    cd mydylms-client
-
-    python -m venv venv
-    venv\Scripts\activate   # Windows
-    source venv/bin/activate   # macOS/Linux
-
-    pip install --upgrade pip
-    pip install -r requirements/base.txt
-
-    python app.py
-    ```
-
-Option 4. **[Build from Source](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#building-from-source)** – For developers or contributors: clone the repo, install dependencies, and run locally.
-
-Option 5. **[Docker](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started#docker-deployment)** – Run the client in a consistent containerized environment.
-
-> For complete instructions, platform-specific steps, and Docker usage, see the **[Getting Started](https://github.com/viraj-sh/mydylms-client/wiki/Getting-Started)** wiki.
-
----
-### Available Services
-
-Once the client is running, these endpoints are accessible (host may vary):
-
-* **[Frontend](https://github.com/viraj-sh/mydylms-client/wiki/Frontend-Documentation)** -  [`localhost:8000`](http://localhost:8000/) : Static interface to interact with the API.
-* **[MCP Server](https://github.com/viraj-sh/mydylms-client/wiki/MCP-Documentation)**  - [`localhost:8000/mcp`](http://localhost:8000/mcp) : Endpoint (`/mcp`) compatible with Model Context Protocol (MCP) clients like LLM Clients or LangChain bots.
-* **[API](https://github.com/viraj-sh/mydylms-client/wiki/API-Documentation)** - [`localhost:8000/api`](http://localhost:8000/api) : FastAPI backend for authentication, semesters, subjects, documents, and attendance.
-
-  * **Interactive Docs:** [`localhost:8000/docs`](http://localhost:8000/docs) : API testing Swagger UI for developers.
-
----
-
-## MCP Usage
-
-> For full instructions on configuring the MCP server, check out the **[MCP Documentation](https://github.com/viraj-sh/mydylms-client/wiki/MCP-Documentation)**.
-
-| Demo |
-| :------------: |
-| <img src="./.github/assets/mcp_usage.gif" width="800"/> |
-
-## Preview
-
-| Dashboard                                      | Login                                           |
-| :-------------------------------------------- | :-------------------------------------------- |
-| <img src="https://raw.githubusercontent.com/viraj-sh/mydylms-client/refs/heads/main/.github/assets/preview_dashboard.png" width="500" height="300"/> | <img src="https://raw.githubusercontent.com/viraj-sh/mydylms-client/refs/heads/main/.github/assets/preview_login.png" width="500" height="300"/> |
-
-| Attendance                                    | Profile                                         |
-| :------------------------------------------- | :-------------------------------------------- |
-| <img src="https://raw.githubusercontent.com/viraj-sh/mydylms-client/refs/heads/main/.github/assets/preview_attendance.png" width="500" height="300"/> | <img src="https://raw.githubusercontent.com/viraj-sh/mydylms-client/refs/heads/main/.github/assets/preview_profile.png" width="500" height="300"/> |
-
-
+```bash
+git clone https://github.com/viraj-sh/uniclare-client 
+cd uniclare-client 
+python web.py
+```
+`--debug` for verbose install/build/server logs. Available at http://localhost:3000.
 
 ---
 
 ## Disclaimer
 
-This project is **unofficial** and intended for personal and educational use only.
-DY Patil or MYDY is **not associated** with this project.
-
-Use responsibly. The author is **not liable for misuse, data loss, or violations of institutional policies**.
+This project is **unofficial** and intended for personal and educational use only. DY Patil or MYDY is **not associated** with this project. Use responsibly. The author is **not liable for misuse, data loss, or violations of institutional policies**.

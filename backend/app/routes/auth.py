@@ -1,0 +1,64 @@
+import re
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, OAuth2PasswordRequestForm
+
+from app.core.http import HTTPClientDep, security
+from app.schemas.auth import LoginResponse
+from app.services.auth import (
+    login,
+    logout,
+)
+
+router = APIRouter()
+
+
+@router.post("/login", response_model=LoginResponse, status_code=201)
+async def auth_login(user_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+    try:
+        response, moodle_session = await login(user_data.username, user_data.password)
+        if (
+            "Invalid login, please try again" in response.text
+            or "Academic Status" not in response.text
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="invalid username or password",
+            )
+        elif "Academic Status" in response.text:
+            user_id = (
+                m.group(1)
+                if (m := re.search(r"/user/profile\.php\?id=(\d+)", response.text))
+                else None
+            )
+            sesskey = (
+                m := re.search(r'sesskey["\'=:\s>]+([a-zA-Z0-9]{8,})', response.text)
+            ) and m.group(1)
+
+            return LoginResponse(
+                user_id=user_id,
+                session_token=moodle_session,
+                session_key=sesskey,
+            )
+
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="invalid username or password",
+            )
+    except HTTPException:
+        raise
+
+
+@router.get("/logout", status_code=200)
+async def auth_logout(
+    session_key: str,
+    token: Annotated[HTTPAuthorizationCredentials, Depends(security)],
+    client: HTTPClientDep,
+):
+    try:
+        resposne = await logout(session_key, token, client)
+        return resposne.text
+    except Exception:
+        raise
