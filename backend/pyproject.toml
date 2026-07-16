@@ -18,3 +18,8 @@ desktop = [
     "pywebview>=6.2.1",
     "qtpy>=2.4.3",
 ]
+
+[dependency-groups]
+dev = [
+    "nuitka>=4.1.3",
+]

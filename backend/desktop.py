@@ -12,35 +12,46 @@ PORT = settings.webview_port
 
 SPLASH_HTML = """<!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Uniclare</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
-    body {
-      margin: 0;
-      padding: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background-color: #111827;
-      color: #ffffff;
-      font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-    }
-    h1 {
-      font-size: 1.5rem;
-      font-weight: 500;
-      margin: 0;
-      line-height: 1.5;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MYDY LMS</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: oklch(0.145 0 0);
+            color: oklch(0.985 0 0);
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 500;
+            line-height: 1.5;
+            letter-spacing: 0;
+            color: oklch(0.985 0 0);
+        }
+    </style>
 </head>
+
 <body>
-  <h1>Uniclare Client</h1>
+    <h1>MYDY LMS</h1>
 </body>
+
 </html>
 """
 
@@ -72,7 +83,7 @@ def on_start(window: webview.Window) -> None:
 threading.Thread(target=run_server, daemon=True).start()
 
 window = webview.create_window(
-    title="Uniclare Client",
+    title="MYDY LMS",
     html=SPLASH_HTML,
     js_api=None,
     width=1200,
