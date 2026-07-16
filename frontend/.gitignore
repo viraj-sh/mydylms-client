@@ -1,0 +1,7 @@
+plans
+guidelines
+node_modules
+.env
+*.md 
+src/imports/pasted_text
+dist

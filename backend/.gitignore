@@ -10,3 +10,4 @@ __pycache__/
 .env
 .vercel
 test_*
+app/static
