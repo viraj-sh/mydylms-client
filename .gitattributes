@@ -1,0 +1,3 @@
+# *.tsx linguist-detectable=false
+frontend/src/app/components/** linguist-vendored
+frontend/src/app/App.tsx linguist-vendored

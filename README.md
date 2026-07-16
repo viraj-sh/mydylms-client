@@ -43,9 +43,9 @@ This client improves on the official MYDY LMS by making document access and brow
 
 
 ```bash
-git clone https://github.com/viraj-sh/uniclare-client 
-cd uniclare-client 
-python web.py
+git clone https://github.com/viraj-sh/mydylms-client
+cd mydylms-client
+python app.py
 ```
 `--debug` for verbose install/build/server logs. Available at http://localhost:3000.
 

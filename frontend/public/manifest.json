@@ -1,5 +1,5 @@
 {
-    "name": "MYDY LMS Client",
+    "name": "MYDY LMS",
     "short_name": "MYDY LMS",
     "description": "Effortlessly access, search, and download DY Patil LMS course materials",
     "start_url": "/login",

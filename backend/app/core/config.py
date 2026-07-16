@@ -11,5 +11,8 @@ class Settings(BaseSettings):
     project_name: str = "mydylms-client"
     version: str = "2.0.0"
 
+    webview_host: str = "127.0.0.1"
+    webview_port: int = 8080
+
 
 settings = Settings()
