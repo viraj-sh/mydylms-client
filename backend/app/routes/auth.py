@@ -2,7 +2,7 @@ import re
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import HTTPAuthorizationCredentials
+from fastapi.security import HTTPAuthorizationCredentials, OAuth2PasswordRequestForm
 
 from app.core.http import HTTPClientDep, security
 from app.schemas.auth import LoginResponse
@@ -15,9 +15,9 @@ router = APIRouter()
 
 
 @router.post("/login", response_model=LoginResponse, status_code=201)
-async def auth_login(username: str, password: str):
+async def auth_login(user_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     try:
-        response, moodle_session = await login(username, password)
+        response, moodle_session = await login(user_data.username, user_data.password)
         if (
             "Invalid login, please try again" in response.text
             or "Academic Status" not in response.text

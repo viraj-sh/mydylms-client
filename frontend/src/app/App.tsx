@@ -89,8 +89,14 @@ async function fetchJSON<T>(path: string): Promise<T> {
 
 async function apiLogin(username: string, password: string): Promise<SessionData> {
   const res = await fetch(
-    `${API_BASE}/v1/auth/login?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`,
-    { method: "POST" }
+    `${API_BASE}/v1/auth/login`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({ username, password }).toString(),
+    }
   );
   if (!res.ok) throw new Error(await extractError(res));
   return res.json();
