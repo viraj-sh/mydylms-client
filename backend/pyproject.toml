@@ -12,9 +12,7 @@ dependencies = [
 
 [project.optional-dependencies]
 desktop = [
-    "pyqt6>=6.11.0; sys_platform == 'linux'",
-    "pyqt6-webengine>=6.11.0; sys_platform == 'linux'",
-    "pyside6>=6.11.1; sys_platform == 'darwin'",
+    "pyside6>=6.11.1 ; sys_platform == 'linux' or sys_platform == 'darwin'",
     "pywebview>=6.2.1",
     "qtpy>=2.4.3",
 ]
