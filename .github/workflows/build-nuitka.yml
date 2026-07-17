@@ -72,7 +72,6 @@ jobs:
           file-version: "2.0.0"
           product-version: "2.0.0"
           disable-console: true
-          enable-plugins: pyside6
           disable-plugins: pywebview
           include-package-data: |
             fastapi
@@ -145,7 +144,6 @@ jobs:
           copyright: "Copyright © 2025 github.com/viraj-sh"
           file-version: "2.0.0"
           disable-console: true
-          enable-plugins: pyside6
           disable-plugins: pywebview
           include-package-data: |
             fastapi
