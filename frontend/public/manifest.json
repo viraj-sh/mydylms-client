@@ -1,6 +1,6 @@
 {
-    "name": "MYDY LMS",
-    "short_name": "MYDY LMS",
+    "name": "MYDY LMS Client (Unofficial)",
+    "short_name": "MYDY LMS Client (Unofficial)",
     "description": "Effortlessly access, search, and download DY Patil LMS course materials",
     "start_url": "/login",
     "display": "standalone",

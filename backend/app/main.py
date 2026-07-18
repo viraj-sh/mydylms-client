@@ -55,7 +55,7 @@ app.include_router(router=calendar.router, prefix="/v1/calendar", tags=["calenda
 
 mcp = FastApiMCP(
     app,
-    name="MYDY LMS MCP",
+    name="MYDY LMS MCP (Unofficial)",
     description="MCP server for MYDY LMS",
     include_operations=[
         "get_user_profile_detailed",

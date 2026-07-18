@@ -16,7 +16,7 @@ SPLASH_HTML = """<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MYDY LMS</title>
+    <title>MYDY LMS Client (Unofficial)</title>
     <style>
         html,
         body {
@@ -49,7 +49,7 @@ SPLASH_HTML = """<!DOCTYPE html>
 </head>
 
 <body>
-    <h1>MYDY LMS</h1>
+    <h1>MYDY LMS Client (Unofficial)</h1>
 </body>
 
 </html>
@@ -83,7 +83,7 @@ def on_start(window: webview.Window) -> None:
 threading.Thread(target=run_server, daemon=True).start()
 
 window = webview.create_window(
-    title="MYDY LMS",
+    title="MYDY LMS Client (Unofficial)",
     html=SPLASH_HTML,
     js_api=None,
     width=1200,
