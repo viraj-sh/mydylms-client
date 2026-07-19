@@ -1,10 +1,9 @@
-# .github/workflows/build.yml
 name: Manual Build
 
 on:
   workflow_dispatch:
     inputs:
-      build_mac:
+      build_macos:
         description: "Build macOS .app"
         type: boolean
         default: false
@@ -13,234 +12,50 @@ on:
         type: boolean
         default: false
       build_windows:
-        description: "Build Windows standalone"
+        description: "Build Windows standalone + MSIX"
         type: boolean
         default: false
+      version:
+        description: "Version to stamp onto this test build (three-part, e.g. 2.0.1)"
+        type: string
+        default: "0.0.0"
 
 jobs:
-  # ────────────────────────────────────────────────────────────
-  #  macOS
-  # ────────────────────────────────────────────────────────────
-  build-mac:
-    name: Build macOS .app
-    runs-on: macos-latest
-    if: ${{ inputs.build_mac }}
+  macos:
+    if: ${{ inputs.build_macos }}
+    # Pin to a tagged release of the template repo, not @main, so a change
+    # there can't silently break every project's build.
+    uses: viraj-sh/dev-workflows/.github/workflows/build-macos-app.yml@v1.0.0
+    with:
+      app_version: ${{ inputs.version }}
+      product_name: MYDYLMS
+      company_name: viraj-sh
+      file_description: "Effortlessly access DY LMS course materials"
+      copyright_text: "Copyright © 2025 github.com/viraj-sh"
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Build frontend
-        working-directory: frontend
-        run: |
-          npm install
-          npm run build
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install uv
-        run: pip install uv
-
-      - name: Install Python dependencies
-        working-directory: backend
-        run: uv sync --dev --extra desktop
-
-      - name: Build macOS app with Nuitka
-        working-directory: backend
-        run: |
-          uv run nuitka \
-            --mode=app \
-            --macos-app-name=desktop \
-            --macos-app-icon=../.github/assets/icon.icns \
-            --remove-output \
-            --lto=yes \
-            --jobs=4 \
-            --prefer-source-code \
-            --assume-yes-for-downloads \
-            --product-name="MYDYLMS" \
-            --company-name="viraj-sh" \
-            --file-description="Effortlessly access DY LMS course materials" \
-            --copyright="Copyright © 2025 github.com/viraj-sh" \
-            --file-version=2.0.0 \
-            --product-version=2.0.0 \
-            --follow-imports \
-            --disable-console \
-            --no-deployment-flag=excluded-module-usage \
-            --disable-plugin=pywebview \
-            --enable-plugin=pyside6 \
-            --include-package-data=fastapi \
-            --include-package-data=uvicorn \
-            --include-package-data=pydantic_settings \
-            --include-package-data=httpx \
-            --include-package-data=qtpy \
-            --include-package-data=webview \
-            --include-data-dir=app/static=static \
-            --output-filename=desktop \
-            --output-dir=dist \
-            desktop.py
-
-          - name: Create tarball (preserves symlinks)
-            working-directory: backend
-            run: tar -czf desktop.app.tar.gz -C dist desktop.app
-
-          - name: Upload macOS .app (tarball)
-            uses: actions/upload-artifact@v4
-            with:
-              name: macOS-desktop
-              path: backend/desktop.app.tar.gz
-
-  # ────────────────────────────────────────────────────────────
-  #  Linux
-  # ────────────────────────────────────────────────────────────
-  build-linux:
-    name: Build Linux standalone
-    runs-on: ubuntu-latest
+  linux:
     if: ${{ inputs.build_linux }}
+    uses: viraj-sh/dev-workflows/.github/workflows/build-linux-standalone.yml@v1.0.0
+    with:
+      app_version: ${{ inputs.version }}
+      product_name: MYDYLMS
+      company_name: viraj-sh
+      file_description: "Effortlessly access DY LMS course materials"
+      copyright_text: "Copyright © 2025 github.com/viraj-sh"
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Build frontend
-        working-directory: frontend
-        run: |
-          npm install
-          npm run build
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install uv
-        run: pip install uv
-
-      - name: Install Python dependencies
-        working-directory: backend
-        run: uv sync --dev --extra desktop
-
-      - name: Build Linux standalone with Nuitka
-        working-directory: backend
-        run: |
-          uv run nuitka \
-            --standalone \
-            --remove-output \
-            --lto=yes \
-            --jobs=4 \
-            --prefer-source-code \
-            --assume-yes-for-downloads \
-            --product-name="MYDYLMS" \
-            --company-name="viraj-sh" \
-            --file-description="Effortlessly access DY LMS course materials" \
-            --copyright="Copyright © 2025 github.com/viraj-sh" \
-            --file-version=2.0.0 \
-            --follow-imports \
-            --disable-console \
-            --no-deployment-flag=excluded-module-usage \
-            --disable-plugin=pywebview \
-            --enable-plugin=pyside6 \
-            --include-package-data=fastapi \
-            --include-package-data=uvicorn \
-            --include-package-data=pydantic_settings \
-            --include-package-data=httpx \
-            --include-package-data=qtpy \
-            --include-package-data=webview \
-            --include-data-dir=app/static=static \
-            --output-filename=desktop \
-            --output-dir=dist \
-            desktop.py
-
-      - name: Upload Linux build folder
-        uses: actions/upload-artifact@v4
-        with:
-          name: Linux-desktop
-          path: backend/dist/desktop.dist
-          include-hidden-files: true
-
-  # ────────────────────────────────────────────────────────────
-  #  Windows
-  # ────────────────────────────────────────────────────────────
-  build-windows:
-    name: Build Windows standalone
-    runs-on: windows-latest
+  windows:
     if: ${{ inputs.build_windows }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Build frontend
-        working-directory: frontend
-        run: |
-          npm install
-          npm run build
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install uv
-        run: pip install uv
-
-      - name: Install Python dependencies
-        working-directory: backend
-        run: uv sync --dev --extra desktop
-
-      - name: Build Windows standalone with Nuitka
-        working-directory: backend
-        run: |
-          uv run nuitka `
-            --standalone `
-            --remove-output `
-            --lto=yes `
-            --jobs=4 `
-            --prefer-source-code `
-            --assume-yes-for-downloads `
-            --product-name="MYDYLMS" `
-            --company-name="viraj-sh" `
-            --file-description="Effortlessly access DY LMS course materials" `
-            --copyright="Copyright © 2025 github.com/viraj-sh" `
-            --file-version=2.0.0 `
-            --product-version=2.0.0 `
-            --follow-imports `
-            --windows-console-mode=disable `
-            --no-deployment-flag=excluded-module-usage `
-            --windows-icon-from-ico=../.github/assets/icon.ico `
-            --disable-plugin=pywebview `
-            --include-module=webview.platforms.edgechromium `
-            --include-module=webview.platforms.win32 `
-            --include-package-data=fastapi `
-            --include-package-data=uvicorn `
-            --include-package-data=pydantic_settings `
-            --include-package-data=httpx `
-            --include-package-data=webview `
-            --include-data-dir=app/static=static `
-            --output-filename=MYDYLMS `
-            --output-dir=dist `
-            desktop.py
-
-      - name: Upload Windows build folder
-        uses: actions/upload-artifact@v4
-        with:
-          name: Windows-desktop
-          path: backend/dist/desktop.dist
-          include-hidden-files: true
+    uses: viraj-sh/dev-workflows/.github/workflows/build-windows.yml@v1.1.0
+    with:
+      app_version: ${{ inputs.version }}
+      product_name: MYDYLMS
+      company_name: viraj-sh
+      file_description: "Effortlessly access DY LMS course materials"
+      copyright_text: "Copyright © 2025 github.com/viraj-sh"
+      executable_name: MYDYLMS
+      build_msix: true
+      publisher_display_name: viraj-sh
+      display_name: "MYDY LMS Client (Unofficial)"
+      build_installer: true
+      iss_path: "backend/installer/mydylms.iss"
+    secrets: inherit
