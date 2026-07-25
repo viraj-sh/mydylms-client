@@ -1,0 +1,54 @@
+app-id: com.viraj_sh.mydylms
+runtime: org.kde.Platform
+runtime-version: "6.7"
+sdk: org.kde.Sdk
+command: mydylms
+finish-args:
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --share=network
+  - --share=ipc
+  - --device=dri
+  - --env=LD_LIBRARY_PATH=/app/mydylms/lib:/app/lib
+  - --env=PYWEBVIEW_GUI=qt
+  - --env=QT_QPA_PLATFORM=xcb
+  - --env=QT_QPA_PLATFORM_PLUGIN_PATH=/usr/plugins/platforms
+  - --env=QT_PLUGIN_PATH=/usr/plugins
+
+modules:
+  - name: krb5
+    buildsystem: simple
+    build-commands:
+      - cd src && ./configure --prefix=/app && make -j$(nproc) && make install
+    sources:
+      - type: archive
+        url: https://kerberos.org/dist/krb5/1.21/krb5-1.21.2.tar.gz
+        sha256: 9560941a9d843c0243a71b17a7ac6fe31c7cebb5bce3983db79e52ae7e850491
+    cleanup:
+      - /include
+      - /lib/pkgconfig
+      - /share
+
+  - name: mydylms
+    buildsystem: simple
+    only-arches:
+      - x86_64
+    build-commands:
+      - mkdir -p /app/mydylms
+      - cp -r appdist/* /app/mydylms/
+      - chmod +x /app/mydylms/desktop.bin
+      - mkdir -p /app/bin
+      - ln -s /app/mydylms/desktop.bin /app/bin/mydylms
+      - install -Dm644 mydylms.desktop /app/share/applications/com.viraj_sh.mydylms.desktop
+      - install -Dm644 icon.svg /app/share/icons/hicolor/scalable/apps/com.viraj_sh.mydylms.svg
+      - install -Dm644 com.viraj_sh.mydylms.metainfo.xml /app/share/metainfo/com.viraj_sh.mydylms.metainfo.xml
+    sources:
+      - type: dir
+        path: ../../dist/desktop.dist
+        dest: appdist
+      - type: file
+        path: mydylms.desktop
+      - type: file
+        path: ../assets/flatpak/icon.svg      # ← fixed (was ../../)
+      - type: file
+        path: com.viraj_sh.mydylms.metainfo.xml

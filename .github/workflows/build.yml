@@ -19,6 +19,10 @@ on:
         description: "Build Windows standalone + Inno Setup installer"
         type: boolean
         default: false
+      build_flatpak:
+        description: "Build Linux Flatpak"
+        type: boolean
+        default: false
       version:
         description: "Version to stamp onto this build (e.g. 2.0.1)"
         type: string
@@ -27,7 +31,7 @@ on:
 jobs:
   macos:
     if: ${{ inputs.build_macos }}
-    uses: viraj-sh/dev-workflows/.github/workflows/build-macos-app.yml@v1.0.0
+    uses: viraj-sh/dev-workflows/.github/workflows/build-macos-app.yml@v1.3.0
     with:
       app_version: ${{ inputs.version }}
       product_name: MYDYLMS
@@ -69,3 +73,17 @@ jobs:
       file_description: "Effortlessly access DY LMS course materials"
       copyright_text: "Copyright © 2025 github.com/viraj-sh"
       executable_name: MYDYLMS
+
+  flatpak:
+    if: ${{ inputs.build_flatpak }}
+    uses: viraj-sh/dev-workflows/.github/workflows/build-linux-flatpak.yml@v1.5.0
+    with:
+      app_version: ${{ inputs.version }}
+      product_name: MYDYLMS
+      company_name: viraj-sh
+      file_description: "Effortlessly access DY LMS course materials"
+      copyright_text: "Copyright © 2025 github.com/viraj-sh"
+      # Optionally override flatpak‑specific defaults:
+      # manifest_path: ".github/flatpak/com.viraj_sh.mydylms.yml"
+      # bundle_name: "mydylms.flatpak"
+      # artifact_name: "linux-flatpak"

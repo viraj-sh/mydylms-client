@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.viraj_sh.mydylms</id>
+  <name>MYDYLMS</name>
+  <summary>Effortlessly access DY LMS course materials</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <description>
+    <p>MYDYLMS is a lightweight desktop client for DY LMS.</p>
+  </description>
+  <launchable type="desktop-id">com.viraj_sh.mydylms.desktop</launchable>
+  <releases>
+    <release version="2.0.0" date="2026-07-16"/>
+  </releases>
+</component>

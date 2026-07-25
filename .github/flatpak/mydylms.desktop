@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=MYDYLMS
+Comment=Effortlessly access DY LMS course materials
+Exec=mydylms
+Icon=com.viraj_sh.mydylms
+Categories=Education;
+Terminal=false
