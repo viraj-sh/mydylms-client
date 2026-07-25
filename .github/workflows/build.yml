@@ -15,6 +15,10 @@ on:
         description: "Build Windows standalone + MSIX"
         type: boolean
         default: false
+      build_windows_installer:
+        description: "Build Windows standalone + Inno Setup installer"
+        type: boolean
+        default: false
       version:
         description: "Version to stamp onto this build (e.g. 2.0.1)"
         type: string
@@ -54,3 +58,14 @@ jobs:
       copyright_text: "Copyright © 2025 github.com/viraj-sh"
       executable_name: MYDYLMS
     secrets: inherit
+
+  windows-installer:
+    if: ${{ inputs.build_windows_installer }}
+    uses: viraj-sh/dev-workflows/.github/workflows/build-windows-installer.yml@v1.1.0
+    with:
+      app_version: ${{ inputs.version }}
+      product_name: MYDYLMS
+      company_name: viraj-sh
+      file_description: "Effortlessly access DY LMS course materials"
+      copyright_text: "Copyright © 2025 github.com/viraj-sh"
+      executable_name: MYDYLMS
